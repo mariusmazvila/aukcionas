@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FeaturesSection from '../../components/sections/FeaturesSection.astro';
+import CTASection from '../../components/sections/CTASection.astro';
+
+const services = [
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>`,
+    title: 'Projektavimas',
+    description: 'Techniniai brėžiniai ir schemos pagal EN 61439 standartą. Tiesiogiai bendradarbiaujame su jūsų projektavimo komanda.',
+    href: '/paslaugos/projektavimas',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>`,
+    title: 'Elektros panelių statymas',
+    description: 'Pramoniniai paskirstymo ir valdymo skydai iki 6300 A. Sertifikuotos medžiagos, pilna dokumentacija, bandymų protokolai.',
+    href: '/paslaugos/elektros-paneliu-statymas',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l5.654-4.654m5.657-5.657l-3.03 2.496a2.25 2.25 0 00-.766 1.208" /></svg>`,
+    title: 'Montavimas',
+    description: 'Profesionalus elektros skydų montavimas, jungimas ir paleidimas objekte. Darbas pagal grafiką, garantuojame terminų laikymąsi.',
+    href: '/paslaugos/montavimas',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>`,
+    title: 'Techninė priežiūra',
+    description: 'Reguliarūs skydų patikrinimai, prevencinė priežiūra ir gedimų šalinimas. Avarinis iškvietimas per 4 val.',
+    href: '/paslaugos/prieziura',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>`,
+    title: 'Konsultacijos',
+    description: 'Nemokama inžinerinė konsultacija — padedame pasirinkti tinkamą sprendimą, įvertinti kaštus ir rizikas dar prieš projektavimą.',
+    href: '/kontaktai',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>`,
+    title: 'Sertifikavimas',
+    description: 'Ruošiame visą techninę dokumentaciją ir sertifikuojame skydus pagal ES direktyvas. Gaunate CE ženklinimą ir atitikties deklaraciją.',
+    href: '/kontaktai',
+  },
+];
+
+const steps = [
+  { number: '01', title: 'Konsultacija', description: 'Aptariame poreikius, objektą ir techninius reikalavimus. Nemokama, be įsipareigojimų.' },
+  { number: '02', title: 'Projektavimas', description: 'Ruošiame elektros schemas, brėžinius ir specifikacijas. Derinamas su klientu.' },
+  { number: '03', title: 'Gamyba', description: 'Gaminame skydą savo gamykloje. Naudojame sertifikuotas detales, atliekame gamyklinius bandymus.' },
+  { number: '04', title: 'Montavimas', description: 'Montuojame, jungiame ir paleidžiame skydą objekte. Bandymai ir derinimas vietoje.' },
+  { number: '05', title: 'Priežiūra', description: 'Sudarome priežiūros sutartį. Reguliarūs patikrinimai, avarinis iškvietimas 24/7.' },
+];
+---
+
+<BaseLayout
+  title="Paslaugos"
+  description="Elektros skydų projektavimas, gamyba, montavimas ir techninė priežiūra pramoniniams ir komerciniams objektams visoje Lietuvoje."
+>
+  <!-- Puslapio antraštė -->
+  <section class="bg-gray-50 border-b border-gray-100 py-10 lg:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Naršymo kelias" class="mb-4">
+        <ol class="flex items-center gap-2 text-sm text-gray-500">
+          <li><a href="/" class="hover:text-gray-900 transition-colors">Pagrindinis</a></li>
+          <li aria-hidden="true" class="text-gray-300">›</li>
+          <li class="text-gray-900 font-medium" aria-current="page">Paslaugos</li>
+        </ol>
+      </nav>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight tracking-tight">
+        Mūsų paslaugos
+      </h1>
+      <p class="mt-4 text-lg text-gray-600 max-w-2xl leading-relaxed">
+        Visas elektros skydų gyvavimo ciklas vienoje vietoje — nuo techninės
+        specifikacijos iki reguliarios priežiūros.
+      </p>
+    </div>
+  </section>
+
+  <!-- Paslaugų grotelė -->
+  <FeaturesSection
+    features={services}
+    columns={3}
+    background="white"
+  />
+
+  <!-- Kaip dirbame — proceso žingsniai -->
+  <section class="py-16 lg:py-24 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12 lg:mb-16">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Kaip dirbame</h2>
+        <p class="mt-3 text-gray-600 max-w-xl mx-auto">
+          Nuo pirmojo skambučio iki paleidimo — aiškus ir nuspėjamas procesas.
+        </p>
+      </div>
+
+      <div class="relative">
+        <!-- Jungiamoji linija (desktop) -->
+        <div class="hidden lg:block absolute top-8 left-0 right-0 h-px bg-gray-200" aria-hidden="true"></div>
+
+        <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+          {steps.map(({ number, title, description }) => (
+            <li class="relative flex flex-col items-center text-center lg:items-start lg:text-left">
+              <!-- Numeris -->
+              <div class="w-16 h-16 rounded-full bg-blue-600 text-white font-bold text-lg flex items-center justify-center mb-4 shrink-0 relative z-10">
+                {number}
+              </div>
+              <h3 class="font-semibold text-gray-900 mb-1">{title}</h3>
+              <p class="text-sm text-gray-600 leading-relaxed">{description}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    headline="Pradėkite su nemokama konsultacija"
+    description="Inžinierius įvertins jūsų poreikius ir paruoš orientacinę kainoraštį per 2 darbo dienas."
+    primaryCta={{ text: 'Susisiekti', href: '/kontaktai' }}
+    secondaryCta={{ text: 'Mūsų darbai', href: '/darbai' }}
+    background="dark"
+  />
+</BaseLayout>

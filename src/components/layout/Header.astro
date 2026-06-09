@@ -1,0 +1,164 @@
+---
+/**
+ * Header — pilnas navigacijos komponentas su mobiliuoju meniu.
+ * Navigacijos struktūra redaguojama src/config/navigation.ts.
+ * Vanilla JS meniu toggle — nėra React/papildomų bundle'ų.
+ */
+import config from '../../config';
+import { mainNav } from '../../config/navigation';
+
+// Dabartinis kelias — aktyvios nuorodos žymėjimui
+const pathname = new URL(Astro.request.url).pathname;
+
+// Nuoroda laikoma aktyvia jei pathname atitinka arba prasideda nuo href
+// (išskyrus '/' — jis aktyvus tik tiksliai)
+function isActive(href: string) {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+}
+---
+
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a
+        href="/"
+        class="flex items-center gap-2 font-bold text-xl text-gray-900 hover:text-blue-600 transition-colors"
+        aria-label={`${config.siteName} — grįžti į pradžią`}
+      >
+        {config.siteName}
+      </a>
+
+      <!-- Desktop navigacija -->
+      <nav aria-label="Pagrindinis meniu" class="hidden md:flex items-center gap-1">
+        {mainNav.map(({ label, href, external }) => (
+          <a
+            href={href}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noopener noreferrer' : undefined}
+            class:list={[
+              'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+              isActive(href)
+                ? 'text-blue-600 bg-blue-50'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100',
+            ]}
+            aria-current={isActive(href) ? 'page' : undefined}
+          >
+            {label}
+          </a>
+        ))}
+      </nav>
+
+      <!-- Desktop CTA -->
+      <a
+        href="/kontaktai"
+        class="hidden md:inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        Susisiekti
+      </a>
+
+      <!-- Mobilusis meniu mygtukas -->
+      <button
+        id="mobile-menu-btn"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Atidaryti meniu"
+        class="md:hidden p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+      >
+        <!-- Hamburger piktograma -->
+        <svg id="icon-menu" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        <!-- X piktograma (paslėpta) -->
+        <svg id="icon-close" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Mobilusis meniu (paslėptas pagal nutylėjimą) -->
+  <div
+    id="mobile-menu"
+    class="hidden md:hidden border-t border-gray-200 bg-white"
+    aria-label="Mobilusis meniu"
+  >
+    <nav class="max-w-6xl mx-auto px-4 py-4 flex flex-col gap-1">
+      {mainNav.map(({ label, href, external }) => (
+        <a
+          href={href}
+          target={external ? '_blank' : undefined}
+          rel={external ? 'noopener noreferrer' : undefined}
+          class:list={[
+            'px-4 py-3 rounded-lg text-sm font-medium transition-colors',
+            isActive(href)
+              ? 'text-blue-600 bg-blue-50'
+              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50',
+          ]}
+          aria-current={isActive(href) ? 'page' : undefined}
+        >
+          {label}
+        </a>
+      ))}
+      <a
+        href="/kontaktai"
+        class="mt-2 px-4 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors text-center"
+      >
+        Susisiekti
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Mobilusis meniu — vanilla JS, be React/framework'o bundle'o
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const iconMenu = document.getElementById('icon-menu');
+  const iconClose = document.getElementById('icon-close');
+
+  function openMenu() {
+    menu?.classList.remove('hidden');
+    btn?.setAttribute('aria-expanded', 'true');
+    btn?.setAttribute('aria-label', 'Uždaryti meniu');
+    iconMenu?.classList.add('hidden');
+    iconClose?.classList.remove('hidden');
+  }
+
+  function closeMenu() {
+    menu?.classList.add('hidden');
+    btn?.setAttribute('aria-expanded', 'false');
+    btn?.setAttribute('aria-label', 'Atidaryti meniu');
+    iconMenu?.classList.remove('hidden');
+    iconClose?.classList.add('hidden');
+  }
+
+  btn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = btn.getAttribute('aria-expanded') === 'true';
+    isOpen ? closeMenu() : openMenu();
+  });
+
+  // Uždaryti paspaudus už meniu ribų
+  document.addEventListener('click', (e) => {
+    const target = e.target as Node;
+    if (!menu?.contains(target) && !btn?.contains(target)) {
+      closeMenu();
+    }
+  });
+
+  // Uždaryti Escape klavišu
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  // Uždaryti kai ekrano plotis pasiekia md breakpoint (768px)
+  const mq = window.matchMedia('(min-width: 768px)');
+  mq.addEventListener('change', (e) => {
+    if (e.matches) closeMenu();
+  });
+</script>

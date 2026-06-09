@@ -1,0 +1,21 @@
+---
+/**
+ * Container — universalus layout wrapper su max-width ir padding.
+ *
+ * @example
+ * <Container>...</Container>
+ * <Container as="section" class="py-16">...</Container>
+ */
+interface Props {
+  /** HTML elementas (default: div) */
+  as?: 'div' | 'section' | 'article' | 'main' | 'aside' | 'header' | 'footer';
+  /** Papildomos Tailwind klasės */
+  class?: string;
+}
+
+const { as: Tag = 'div', class: className } = Astro.props;
+---
+
+<Tag class:list={['max-w-6xl mx-auto px-4 sm:px-6 lg:px-8', className]}>
+  <slot />
+</Tag>

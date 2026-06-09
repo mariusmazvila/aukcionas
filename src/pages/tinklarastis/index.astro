@@ -1,0 +1,87 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogCard from '../../components/blog/BlogCard.astro';
+import { slugify } from '../../lib/utils';
+import config from '../../config';
+
+const PAGE_SIZE = 10;
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const posts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Unikalios žymos iš visų postų, abėcėliškai
+const allTags = [...new Set(posts.flatMap((p) => p.data.tags))].sort(
+  (a, b) => a.localeCompare(b, 'lt')
+);
+
+const displayPosts = posts.slice(0, PAGE_SIZE);
+const totalPages = Math.ceil(posts.length / PAGE_SIZE);
+---
+
+<BaseLayout
+  title="Tinklaraštis"
+  description={`${config.companyName} tinklaraštis — straipsniai apie elektros sistemas, montavimą ir pramonines instaliacijas.`}
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+    <!-- Antraštė -->
+    <header class="mb-12">
+      <h1 class="text-4xl font-bold text-gray-900 mb-3">Tinklaraštis</h1>
+      <p class="text-lg text-gray-600">
+        Patarimai, naujienos ir ekspertų įžvalgos apie elektros sistemas.
+      </p>
+    </header>
+
+    <!-- Žymų filtrai -->
+    {allTags.length > 0 && (
+      <nav aria-label="Filtravimas pagal žymą" class="mb-10">
+        <div class="flex flex-wrap gap-2">
+          {allTags.map((tag) => (
+            <a
+              href={`/tinklarastis/zyma/${slugify(tag)}`}
+              class="px-4 py-1.5 border border-gray-300 text-sm text-gray-700 rounded-full hover:border-blue-500 hover:text-blue-600 transition-colors"
+            >
+              {tag}
+            </a>
+          ))}
+        </div>
+      </nav>
+    )}
+
+    <!-- Post'ų tinklelis -->
+    {posts.length === 0 ? (
+      <p class="text-gray-500 text-center py-20">Straipsnių dar nėra.</p>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {displayPosts.map((post) => (
+          <BlogCard post={post} />
+        ))}
+      </div>
+    )}
+
+    <!-- Paginacija — rodoma tik kai postų > PAGE_SIZE -->
+    {totalPages > 1 && (
+      <nav
+        aria-label="Puslapių navigacija"
+        class="flex items-center justify-between mt-12 pt-8 border-t border-gray-200"
+      >
+        <span class="text-sm text-gray-500">
+          Puslapis 1 iš {totalPages}
+        </span>
+        <a
+          href="/tinklarastis/puslapis/2"
+          class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+        >
+          Kiti straipsniai
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </nav>
+    )}
+
+  </div>
+</BaseLayout>

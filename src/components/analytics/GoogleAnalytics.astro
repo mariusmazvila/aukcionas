@@ -1,0 +1,32 @@
+---
+// Google Analytics 4 — su Partytown palaikymu.
+// Partytown perkelia GA4 skriptą į Web Worker'į, atlaisvinant main thread'ą.
+// Tai tiesiogiai gerina INP (Interaction to Next Paint) ir TBT metrikas.
+import config from '../../config';
+
+const { gaId, gtmId } = config.analyticsConfig;
+
+// Nerenderuojame jei:
+// 1. gaId nenustatytas (.env nėra PUBLIC_GA_ID)
+// 2. gtmId nustatytas — GTM jau valdo GA4 tags viduje, dvigubas sekimas yra klaida
+const enabled = !!gaId && !gtmId;
+---
+
+{enabled && (
+  <Fragment>
+    {/* gtag.js CDN failas — async, nekomplektinamas Astro */}
+    <script
+      type="text/partytown"
+      async
+      src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+    ></script>
+
+    {/* GA4 inicializacija — set:html leidžia įterpti gaId reikšmę dinamiškai */}
+    <script type="text/partytown" set:html={`
+window.dataLayer = window.dataLayer || [];
+function gtag(){window.dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaId}');
+`} />
+  </Fragment>
+)}

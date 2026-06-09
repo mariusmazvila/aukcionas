@@ -1,0 +1,18 @@
+---
+import type { SchemaOrgType } from '../../lib/schema';
+
+interface Props {
+  schema: SchemaOrgType;
+}
+
+const { schema } = Astro.props;
+
+// Unicode escaping apsaugo nuo </script> injekcijos — rekomenduojama praktika
+// net jei duomenys iš mūsų konfigūracijos, nes ateityje gali ateiti iš CMS
+const jsonLd = JSON.stringify(schema)
+  .replace(/</g, '\\u003c')
+  .replace(/>/g, '\\u003e')
+  .replace(/&/g, '\\u0026');
+---
+
+<script type="application/ld+json" set:html={jsonLd} />

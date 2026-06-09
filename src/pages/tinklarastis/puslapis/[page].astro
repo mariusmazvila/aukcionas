@@ -1,0 +1,98 @@
+---
+// Paginacijos puslapiai 2, 3, 4... — /tinklarastis/puslapis/2 ir t.t.
+// Pirmas puslapis yra /tinklarastis/ (index.astro).
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogCard from '../../../components/blog/BlogCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+// PAGE_SIZE apibrėžta getStaticPaths viduje — Astro vykdo jį atskirame
+// modulio kontekste, todėl išorinės konstantos ten nepasiekiamos.
+export const getStaticPaths: GetStaticPaths = async () => {
+  const PAGE_SIZE = 10;
+  const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+  const sorted = allPosts.sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
+
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
+
+  // Generuojame tik puslapius nuo 2 — pirmą apdoroja index.astro
+  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => {
+    const page = i + 2;
+    return {
+      params: { page: String(page) },
+      props: {
+        posts: sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+        currentPage: page,
+        totalPages,
+      },
+    };
+  });
+};
+
+interface Props {
+  posts: CollectionEntry<'blog'>[];
+  currentPage: number;
+  totalPages: number;
+}
+
+const { posts, currentPage, totalPages } = Astro.props;
+---
+
+<BaseLayout
+  title={`Tinklaraštis — puslapis ${currentPage}`}
+  description={`Straipsniai apie elektros sistemas ir montavimą. Puslapis ${currentPage} iš ${totalPages}.`}
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+    <header class="mb-12">
+      <div class="text-sm text-gray-500 mb-2">
+        <a href="/tinklarastis" class="hover:text-blue-600 transition-colors">← Grįžti į sąrašą</a>
+      </div>
+      <h1 class="text-4xl font-bold text-gray-900">
+        Tinklaraštis <span class="text-gray-400 text-3xl">/ {currentPage}</span>
+      </h1>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      {posts.map((post) => <BlogCard post={post} />)}
+    </div>
+
+    <!-- Paginacijos navigacija -->
+    <nav
+      aria-label="Puslapių navigacija"
+      class="flex items-center justify-between pt-8 border-t border-gray-200"
+    >
+      <a
+        href={currentPage === 2 ? '/tinklarastis' : `/tinklarastis/puslapis/${currentPage - 1}`}
+        class="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg text-sm hover:border-blue-500 hover:text-blue-600 transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+        </svg>
+        Ankstesni
+      </a>
+
+      <span class="text-sm text-gray-500">
+        {currentPage} / {totalPages}
+      </span>
+
+      {currentPage < totalPages ? (
+        <a
+          href={`/tinklarastis/puslapis/${currentPage + 1}`}
+          class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+        >
+          Toliau
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      ) : (
+        <span class="px-5 py-2.5 text-sm text-gray-300">Toliau</span>
+      )}
+    </nav>
+
+  </div>
+</BaseLayout>

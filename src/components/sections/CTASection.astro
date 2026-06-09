@@ -1,0 +1,119 @@
+---
+/**
+ * CTASection — call-to-action sekcija.
+ * Tinka puslapio apačioje arba tarp sekcijų kaip konversijų skatinimas.
+ *
+ * @example
+ * <CTASection
+ *   headline="Pasikonsultuokite nemokamai"
+ *   description="Inžinierius atsakys per 24 val."
+ *   primaryCta={{ text: 'Susisiekti', href: '/kontaktai' }}
+ * />
+ *
+ * <CTASection
+ *   headline="Pradėkime projektą"
+ *   background="brand"
+ *   primaryCta={{ text: 'Gauti pasiūlymą', href: '/kontaktai' }}
+ *   secondaryCta={{ text: 'Skaityti atvejus', href: '/projektai' }}
+ * />
+ */
+import Button from '../ui/Button.astro';
+
+interface Cta {
+  text: string;
+  href: string;
+  external?: boolean;
+}
+
+interface Props {
+  /** Pagrindinis šūkis */
+  headline: string;
+  /** Papildomas aprašymas po antrašte */
+  description?: string;
+  /** Pagrindinis CTA (ryškus mygtukas) */
+  primaryCta: Cta;
+  /** Antrinis CTA (subtiliau) */
+  secondaryCta?: Cta;
+  /**
+   * Fono spalvų schema:
+   * - 'dark'  — tamsus (gray-900), tekstas baltas
+   * - 'light' — šviesus (gray-50), tekstas tamsus
+   * - 'brand' — mėlynas (blue-700), tekstas baltas
+   */
+  background?: 'dark' | 'light' | 'brand';
+  /** Papildomos CSS klasės */
+  class?: string;
+}
+
+const {
+  headline,
+  description,
+  primaryCta,
+  secondaryCta,
+  background = 'dark',
+  class: className,
+} = Astro.props;
+
+const bgClasses = {
+  dark:  'bg-gray-900 text-white',
+  light: 'bg-gray-50 text-gray-900',
+  brand: 'bg-blue-700 text-white',
+} as const;
+
+const descClasses = {
+  dark:  'text-gray-400',
+  light: 'text-gray-600',
+  brand: 'text-blue-200',
+} as const;
+
+// Antrinio mygtuko variantas priklauso nuo fono
+const secondaryVariant = background === 'light' ? 'outline' : 'ghost';
+---
+
+<section class:list={['py-20 lg:py-28', bgClasses[background], className]}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+
+    <!-- Papildomas slot'as virš antraštės (pvz. ikona, badge) -->
+    <slot name="eyebrow" />
+
+    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight tracking-tight">
+      {headline}
+    </h2>
+
+    {description && (
+      <p class:list={['mt-4 text-lg max-w-2xl mx-auto', descClasses[background]]}>
+        {description}
+      </p>
+    )}
+
+    <!-- Papildomas slot'as (pvz. kontaktų info, garantijų sąrašas) -->
+    <slot />
+
+    <!-- Mygtukų zona -->
+    <div class="mt-8 flex flex-wrap justify-center items-center gap-4">
+      <slot name="cta">
+        <Button
+          variant={background === 'light' ? 'primary' : 'secondary'}
+          size="lg"
+          href={primaryCta.href}
+          external={primaryCta.external}
+          class={background !== 'light' ? '!bg-white !text-gray-900 hover:!bg-gray-100' : ''}
+        >
+          {primaryCta.text}
+        </Button>
+        {secondaryCta && (
+          <Button
+            variant={secondaryVariant}
+            size="lg"
+            href={secondaryCta.href}
+            external={secondaryCta.external}
+            class={background !== 'light' ? '!text-white !border-white/40 hover:!bg-white/10' : ''}
+          >
+            {secondaryCta.text}
+          </Button>
+        )}
+      </slot>
+    </div>
+
+  </div>
+</section>

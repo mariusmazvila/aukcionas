@@ -1,0 +1,72 @@
+---
+// BlogLayout — extends BaseLayout su BlogPosting structured data ir article meta.
+// Naudojamas blog straipsnių puslapiuose.
+import BaseLayout from './BaseLayout.astro';
+import StructuredData from '../components/seo/StructuredData.astro';
+import config from '../config';
+import type { BlogPostingSchema } from '../lib/schema';
+import { getCanonicalUrl } from '../lib/utils';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  publishDate: string;   // privalomas blog post'ui
+  modifiedDate?: string;
+  author?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  publishDate,
+  modifiedDate,
+  author = config.companyName,
+  noindex = false,
+} = Astro.props;
+
+const canonicalUrl = getCanonicalUrl(config.siteUrl, Astro.url.pathname);
+
+const blogPostingSchema: BlogPostingSchema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: title,
+  description: description ?? config.siteDescription,
+  image: image ?? config.ogImage,
+  url: canonicalUrl,
+  datePublished: publishDate,
+  // Jei nėra modifiedDate, laikome, kad straipsnis nebuvo redaguotas
+  dateModified: modifiedDate ?? publishDate,
+  author: {
+    "@type": "Organization",
+    name: author,
+    url: config.siteUrl,
+  },
+  publisher: {
+    "@type": "Organization",
+    name: config.companyName,
+    url: config.siteUrl,
+  },
+  mainEntityOfPage: canonicalUrl,
+};
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={image}
+  type="article"
+  publishDate={publishDate}
+  modifiedDate={modifiedDate}
+  author={author}
+  noindex={noindex}
+>
+  <!-- Šis slot="head" perduodamas BaseLayout <slot name="head" /> — BlogPosting schema -->
+  <Fragment slot="head">
+    <StructuredData schema={blogPostingSchema} />
+  </Fragment>
+
+  <slot />
+</BaseLayout>

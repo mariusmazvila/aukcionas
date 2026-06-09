@@ -1,0 +1,180 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTASection from '../components/sections/CTASection.astro';
+import Button from '../components/ui/Button.astro';
+import config from '../config';
+
+const stats = [
+  { value: '15+', label: 'metų patirtis' },
+  { value: '300+', label: 'įgyvendintų projektų' },
+  { value: '120+', label: 'patenkintų klientų' },
+  { value: '5', label: 'metų garantija' },
+];
+
+const values = [
+  {
+    title: 'Kokybė be kompromisų',
+    description: 'Naudojame tik sertifikuotas detales ir medžiagas iš patikimų Europos tiekėjų. Kiekvienas skydelis išeina gamyklą su pilnu bandymų protokolu.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>`,
+  },
+  {
+    title: 'Terminai gerbiami',
+    description: 'Suderėtus terminus laikome griežtai. Projekto grafikas — ne rekomendacija, o įsipareigojimas. Jei iškyla rizikų, informuojame anksti.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+  },
+  {
+    title: 'Inžinerinė kompetencija',
+    description: 'Mūsų komandoje — sertifikuoti elektros inžinieriai su ilgamete patirtimi pramoniniuose ir komerciniuose projektuose.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" /></svg>`,
+  },
+  {
+    title: 'Visapusis aptarnavimas',
+    description: 'Dirbame visame gyvavimo cikle: projektavimas → gamyba → montavimas → priežiūra. Vienas tiekėjas — mažiau koordinavimo problemų.',
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>`,
+  },
+];
+---
+
+<BaseLayout
+  title="Apie mus"
+  description={`${config.companyName} — elektros skydų specialistai nuo 2010 m. Projektuojame, gaminame ir montuojame elektros skydus visoje Lietuvoje.`}
+>
+
+  <!-- Puslapio antraštė -->
+  <section class="bg-gray-50 border-b border-gray-100 py-10 lg:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Naršymo kelias" class="mb-4">
+        <ol class="flex items-center gap-2 text-sm text-gray-500">
+          <li><a href="/" class="hover:text-gray-900 transition-colors">Pagrindinis</a></li>
+          <li aria-hidden="true" class="text-gray-300">›</li>
+          <li class="text-gray-900 font-medium" aria-current="page">Apie mus</li>
+        </ol>
+      </nav>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight tracking-tight">
+        Elektros skydų specialistai<br class="hidden sm:block" /> nuo 2010 metų
+      </h1>
+      <p class="mt-4 text-lg text-gray-600 max-w-2xl leading-relaxed">
+        Innomode — Lietuvos elektros inžinerijos įmonė, specializuojasi pramoninių ir
+        komercinių elektros skydų projektavime, gamyboje ir montavime.
+      </p>
+    </div>
+  </section>
+
+  <!-- Skaičiai / statistika -->
+  <section class="py-12 lg:py-16 border-b border-gray-100">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <dl class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+        {stats.map(({ value, label }) => (
+          <div>
+            <dt class="text-4xl sm:text-5xl font-bold text-blue-600">{value}</dt>
+            <dd class="mt-1 text-sm text-gray-600">{label}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- Įmonės istorija -->
+  <section class="py-16 lg:py-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+            Mūsų istorija
+          </h2>
+          <div class="mt-6 space-y-4 text-gray-600 leading-relaxed">
+            <p>
+              Innomode buvo įkurta 2010 metais — tada dar kaip nedidelė komanda, sprendžianti
+              pramoninių objektų elektros infrastruktūros uždavinius. Per 15 metų išaugome į
+              visą Lietuvą aptarnaujančią įmonę su pilnu elektros skydų gyvavimo ciklu.
+            </p>
+            <p>
+              Šiandien mūsų komandą sudaro 15+ sertifikuotų elektros inžinierių ir technikų.
+              Dirbame su pramonės, logistikos, statybos ir komerciniais objektais — nuo nedidelių
+              biuro skydų iki kompleksinių pramoninių jėgainių.
+            </p>
+            <p>
+              Visi gaminami skydai atitinka EN 61439 standartą ir pateikiami su pilna technine
+              dokumentacija bei bandymų protokolais.
+            </p>
+          </div>
+          <div class="mt-8">
+            <Button variant="primary" href="/kontaktai">Susisiekti su mumis</Button>
+          </div>
+        </div>
+
+        <!-- Placeholder: įmonės nuotrauka / logotipas -->
+        <div class="rounded-2xl overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 aspect-[4/3] flex items-center justify-center">
+          <div class="text-center p-8">
+            <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-blue-200 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+              </svg>
+            </div>
+            <p class="text-blue-700 font-semibold">{config.companyName}</p>
+            <p class="text-blue-500 text-sm mt-1">Nuotrauka — placeholder</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Vertybės -->
+  <section class="py-16 lg:py-24 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Kaip mes dirbame</h2>
+        <p class="mt-3 text-gray-600 max-w-xl mx-auto">
+          Keturi principai, kuriais vadovaujamės kiekviename projekte.
+        </p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {values.map(({ title, description, icon }) => (
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex gap-5">
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0" set:html={icon}></div>
+            <div>
+              <h3 class="font-semibold text-gray-900 mb-1">{title}</h3>
+              <p class="text-sm text-gray-600 leading-relaxed">{description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Komanda — placeholder -->
+  <section class="py-16 lg:py-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Mūsų komanda</h2>
+      <p class="mt-3 text-gray-600 max-w-xl mx-auto">
+        15+ sertifikuotų elektros inžinierių ir technikų.
+      </p>
+      <!-- TODO: pridėti komandos narių korteles su nuotraukomis ir pareigomis -->
+      <div class="mt-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div class="text-center">
+            <div class="w-20 h-20 mx-auto rounded-full bg-gray-100 flex items-center justify-center mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            </div>
+            <p class="text-sm font-medium text-gray-700">Komandos narys</p>
+            <p class="text-xs text-gray-500">Pareigos — placeholder</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-8 text-sm text-gray-400 italic">Komandos nuotraukos bus pridėtos vėliau</p>
+    </div>
+  </section>
+
+  <CTASection
+    headline="Pradėkime jūsų projektą"
+    description="Inžinierius įvertins poreikius ir paruoš techninę specifikaciją per 2 darbo dienas."
+    primaryCta={{ text: 'Gauti pasiūlymą', href: '/kontaktai' }}
+    secondaryCta={{ text: 'Mūsų darbai', href: '/darbai' }}
+    background="dark"
+  />
+
+</BaseLayout>

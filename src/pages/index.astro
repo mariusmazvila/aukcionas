@@ -1,0 +1,223 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/sections/Hero.astro';
+import FeaturesSection from '../components/sections/FeaturesSection.astro';
+import CTASection from '../components/sections/CTASection.astro';
+import BlogCard from '../components/blog/BlogCard.astro';
+import Button from '../components/ui/Button.astro';
+import { getCollection } from 'astro:content';
+
+// Paskutiniai 3 blog straipsniai
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const latestPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+// USP kortelės — „Kodėl mes"
+const whyUs = [
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+    title: 'Nuo 2010 metų',
+    description: '15+ metų patirtis pramoninių ir komercinių objektų elektros infrastruktūroje.',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>`,
+    title: 'Sertifikuota kokybė',
+    description: 'Visi skydai pagaminti pagal EN 61439. Sertifikuotos medžiagos, pilni bandymų protokolai.',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>`,
+    title: 'Laiku ir pagal planą',
+    description: 'Terminai — įsipareigojimas, ne rekomendacija. Jei iškyla rizikų, informuojame anksti.',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>`,
+    title: '5 metų garantija',
+    description: 'Pilna garantija gamybos defektams. Papildomai siūlome techninės priežiūros sutartis.',
+  },
+];
+
+// Paslaugų peržiūra (3 pagrindinės)
+const servicesPreview = [
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>`,
+    title: 'Elektros panelių statymas',
+    description: 'Paskirstymo ir valdymo skydai iki 6300 A. EN 61439 standartas, pilna dokumentacija.',
+    href: '/paslaugos/elektros-paneliu-statymas',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l5.654-4.654m5.657-5.657l-3.03 2.496a2.25 2.25 0 00-.766 1.208" /></svg>`,
+    title: 'Montavimas',
+    description: 'Profesionalus montavimas, jungimas ir paleidimas objekte. Terminų laikymosi garantija.',
+    href: '/paslaugos/montavimas',
+  },
+  {
+    icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>`,
+    title: 'Techninė priežiūra',
+    description: 'Prevencinė priežiūra ir avarinis iškvietimas per 4 val. visoje Lietuvoje.',
+    href: '/paslaugos/prieziura',
+  },
+];
+
+// Klientų atsiliepimai (placeholder — pakeisk tikrais)
+const testimonials = [
+  {
+    name: 'Tomas Kairys',
+    title: 'Vyriausiasis inžinierius',
+    company: 'Vilniaus pramoninis parkas UAB',
+    text: 'Innomode komanda įgyvendino sudėtingą 2×1000 A paskirstymo sistemos projektą per numatytą terminą. Dokumentacija pilna, kokybė — be pretenzijų. Rekomenduojame.',
+    rating: 5,
+  },
+  {
+    name: 'Rasa Petraitienė',
+    title: 'Projekto vadovė',
+    company: 'Statybų grupė LT UAB',
+    text: 'Dirbame su Innomode jau kelerius metus. Vertinu tai, kad apie bet kokias rizikas informuoja iš anksto — tai labai padeda koordinuoti didelius statybų projektus.',
+    rating: 5,
+  },
+  {
+    name: 'Mindaugas Stankevičius',
+    title: 'Technikos direktorius',
+    company: 'Logistikos centras Nord',
+    text: 'Gaminami skydai su pilna EN 61439 dokumentacija — tai svarbu mūsų auditų procesams. Avarinis aptarnavimas veikia greitai, kol šiol nusivylimo nebuvo.',
+    rating: 5,
+  },
+];
+---
+
+<BaseLayout
+  title="Elektrinių skydų sprendimai"
+  description="Innomode — elektros skydų projektavimas, gamyba ir montavimas pramonei ir statybai Lietuvoje nuo 2010 m."
+>
+
+  <!-- Hero -->
+  <Hero
+    headline="Elektros skydai pramonei ir statybai"
+    subheadline="Projektuojame, gaminame ir montuojame elektros skydus nuo 2010 m. EN 61439 standartas, terminų garantija, 5 metų garantija."
+    primaryCta={{ text: 'Gauti pasiūlymą', href: '/kontaktai' }}
+    secondaryCta={{ text: 'Mūsų darbai', href: '/darbai' }}
+  />
+
+  <!-- Skaičiai -->
+  <section class="border-y border-gray-100 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <dl class="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+        {[
+          { value: '15+', label: 'metų patirtis' },
+          { value: '300+', label: 'įgyvendintų projektų' },
+          { value: '120+', label: 'patenkintų klientų' },
+          { value: '5', label: 'metų garantija' },
+        ].map(({ value, label }) => (
+          <div>
+            <dt class="text-3xl sm:text-4xl font-bold text-blue-600">{value}</dt>
+            <dd class="mt-1 text-sm text-gray-600">{label}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <!-- Kodėl mes -->
+  <FeaturesSection
+    headline="Kodėl renkasi mus"
+    subheadline="Keturi principai, dėl kurių klientai grįžta."
+    features={whyUs}
+    columns={4}
+    background="white"
+  />
+
+  <!-- Paslaugų peržiūra -->
+  <FeaturesSection
+    headline="Mūsų paslaugos"
+    subheadline="Visas elektros skydų gyvavimo ciklas vienoje vietoje."
+    features={servicesPreview}
+    columns={3}
+    background="light"
+  >
+    <div class="mt-10 text-center">
+      <Button variant="outline" href="/paslaugos">Visos paslaugos</Button>
+    </div>
+  </FeaturesSection>
+
+  <!-- CTA juosta -->
+  <CTASection
+    headline="Pasikonsultuokite nemokamai"
+    description="Inžinierius įvertins jūsų poreikius ir paruoš techninę specifikaciją per 2 darbo dienas."
+    primaryCta={{ text: 'Susisiekti dabar', href: '/kontaktai' }}
+    secondaryCta={{ text: 'Apie įmonę', href: '/apie-mus' }}
+    background="dark"
+  />
+
+  <!-- Atsiliepimai -->
+  <section class="py-16 lg:py-24 bg-white">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
+          Ką sako klientai
+        </h2>
+        <p class="mt-3 text-gray-600 max-w-xl mx-auto">
+          Atsiliepimai iš įmonių, su kuriomis dirbame ilgą laiką.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {testimonials.map(({ name, title, company, text, rating }) => (
+          <figure class="bg-gray-50 rounded-2xl border border-gray-100 p-6 flex flex-col">
+            <!-- Žvaigždutės -->
+            <div class="flex gap-0.5 mb-4" aria-label={`${rating} iš 5 žvaigždučių`}>
+              {Array.from({ length: rating }).map(() => (
+                <svg class="w-4 h-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              ))}
+            </div>
+
+            <blockquote class="text-gray-700 text-sm leading-relaxed flex-1 mb-5">
+              „{text}"
+            </blockquote>
+
+            <figcaption>
+              <p class="font-semibold text-gray-900 text-sm">{name}</p>
+              <p class="text-xs text-gray-500">{title}, {company}</p>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <!-- TODO: pakeisk placeholder atsiliepimus tikrais, kai klientas pateiks -->
+      <p class="mt-8 text-center text-xs text-gray-400 italic">
+        Atsiliepimai — placeholder. Pakeiskite tikrais prieš publikuojant.
+      </p>
+    </div>
+  </section>
+
+  <!-- Blog peržiūra -->
+  {latestPosts.length > 0 && (
+    <section class="py-16 lg:py-24 bg-gray-50">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-end justify-between mb-10 gap-4">
+          <div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 tracking-tight">
+              Iš tinklaraščio
+            </h2>
+            <p class="mt-2 text-gray-600">Patarimai ir naujienos apie elektros skydus.</p>
+          </div>
+          <Button variant="outline" href="/tinklarastis" class="shrink-0 hidden sm:inline-flex">
+            Visi straipsniai
+          </Button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {latestPosts.map((post) => (
+            <BlogCard post={post} />
+          ))}
+        </div>
+
+        <div class="mt-8 text-center sm:hidden">
+          <Button variant="outline" href="/tinklarastis">Visi straipsniai</Button>
+        </div>
+      </div>
+    </section>
+  )}
+
+</BaseLayout>

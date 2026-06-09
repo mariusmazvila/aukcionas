@@ -1,0 +1,40 @@
+---
+// Meta (Facebook) Pixel — su Partytown palaikymu.
+// fbq funkcija perduodama į main thread per Partytown forward konfigūraciją
+// (astro.config.mjs: forward: ['fbq']).
+import config from '../../config';
+
+const { metaPixelId, gtmId } = config.analyticsConfig;
+
+// Nerenderuojame jei metaPixelId nenustatytas arba GTM jau valdo Pixel'į
+const enabled = !!metaPixelId && !gtmId;
+---
+
+{enabled && (
+  <Fragment>
+    {/* Meta Pixel inicializacija — standartinis Meta kodo fragmentas */}
+    <script type="text/partytown" set:html={`
+!function(f,b,e,v,n,t,s){
+  if(f.fbq)return;
+  n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];
+  t=b.createElement(e);t.async=!0;t.src=v;
+  s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)
+}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','${metaPixelId}');
+fbq('track','PageView');
+`} />
+
+    {/* Fallback be JavaScript — seka PageView per 1x1px nuotrauką */}
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display:none"
+        src={`https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1`}
+        alt=""
+      />
+    </noscript>
+  </Fragment>
+)}

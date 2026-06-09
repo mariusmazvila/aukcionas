@@ -1,0 +1,63 @@
+---
+// Reusable blog post kortelė — naudojama listing, tag ir pagination puslapiuose.
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, slugify } from '../../lib/utils';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+const { post } = Astro.props;
+const { title, description, pubDate, author, tags, heroImage } = post.data;
+---
+
+<article class="group flex flex-col border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow duration-200 bg-white">
+  {heroImage && (
+    <a href={`/tinklarastis/${post.id}`} class="block overflow-hidden">
+      <Image
+        src={heroImage}
+        alt={title}
+        width={720}
+        height={360}
+        class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+      />
+    </a>
+  )}
+
+  <div class="flex flex-col flex-1 p-6">
+    <!-- Meta: data ir autorius -->
+    <div class="flex items-center gap-2 text-sm text-gray-500 mb-3">
+      <time datetime={pubDate.toISOString()}>
+        {formatDate(pubDate.toISOString())}
+      </time>
+      <span aria-hidden="true">·</span>
+      <span>{author}</span>
+    </div>
+
+    <!-- Pavadinimas -->
+    <h2 class="text-xl font-semibold text-gray-900 mb-2 leading-snug group-hover:text-blue-600 transition-colors">
+      <a href={`/tinklarastis/${post.id}`} class="stretched-link">
+        {title}
+      </a>
+    </h2>
+
+    <!-- Aprašymas -->
+    <p class="text-gray-600 text-sm mb-4 flex-1 line-clamp-3">
+      {description}
+    </p>
+
+    <!-- Žymos -->
+    {tags.length > 0 && (
+      <div class="flex flex-wrap gap-2 mt-auto">
+        {tags.map((tag) => (
+          <a
+            href={`/tinklarastis/zyma/${slugify(tag)}`}
+            class="text-xs px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full hover:bg-blue-100 transition-colors"
+          >
+            {tag}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</article>

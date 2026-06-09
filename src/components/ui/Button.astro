@@ -1,0 +1,80 @@
+---
+/**
+ * Button — daugiafunkcis mygtukas arba nuoroda.
+ * Jei `href` nurodytas — render'ina <a>, kitaip <button>.
+ *
+ * @example
+ * <Button variant="primary" size="lg" href="/kontaktai">Susisiekti</Button>
+ * <Button variant="outline" size="md">Sužinoti daugiau</Button>
+ * <Button variant="ghost" size="sm" href="https://..." external>Išorinis</Button>
+ */
+interface Props {
+  /** Mygtuko vizualinis stilius */
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  /** Mygtuko dydis */
+  size?: 'sm' | 'md' | 'lg';
+  /** Nuoroda — jei pateikta, render'ina <a> elementą */
+  href?: string;
+  /** <button> tipas (ignoruojama jei href pateiktas) */
+  type?: 'button' | 'submit' | 'reset';
+  /** Atidaryti naujame skirtuke + rel="noopener noreferrer" */
+  external?: boolean;
+  /** Išjungtas mygtukas */
+  disabled?: boolean;
+  /** Papildomos Tailwind klasės */
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  external = false,
+  disabled = false,
+  class: className,
+} = Astro.props;
+
+const variantClasses = {
+  primary:   'bg-blue-600 text-white border-transparent hover:bg-blue-700 active:bg-blue-800',
+  secondary: 'bg-gray-900 text-white border-transparent hover:bg-gray-800 active:bg-gray-700',
+  outline:   'bg-transparent text-blue-600 border-blue-600 hover:bg-blue-50 active:bg-blue-100',
+  ghost:     'bg-transparent text-gray-700 border-transparent hover:bg-gray-100 active:bg-gray-200',
+} as const;
+
+const sizeClasses = {
+  sm: 'px-3 py-1.5 text-sm gap-1.5',
+  md: 'px-5 py-2.5 text-base gap-2',
+  lg: 'px-7 py-3.5 text-lg gap-2.5',
+} as const;
+
+const baseClasses = [
+  'inline-flex items-center justify-center font-medium rounded-lg border',
+  'transition-colors duration-150',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+  disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
+  variantClasses[variant],
+  sizeClasses[size],
+  className,
+];
+---
+
+{href ? (
+  <a
+    href={href}
+    class:list={baseClasses}
+    target={external ? '_blank' : undefined}
+    rel={external ? 'noopener noreferrer' : undefined}
+    aria-disabled={disabled}
+  >
+    <slot />
+  </a>
+) : (
+  <button
+    type={type}
+    class:list={baseClasses}
+    disabled={disabled}
+  >
+    <slot />
+  </button>
+)}

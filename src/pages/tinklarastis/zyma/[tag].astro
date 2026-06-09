@@ -1,0 +1,95 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BlogCard from '../../../components/blog/BlogCard.astro';
+import { slugify } from '../../../lib/utils';
+import config from '../../../config';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+
+  // Surenkame visas unikalias žymas ir jų slugus
+  const tagMap = new Map<string, string>(); // slug → originalus pavadinimas
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      tagMap.set(slugify(tag), tag);
+    }
+  }
+
+  return [...tagMap.entries()].map(([tagSlug, tagName]) => ({
+    params: { tag: tagSlug },
+    props: { tagName },
+  }));
+};
+
+interface Props {
+  tagName: string;
+}
+
+const { tag } = Astro.params;
+const { tagName } = Astro.props;
+
+// Filtruojame postus pagal žymą (lyginame slugus, nes tas pats tekstas → tas pats slug)
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const tagPosts = allPosts
+  .filter((p) => p.data.tags.some((t) => slugify(t) === tag))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Visos kitos žymos — šoninė navigacija
+const allTags = [...new Set(allPosts.flatMap((p) => p.data.tags))].sort(
+  (a, b) => a.localeCompare(b, 'lt')
+);
+---
+
+<BaseLayout
+  title={`Žyma: ${tagName}`}
+  description={`Straipsniai su žyma "${tagName}" — ${config.companyName} tinklaraštis.`}
+>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+    <!-- Antraštė -->
+    <header class="mb-12">
+      <div class="text-sm text-gray-500 mb-3">
+        <a href="/tinklarastis" class="hover:text-blue-600 transition-colors">← Tinklaraštis</a>
+      </div>
+      <p class="text-sm font-medium text-blue-600 uppercase tracking-wider mb-2">Žyma</p>
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">{tagName}</h1>
+      <p class="text-gray-500">{tagPosts.length} {tagPosts.length === 1 ? 'straipsnis' : 'straipsniai'}</p>
+    </header>
+
+    <div class="lg:grid lg:grid-cols-4 lg:gap-12">
+      <!-- Post'ų sąrašas -->
+      <main class="lg:col-span-3">
+        {tagPosts.length === 0 ? (
+          <p class="text-gray-500">Straipsnių su šia žyma nėra.</p>
+        ) : (
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {tagPosts.map((post) => <BlogCard post={post} />)}
+          </div>
+        )}
+      </main>
+
+      <!-- Šoninė juosta: visos žymos -->
+      <aside class="mt-12 lg:mt-0">
+        <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Visos žymos</h2>
+        <div class="flex flex-wrap lg:flex-col gap-2">
+          {allTags.map((t) => (
+            <a
+              href={`/tinklarastis/zyma/${slugify(t)}`}
+              class:list={[
+                'text-sm px-3 py-1.5 rounded-lg transition-colors',
+                slugify(t) === tag
+                  ? 'bg-blue-600 text-white font-medium'
+                  : 'text-gray-600 hover:bg-gray-100',
+              ]}
+            >
+              {t}
+            </a>
+          ))}
+        </div>
+      </aside>
+    </div>
+
+  </div>
+</BaseLayout>

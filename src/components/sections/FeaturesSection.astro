@@ -1,0 +1,117 @@
+---
+// Paslaugų / funkcijų sekcija — universali kortelių grotelė.
+// Veikia su bet kokiu skaičiumi features, 2–4 stulpelių išdėstymu.
+
+interface Feature {
+  /** SVG HTML eilutė (inline ikona) */
+  icon: string;
+  title: string;
+  description: string;
+  /** Jei nurodytas — kortelė tampa nuoroda */
+  href?: string;
+}
+
+interface Props {
+  headline?: string;
+  subheadline?: string;
+  features: Feature[];
+  /** Stulpelių skaičius (numatytas: 3) */
+  columns?: 2 | 3 | 4;
+  background?: 'white' | 'light' | 'dark';
+  class?: string;
+}
+
+const {
+  headline,
+  subheadline,
+  features,
+  columns = 3,
+  background = 'white',
+  class: className,
+} = Astro.props;
+
+const sectionBg = {
+  white: 'bg-white',
+  light: 'bg-gray-50',
+  dark:  'bg-gray-900',
+} as const;
+
+const headingCl = background === 'dark' ? 'text-white' : 'text-gray-900';
+const subCl     = background === 'dark' ? 'text-gray-400' : 'text-gray-600';
+const cardCl    = background === 'dark'
+  ? 'bg-gray-800'
+  : 'bg-white border border-gray-100 shadow-sm hover:shadow-md';
+const descCl    = background === 'dark' ? 'text-gray-300' : 'text-gray-600';
+const iconCl    = background === 'dark'
+  ? 'bg-blue-500/20 text-blue-400'
+  : 'bg-blue-50 text-blue-600';
+const arrowCl   = background === 'dark' ? 'text-blue-400' : 'text-blue-600';
+
+const colClass = {
+  2: 'sm:grid-cols-2',
+  3: 'sm:grid-cols-2 lg:grid-cols-3',
+  4: 'sm:grid-cols-2 lg:grid-cols-4',
+} as const;
+---
+
+<section class:list={['py-16 lg:py-24', sectionBg[background], className]}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    {(headline || subheadline) && (
+      <div class="text-center mb-12 lg:mb-16">
+        <slot name="eyebrow" />
+        {headline && (
+          <h2 class:list={['text-3xl sm:text-4xl font-bold leading-tight tracking-tight', headingCl]}>
+            {headline}
+          </h2>
+        )}
+        {subheadline && (
+          <p class:list={['mt-4 text-lg max-w-2xl mx-auto', subCl]}>
+            {subheadline}
+          </p>
+        )}
+      </div>
+    )}
+
+    <div class:list={['grid grid-cols-1 gap-6 lg:gap-8', colClass[columns]]}>
+      {features.map(({ icon, title, description, href }) => (
+        href ? (
+          <a
+            href={href}
+            class:list={['group block p-6 rounded-2xl transition-all duration-200', cardCl]}
+          >
+            <div
+              class:list={['w-12 h-12 rounded-xl flex items-center justify-center mb-5', iconCl]}
+              set:html={icon}
+            ></div>
+            <h3 class:list={['text-lg font-semibold mb-2', headingCl]}>{title}</h3>
+            <p class:list={['text-sm leading-relaxed', descCl]}>{description}</p>
+            <span class:list={[
+              'mt-4 inline-flex items-center gap-1 text-sm font-medium',
+              'transition-[gap] duration-150 group-hover:gap-2',
+              arrowCl,
+            ]}>
+              Sužinoti daugiau
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </span>
+          </a>
+        ) : (
+          <div class:list={['p-6 rounded-2xl transition-shadow duration-200', cardCl]}>
+            <div
+              class:list={['w-12 h-12 rounded-xl flex items-center justify-center mb-5', iconCl]}
+              set:html={icon}
+            ></div>
+            <h3 class:list={['text-lg font-semibold mb-2', headingCl]}>{title}</h3>
+            <p class:list={['text-sm leading-relaxed', descCl]}>{description}</p>
+          </div>
+        )
+      ))}
+    </div>
+
+    <!-- Papildomas slot'as po kortelėmis (pvz. "Visos paslaugos" mygtukas) -->
+    <slot />
+
+  </div>
+</section>

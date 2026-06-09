@@ -1,0 +1,112 @@
+---
+import SEO from '../components/seo/SEO.astro';
+import StructuredData from '../components/seo/StructuredData.astro';
+import GoogleAnalytics from '../components/analytics/GoogleAnalytics.astro';
+import MetaPixel from '../components/analytics/MetaPixel.astro';
+import GoogleTagManager from '../components/analytics/GoogleTagManager.astro';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import config from '../config';
+import type { LocalBusinessSchema } from '../lib/schema';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  // 'website' — landing puslapiai; 'article' — blog post'ai (naudoja BlogLayout)
+  type?: 'website' | 'article';
+  publishDate?: string;
+  modifiedDate?: string;
+  author?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  image,
+  canonical,
+  type = 'website',
+  publishDate,
+  modifiedDate,
+  author,
+  noindex = false,
+} = Astro.props;
+
+// LocalBusiness schema — rodoma KIEKVIENAME puslapyje.
+// Tai signalizuoja Google'ui apie vietinį verslą ir gerina Local SEO.
+const localBusinessSchema: LocalBusinessSchema = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: config.companyName,
+  url: config.siteUrl,
+  email: config.companyEmail,
+  telephone: config.companyPhone,
+  description: config.siteDescription,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: config.companyAddress,
+    addressCountry: "LT",
+  },
+  sameAs: (Object.values(config.socialLinks) as string[]).filter(Boolean),
+};
+
+const { gtmId } = config.analyticsConfig;
+---
+
+<!doctype html>
+<html lang={config.defaultLocale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
+    <SEO
+      title={title}
+      description={description}
+      image={image}
+      canonical={canonical}
+      type={type}
+      publishDate={publishDate}
+      modifiedDate={modifiedDate}
+      author={author}
+      noindex={noindex}
+    />
+
+    <StructuredData schema={localBusinessSchema} />
+
+    <!-- Analytics — render'inami tik jei atitinkami ID'ai nustatyti .env faile.
+         Visi skriptai naudoja type="text/partytown" — Web Worker kontekstas,
+         main thread'as lieka laisvas (pageina INP, TBT Lighthouse metrikas). -->
+    <GoogleAnalytics />
+    <MetaPixel />
+    <GoogleTagManager />
+
+    <!-- Named slot: BlogLayout ir kt. gali įkelti papildomus <head> elementus -->
+    <slot name="head" />
+  </head>
+  <body class="flex flex-col min-h-screen bg-white text-gray-900 antialiased">
+
+    <!-- GTM noscript: privalo būti iš karto po <body> — GTM reikalavimas.
+         Veikia tik kai JavaScript išjungtas naršyklėje (retas atvejis). -->
+    {gtmId && (
+      <noscript>
+        <iframe
+          src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden"
+        ></iframe>
+      </noscript>
+    )}
+
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

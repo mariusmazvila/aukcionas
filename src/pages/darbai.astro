@@ -1,0 +1,202 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CTASection from '../components/sections/CTASection.astro';
+
+// Placeholder projektų duomenys — pakeisk tikrais kai bus nuotraukos
+const projects = [
+  {
+    title: 'Vilniaus logistikos centro jėgainė',
+    description: 'Pagrindinis 2×1000 A paskirstymo skydelis ir 8 antriniai skydai. 12 000 m² logistikos objektas.',
+    category: 'Pramoninis',
+    location: 'Vilnius',
+    year: '2024',
+    gradient: 'from-blue-100 to-blue-200',
+  },
+  {
+    title: 'Kauno gamybos įmonės MCC',
+    description: 'Variklių valdymo centras (MCC) 18 variklių sistemai. Integracija su SCADA valdymo sistema.',
+    category: 'Pramoninis',
+    location: 'Kaunas',
+    year: '2023',
+    gradient: 'from-indigo-100 to-indigo-200',
+  },
+  {
+    title: 'Šiaulių sandėlių kompleksas',
+    description: 'ATS (automatinis tinklo perjungimas) sistema su generatorių valdymu. 3 pastato sekcijos.',
+    category: 'Komercinis',
+    location: 'Šiauliai',
+    year: '2023',
+    gradient: 'from-sky-100 to-sky-200',
+  },
+  {
+    title: 'Vilniaus biurų pastatas',
+    description: 'UPS sistema ir 400 V paskirstymo skydai 15 aukštų biurų pastatui. Redundantinė schema.',
+    category: 'Komercinis',
+    location: 'Vilnius',
+    year: '2022',
+    gradient: 'from-violet-100 to-violet-200',
+  },
+  {
+    title: 'Klaipėdos pramoninis parkas',
+    description: '3 fazių paskirstymo sistemos modernizacija. Seni skydai pakeisti naujais pagal EN 61439.',
+    category: 'Pramoninis',
+    location: 'Klaipėda',
+    year: '2022',
+    gradient: 'from-cyan-100 to-cyan-200',
+  },
+  {
+    title: 'Panevėžio maisto perdirbimo įmonė',
+    description: 'ATEX skydas sprogimui pavojingai zonai. Specialūs apsaugos reikalavimai ir sertifikavimas.',
+    category: 'Pramoninis',
+    location: 'Panevėžys',
+    year: '2021',
+    gradient: 'from-teal-100 to-teal-200',
+  },
+  {
+    title: 'Alytaus tekstilės gamykla',
+    description: 'Gamybos linijų automatikos skydai su Siemens S7 PLC integracija.',
+    category: 'Pramoninis',
+    location: 'Alytus',
+    year: '2021',
+    gradient: 'from-emerald-100 to-emerald-200',
+  },
+  {
+    title: 'Marijampolės prekybos centras',
+    description: 'Pagrindinis 630 A skydelis, apsaugos ir apšvietimo valdymas, avarinis apšvietimas.',
+    category: 'Komercinis',
+    location: 'Marijampolė',
+    year: '2020',
+    gradient: 'from-blue-100 to-slate-200',
+  },
+];
+
+const categories = ['Visi', 'Pramoninis', 'Komercinis'];
+---
+
+<BaseLayout
+  title="Mūsų darbai"
+  description="Innomode atliktų darbų galerija — pramoniniai ir komerciniai elektros skydų projektai visoje Lietuvoje."
+>
+  <!-- Puslapio antraštė -->
+  <section class="bg-gray-50 border-b border-gray-100 py-10 lg:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Naršymo kelias" class="mb-4">
+        <ol class="flex items-center gap-2 text-sm text-gray-500">
+          <li><a href="/" class="hover:text-gray-900 transition-colors">Pagrindinis</a></li>
+          <li aria-hidden="true" class="text-gray-300">›</li>
+          <li class="text-gray-900 font-medium" aria-current="page">Mūsų darbai</li>
+        </ol>
+      </nav>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight tracking-tight">
+        Mūsų darbai
+      </h1>
+      <p class="mt-4 text-lg text-gray-600 max-w-2xl leading-relaxed">
+        300+ įgyvendintų projektų — nuo nedidelių biurų skydų iki kompleksinių
+        pramoninių jėgainių. Štai keletas iš jų.
+      </p>
+    </div>
+  </section>
+
+  <!-- Kategorijų filtras -->
+  <section class="border-b border-gray-100 bg-white sticky top-16 z-30">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center gap-1 py-3 overflow-x-auto">
+        {categories.map((cat, i) => (
+          <button
+            type="button"
+            data-filter={cat}
+            class:list={[
+              'px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
+              i === 0
+                ? 'bg-blue-600 text-white'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100',
+            ]}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Projektų grotelė -->
+  <section class="py-12 lg:py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8" id="projects-grid">
+        {projects.map(({ title, description, category, location, year, gradient }) => (
+          <article
+            class="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
+            data-category={category}
+          >
+            <!-- Nuotraukos placeholder — pakeisk tikra nuotrauka -->
+            <div class:list={['aspect-[4/3] bg-gradient-to-br flex items-center justify-center relative', gradient]}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-12 w-12 text-blue-400 opacity-50"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="1"
+                aria-hidden="true"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+              </svg>
+              <!-- Kategorijos žyma -->
+              <span class="absolute top-3 left-3 px-2.5 py-1 bg-white/80 backdrop-blur-sm text-xs font-medium text-gray-700 rounded-full">
+                {category}
+              </span>
+            </div>
+
+            <div class="p-5">
+              <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                <span>{location}</span>
+                <span aria-hidden="true">·</span>
+                <span>{year}</span>
+              </div>
+              <h2 class="font-semibold text-gray-900 leading-snug mb-2 group-hover:text-blue-600 transition-colors">
+                {title}
+              </h2>
+              <p class="text-sm text-gray-600 leading-relaxed line-clamp-2">
+                {description}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CTASection
+    headline="Vykdome projektus visoje Lietuvoje"
+    description="Susisiekite — aptarsime jūsų projekto reikalavimus ir paruošime techninę specifikaciją."
+    primaryCta={{ text: 'Gauti pasiūlymą', href: '/kontaktai' }}
+    secondaryCta={{ text: 'Mūsų paslaugos', href: '/paslaugos' }}
+    background="dark"
+  />
+</BaseLayout>
+
+<script>
+  // Kategorijų filtravimas — vanilla JS, be framework'o
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-category]');
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter ?? 'Visi';
+
+      // Aktyvaus mygtuko stilius
+      filterBtns.forEach((b) => {
+        b.classList.toggle('bg-blue-600', b === btn);
+        b.classList.toggle('text-white', b === btn);
+        b.classList.toggle('text-gray-600', b !== btn);
+        b.classList.toggle('hover:bg-gray-100', b !== btn);
+      });
+
+      // Kortelių filtravimas
+      cards.forEach((card) => {
+        const show = filter === 'Visi' || card.dataset.category === filter;
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+</script>

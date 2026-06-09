@@ -1,0 +1,29 @@
+---
+// Google Tag Manager (GTM) — su Partytown palaikymu.
+//
+// GTM ARBA tiesioginiai GA4/Pixel skriptai — ne abu kartu.
+// Jei naudoji GTM, GA4 ir Meta Pixel konfigūruok GTM workspace'e,
+// o PUBLIC_GA_ID ir PUBLIC_META_PIXEL_ID palik tuščius .env faile.
+//
+// Svarbu: GTM noscript <iframe> turi būti <body> pradžioje —
+// jis render'inamas BaseLayout.astro, nes šis komponentas yra <head> kontekste.
+import config from '../../config';
+
+const { gtmId } = config.analyticsConfig;
+const enabled = !!gtmId;
+---
+
+{enabled && (
+  <script type="text/partytown" set:html={`
+(function(w,d,s,l,i){
+  w[l]=w[l]||[];
+  w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+  var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),
+      dl=l!='dataLayer'?'&l='+l:'';
+  j.async=true;
+  j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+  f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${gtmId}');
+`} />
+)}

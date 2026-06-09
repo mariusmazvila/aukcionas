@@ -1,0 +1,241 @@
+---
+// Netlify Forms kontaktų forma — server-rendered pure HTML.
+// Netlify aptinka šią formą deploy metu ir sukuria submissions saugyklą.
+// JS sluoksnis: lietuviški klaidos pranešimai + loading state (progresyvus pagerinimas).
+
+interface Props {
+  /**
+   * Netlify form identifikatorius.
+   * Turi sutapti su form-name hidden input verte.
+   * Netlify dashboard'e matosi šiuo vardu.
+   */
+  formName?: string;
+  /** Redirect URL po sėkmingo submit */
+  successUrl?: string;
+  class?: string;
+}
+
+const {
+  formName = 'contact',
+  successUrl = '/aciu',
+  class: className,
+} = Astro.props;
+
+// Unikalus ID — leidžia turėti kelis formų egzempliorius viename puslapyje
+const formId = `contact-form-${Math.random().toString(36).slice(2, 7)}`;
+---
+
+<!--
+  SVARBU (Netlify Forms):
+  1. data-netlify="true" — įjungia Netlify form processing
+  2. name atributas — formos identifikatorius (unikalus tarp visų formų projekte)
+  3. #form-name hidden input — Netlify reikalavimas AJAX/SPA aplinkoje
+  4. data-netlify-honeypot — anti-spam (nenaudoja CAPTCHA)
+  5. method="POST" + action — Netlify redirect'ina po sėkmingo submit'o
+-->
+<form
+  id={formId}
+  name={formName}
+  method="POST"
+  action={successUrl}
+  data-netlify="true"
+  data-netlify-honeypot="bot-field"
+  novalidate
+  class:list={[className]}
+>
+  <!-- Netlify: paslėptas formos identifikatoriaus laukas -->
+  <input type="hidden" name="form-name" value={formName} />
+
+  <!-- Honeypot: robotai šį lauką mato ir užpildo, žmonės ne -->
+  <input name="bot-field" hidden tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <!-- Vardas + El. paštas -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div>
+      <label for={`${formId}-vardas`} class="block text-sm font-medium text-gray-700 mb-1.5">
+        Vardas <span class="text-red-500" aria-hidden="true">*</span>
+      </label>
+      <input
+        id={`${formId}-vardas`}
+        type="text"
+        name="vardas"
+        required
+        minlength="2"
+        maxlength="100"
+        autocomplete="name"
+        placeholder="Vardas Pavardė"
+        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm
+               placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500
+               focus:border-transparent transition-shadow"
+      />
+    </div>
+    <div>
+      <label for={`${formId}-email`} class="block text-sm font-medium text-gray-700 mb-1.5">
+        El. paštas <span class="text-red-500" aria-hidden="true">*</span>
+      </label>
+      <input
+        id={`${formId}-email`}
+        type="email"
+        name="email"
+        required
+        autocomplete="email"
+        placeholder="vardas@imone.lt"
+        class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm
+               placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500
+               focus:border-transparent transition-shadow"
+      />
+    </div>
+  </div>
+
+  <!-- Telefonas -->
+  <div class="mt-5">
+    <label for={`${formId}-telefonas`} class="block text-sm font-medium text-gray-700 mb-1.5">
+      Telefonas
+      <span class="font-normal text-gray-400">(neprivaloma)</span>
+    </label>
+    <input
+      id={`${formId}-telefonas`}
+      type="tel"
+      name="telefonas"
+      autocomplete="tel"
+      placeholder="+370 600 00000"
+      class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm
+             placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500
+             focus:border-transparent transition-shadow"
+    />
+  </div>
+
+  <!-- Žinutė -->
+  <div class="mt-5">
+    <label for={`${formId}-zinute`} class="block text-sm font-medium text-gray-700 mb-1.5">
+      Žinutė <span class="text-red-500" aria-hidden="true">*</span>
+    </label>
+    <textarea
+      id={`${formId}-zinute`}
+      name="zinute"
+      required
+      minlength="10"
+      maxlength="2000"
+      rows="5"
+      placeholder="Aprašykite savo projektą ar klausimą..."
+      class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 text-sm
+             placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500
+             focus:border-transparent transition-shadow resize-none"
+    ></textarea>
+  </div>
+
+  <!-- Submit mygtukas -->
+  <div class="mt-6">
+    <button
+      id={`${formId}-submit`}
+      type="submit"
+      class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white
+             font-semibold text-sm rounded-xl hover:bg-blue-700 active:bg-blue-800
+             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+             transition-colors duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      <!-- Normal state -->
+      <span data-btn-label>Siųsti žinutę</span>
+
+      <!-- Loading state (hidden kol forma nesubmit'inta) -->
+      <span data-btn-loading class="hidden items-center gap-2">
+        <svg
+          class="animate-spin h-4 w-4 shrink-0"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.568 3 7.212l3-3.012z"></path>
+        </svg>
+        Siunčiama...
+      </span>
+    </button>
+
+    <p class="mt-3 text-xs text-center text-gray-400">
+      Atsakysime per 2 darbo dienas. Duomenys tvarkomi pagal{' '}
+      <a href="/privatumo-politika" class="text-blue-500 hover:underline">Privatumo politiką</a>.
+    </p>
+  </div>
+</form>
+
+<script define:vars={{ formId }}>
+  // Lietuviški validacijos pranešimai pagal lauko pavadinimą ir klaidos tipą.
+  // setCustomValidity() perrašo naršyklės numatytą (anglišką) pranešimą.
+  const MESSAGES = {
+    vardas: {
+      valueMissing: 'Įveskite savo vardą.',
+      tooShort: 'Vardas per trumpas — reikia bent 2 simbolių.',
+    },
+    email: {
+      valueMissing: 'Įveskite el. pašto adresą.',
+      typeMismatch: 'Įveskite teisingą el. pašto adresą (pvz. vardas@domain.lt).',
+    },
+    zinute: {
+      valueMissing: 'Parašykite žinutę.',
+      tooShort: 'Žinutė per trumpa — reikia bent 10 simbolių.',
+    },
+  };
+
+  const form = document.getElementById(formId);
+  if (!form) throw new Error(`[ContactForm] forma #${formId} nerasta`);
+
+  // Visi tekstiniai laukai (be hidden ir honeypot)
+  const inputs = Array.from(
+    form.querySelectorAll('input:not([type="hidden"]):not([hidden]), textarea')
+  );
+
+  // Priskiria lietuviškus pranešimus per 'invalid' event'ą
+  inputs.forEach((el) => {
+    const input = /** @type {HTMLInputElement | HTMLTextAreaElement} */ (el);
+    const msgs = MESSAGES[input.name];
+    if (!msgs) return;
+
+    input.addEventListener('invalid', () => {
+      const v = input.validity;
+      if (v.valueMissing && msgs.valueMissing) {
+        input.setCustomValidity(msgs.valueMissing);
+      } else if (v.typeMismatch && msgs.typeMismatch) {
+        input.setCustomValidity(msgs.typeMismatch);
+      } else if (v.tooShort && msgs.tooShort) {
+        input.setCustomValidity(msgs.tooShort);
+      }
+      // kiti tipai (tooLong, patternMismatch ir kt.) — palieka naršyklės numatytąjį
+    });
+
+    // Vartotojui rašant — nuvalome custom validity, kad formos būsena atsinaujintų
+    input.addEventListener('input', () => input.setCustomValidity(''));
+  });
+
+  // Submit handler: validacija → loading state → leisti naršyklei submit'inti
+  form.addEventListener('submit', (e) => {
+    // 1. Nuvalome visas ankstesnes custom validity reikšmes
+    inputs.forEach((el) => {
+      const input = /** @type {HTMLInputElement | HTMLTextAreaElement} */ (el);
+      input.setCustomValidity('');
+    });
+
+    // 2. reportValidity() iškvietimas:
+    //    — visiems negaliotiems laukams iššaukia 'invalid' event'ą (mūsų handler'iai nustato LT pranešimus)
+    //    — parodo validacijos UI pirmam negaliojančiam laukui
+    //    — grąžina false jei bent vienas laukas negalioja
+    if (!form.reportValidity()) {
+      e.preventDefault();
+      return;
+    }
+
+    // 3. Validacija praėjo — rodome loading state; naršyklė submitina formą į Netlify
+    const submitBtn = form.querySelector(`#${formId}-submit`);
+    const btnLabel = form.querySelector('[data-btn-label]');
+    const btnLoading = form.querySelector('[data-btn-loading]');
+
+    if (submitBtn) submitBtn.disabled = true;
+    if (btnLabel) btnLabel.classList.add('hidden');
+    if (btnLoading) {
+      btnLoading.classList.remove('hidden');
+      btnLoading.classList.add('inline-flex');
+    }
+    // e.preventDefault() NEKVIEČIAMAS — naršyklė pati submitina formą į Netlify
+  });
+</script>
