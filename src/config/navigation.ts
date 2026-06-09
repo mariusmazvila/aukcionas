@@ -1,37 +1,29 @@
-// Navigacijos struktūra — redaguok čia, Header/Footer automatiškai atsinaujins.
 export interface NavItem {
   label: string;
   href: string;
   external?: boolean;
 }
 
-// Pagrindinis meniu (Header + mobilusis meniu)
 export const mainNav: NavItem[] = [
-  { label: 'Pagrindinis', href: '/' },
-  { label: 'Paslaugos', href: '/paslaugos' },
-  { label: 'Darbai', href: '/darbai' },
-  { label: 'Apie mus', href: '/apie-mus' },
-  { label: 'Tinklaraštis', href: '/tinklarastis' },
-  { label: 'Kontaktai', href: '/kontaktai' },
+  { label: 'Kaip veikia', href: '/kaip-veikia' },
+  { label: 'Apie mus', href: '/apie' },
+  { label: 'Kainodara', href: '/kainodara' },
 ];
 
-// Footer navigacijos stulpeliai
 export const footerNav: { title: string; items: NavItem[] }[] = [
   {
-    title: 'Paslaugos',
+    title: 'Produktas',
     items: [
-      { label: 'Elektros panelių statymas', href: '/paslaugos/elektros-paneliu-statymas' },
-      { label: 'Montavimas', href: '/paslaugos/montavimas' },
-      { label: 'Projektavimas', href: '/paslaugos/projektavimas' },
-      { label: 'Visos paslaugos', href: '/paslaugos' },
+      { label: 'Kaip veikia', href: '/kaip-veikia' },
+      { label: 'Kainodara', href: '/kainodara' },
+      { label: 'Registruotis', href: '/registracija' },
     ],
   },
   {
     title: 'Įmonė',
     items: [
-      { label: 'Apie mus', href: '/apie-mus' },
-      { label: 'Mūsų darbai', href: '/darbai' },
-      { label: 'Tinklaraštis', href: '/tinklarastis' },
+      { label: 'Apie mus', href: '/apie' },
+      { label: 'Privatumo politika', href: '/privatumas' },
       { label: 'Kontaktai', href: '/kontaktai' },
     ],
   },

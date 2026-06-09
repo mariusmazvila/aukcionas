@@ -7,7 +7,7 @@ import GoogleTagManager from '../components/analytics/GoogleTagManager.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import config from '../config';
-import type { LocalBusinessSchema } from '../lib/schema';
+import type { OrganizationSchema } from '../lib/schema';
 import '../styles/global.css';
 
 interface Props {
@@ -35,21 +35,13 @@ const {
   noindex = false,
 } = Astro.props;
 
-// LocalBusiness schema — rodoma KIEKVIENAME puslapyje.
-// Tai signalizuoja Google'ui apie vietinį verslą ir gerina Local SEO.
-const localBusinessSchema: LocalBusinessSchema = {
+const organizationSchema: OrganizationSchema = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
+  "@type": "Organization",
   name: config.companyName,
   url: config.siteUrl,
   email: config.companyEmail,
-  telephone: config.companyPhone,
   description: config.siteDescription,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: config.companyAddress,
-    addressCountry: "LT",
-  },
   sameAs: (Object.values(config.socialLinks) as string[]).filter(Boolean),
 };
 
@@ -61,8 +53,11 @@ const { gtmId } = config.analyticsConfig;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" href="/images/autobid%20favicon.png" />
     <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
     <SEO
       title={title}
@@ -76,7 +71,7 @@ const { gtmId } = config.analyticsConfig;
       noindex={noindex}
     />
 
-    <StructuredData schema={localBusinessSchema} />
+    <StructuredData schema={organizationSchema} />
 
     <!-- Analytics — render'inami tik jei atitinkami ID'ai nustatyti .env faile.
          Visi skriptai naudoja type="text/partytown" — Web Worker kontekstas,

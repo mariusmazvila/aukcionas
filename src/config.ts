@@ -1,12 +1,11 @@
-// Klientų konfigūracijos failas — keičiant klientą, redaguok TIK ŠĮ failą.
-// Tikrus analytics ID'us dėk į .env (žr. .env.example).
-
-// --- Tipų apibrėžimai ---
+// Projekto konfigūracijos failas — čia keičiama pagrindinė svetainės info.
+// Analytics ID'us dėk į .env (žr. .env.example).
 
 export interface SocialLinks {
   facebook?: string;
   instagram?: string;
   linkedin?: string;
+  twitter?: string;
 }
 
 export interface AnalyticsConfig {
@@ -30,29 +29,26 @@ export interface SiteConfig {
   ogImage: string;
 }
 
-// --- Analytics ID'ai iš .env ---
-// PUBLIC_ prefiksas — Astro taisyklė: tik PUBLIC_ kintamieji pasiekiami naršyklėje.
-// Jei kintamasis nenustatytas, analytics tiesiog neįkeliamas (nėra klaidos).
+// Analytics ID'ai iš .env
 const analyticsConfig: AnalyticsConfig = {
   gaId: import.meta.env.PUBLIC_GA_ID,
   metaPixelId: import.meta.env.PUBLIC_META_PIXEL_ID,
   gtmId: import.meta.env.PUBLIC_GTM_ID,
 };
 
-// --- Innomode konfigūracija (placeholder'iai — tikrus duomenis įrašyk čia) ---
 const config: SiteConfig = {
-  siteName: "Innomode",
-  siteUrl: "https://innomode.lt",
+  siteName: "AutoBid",
+  siteUrl: "https://autobid.lt",
   siteDescription:
-    "Profesionalūs elektrinių skydų sprendimai pramonei ir statybai Lietuvoje. Kokybė, patikimumas, greitis.",
+    "AutoBid — visų Lietuvos ir Europos automobilių aukcionų duomenys viename ekrane. Sutaupyk laiką, rask geriausias kainas.",
 
-  companyName: "Innomode UAB",
-  companyEmail: "info@innomode.lt",
+  companyName: "AutoBid UAB",
+  companyEmail: "info@autobid.lt",
   companyPhone: "+370 600 00000",
-  companyAddress: "Gedimino pr. 1, Vilnius, Lietuva",
+  companyAddress: "Vilnius, Lietuva",
 
   socialLinks: {
-    facebook: "https://facebook.com/innomode",
+    facebook: "",
     instagram: "",
     linkedin: "",
   },

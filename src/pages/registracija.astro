@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Registracija" noindex={true}>
+  <div class="min-h-screen bg-zinc-50 flex items-center justify-center px-6 py-16">
+    <div class="w-full max-w-sm">
+
+      <div class="mb-8">
+        <h1 class="text-2xl font-medium text-zinc-900">Sukurti paskyrą</h1>
+        <p class="mt-1.5 text-sm text-zinc-500">
+          Jau turi paskyrą?{' '}
+          <a href="/prisijungti" class="text-[#0344D3] hover:text-[#0240C8] transition-colors">Prisijungti</a>
+        </p>
+      </div>
+
+      <div class="bg-white border border-zinc-200 p-7">
+        <form class="space-y-5" method="POST" action="#">
+          <div>
+            <label for="name" class="block text-xs text-zinc-500 uppercase tracking-wide mb-1.5">Vardas</label>
+            <input id="name" type="text" name="name" autocomplete="name" required minlength="2"
+              class="w-full px-3 py-2.5 bg-white border border-zinc-300 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#0344D3] transition-colors"
+              placeholder="Vardas Pavardė" />
+          </div>
+          <div>
+            <label for="email" class="block text-xs text-zinc-500 uppercase tracking-wide mb-1.5">El. paštas</label>
+            <input id="email" type="email" name="email" autocomplete="email" required
+              class="w-full px-3 py-2.5 bg-white border border-zinc-300 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#0344D3] transition-colors"
+              placeholder="vardas@imone.lt" />
+          </div>
+          <div>
+            <label for="password" class="block text-xs text-zinc-500 uppercase tracking-wide mb-1.5">Slaptažodis</label>
+            <input id="password" type="password" name="password" autocomplete="new-password" required minlength="8"
+              class="w-full px-3 py-2.5 bg-white border border-zinc-300 text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#0344D3] transition-colors"
+              placeholder="Mažiausiai 8 simboliai" />
+          </div>
+          <button type="submit" class="w-full py-2.5 bg-[#0344D3] hover:bg-[#0240C8] text-white text-sm font-medium transition-colors">
+            Registruotis nemokamai
+          </button>
+        </form>
+      </div>
+
+      <p class="mt-4 text-xs text-center text-zinc-400">
+        <a href="/privatumas" class="hover:text-zinc-600 transition-colors">Privatumo politika</a>
+        {' · '}
+        <a href="/salygos" class="hover:text-zinc-600 transition-colors">Naudojimosi sąlygos</a>
+      </p>
+
+    </div>
+  </div>
+</BaseLayout>

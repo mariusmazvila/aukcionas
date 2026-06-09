@@ -1,19 +1,4 @@
 ---
-// Serverio klaidos puslapis.
-// SSG (statiniame) režime tikros 500 klaidos nekyla tiesiai iš puslapių —
-// jos gali atsirasti Netlify edge lygyje (pvz. CDN problemos).
-//
-// Netlify konfigūracija (netlify.toml) šiam puslapiui:
-//   Jei norite naudoti kaip custom 5xx puslapį, pridėkite į netlify.toml:
-//
-//   [[redirects]]
-//     from = "/*"
-//     to = "/500"
-//     status = 500
-//     conditions = {Status = ["5xx"]}
-//
-// Pastaba: Netlify Pro/Enterprise planuose galima konfigūruoti Custom error pages
-// per Netlify dashboard. Free plane naudokite redirect taisyklę aukščiau.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/ui/Button.astro';
 ---
@@ -80,7 +65,7 @@ import Button from '../components/ui/Button.astro';
         </div>
         <p class="text-sm text-gray-500">
           Problema tęsiasi?{' '}
-          <a href="/kontaktai" class="text-blue-600 hover:underline">Susisiekite su mumis</a>.
+          <a href="mailto:info@autobid.lt" class="text-blue-600 hover:underline">Susisiekite su mumis</a>.
         </p>
       </div>
 
