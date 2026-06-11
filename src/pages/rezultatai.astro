@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { supabase } from '../lib/supabase';
 
-const fmtPrice = (n: number) => '€' + n.toLocaleString('lt-LT');
-const fmtKm    = (n: number) => n.toLocaleString('lt-LT') + ' km';
+const fmtPrice = (n: number | null) => (n == null ? 'Kaina sutartinė' : '€' + n.toLocaleString('lt-LT'));
+const fmtKm    = (n: number | null) => (n == null ? '—' : n.toLocaleString('lt-LT') + ' km');
 
 const sourceBadge: Record<string,string> = {
   'Autoplius.lt': 'bg-orange-100 text-orange-700',
@@ -11,28 +12,43 @@ const sourceBadge: Record<string,string> = {
   'Auto.lt':      'bg-violet-100 text-violet-700',
   'BCA':          'bg-rose-100 text-rose-700',
   'Copart':       'bg-amber-100 text-amber-700',
+  'Alcopa':       'bg-indigo-100 text-indigo-700',
 };
 
 const statusMap = {
   buy:   { label: 'PIRKTI',  chip: 'bg-emerald-100 text-emerald-700', dot: 'bg-emerald-500' },
   maybe: { label: 'GALBŪT', chip: 'bg-amber-100   text-amber-700',   dot: 'bg-amber-400'   },
   avoid: { label: 'VENGTI',  chip: 'bg-red-100     text-red-700',     dot: 'bg-red-500'     },
+  // No profit analysis yet — neutral badge so real listings render unchanged.
+  none:  { label: 'NAUJAS',  chip: 'bg-zinc-100    text-zinc-500',    dot: 'bg-zinc-300'    },
 };
 
-const results = [
-  { make:'Skoda',         model:'Octavia 2.0 TDI',   year:2020, km:89000,  price:14200, source:'Auto.lt',      score:85, status:'buy'   },
-  { make:'BMW',           model:'3 Series 320d',      year:2019, km:142000, price:16500, source:'Mobile.de',    score:81, status:'buy'   },
-  { make:'Mazda',         model:'CX-5 2.2D AWD',      year:2018, km:88000,  price:17400, source:'AutoScout24',  score:79, status:'buy'   },
-  { make:'Volvo',         model:'XC40 D3',            year:2020, km:72000,  price:24900, source:'AutoScout24',  score:78, status:'buy'   },
-  { make:'Renault',       model:'Megane 1.5 dCi',     year:2019, km:121000, price:8700,  source:'Auto.lt',      score:74, status:'buy'   },
-  { make:'Volkswagen',    model:'Golf 1.6 TDI',       year:2018, km:187000, price:8200,  source:'Autoplius.lt', score:72, status:'maybe' },
-  { make:'Toyota',        model:'Yaris Hybrid',       year:2021, km:44000,  price:16900, source:'AutoScout24',  score:68, status:'maybe' },
-  { make:'Hyundai',       model:'Tucson 2.0 CRDi',   year:2018, km:156000, price:12600, source:'Mobile.de',    score:65, status:'maybe' },
-  { make:'Audi',          model:'A4 2.0 TDI',         year:2017, km:193000, price:11200, source:'Autoplius.lt', score:61, status:'maybe' },
-  { make:'Mercedes-Benz', model:'C 220 CDI',          year:2017, km:210000, price:13800, source:'BCA',          score:55, status:'maybe' },
-  { make:'Ford',          model:'Focus 1.5 EcoBoost', year:2019, km:98000,  price:9800,  source:'Copart',       score:44, status:'avoid' },
-  { make:'Opel',          model:'Astra 1.6 CDTI',     year:2016, km:224000, price:5900,  source:'BCA',          score:38, status:'avoid' },
-] as const;
+// Live data from Supabase. In `astro dev` this runs per-request, so refreshing
+// the page reflects whatever the scraper last synced.
+const PAGE_SIZE = 60;
+const { data, count, error } = await supabase
+  .from('listings')
+  .select('make, model, year, mileage_km, price, source, auction_end_date', { count: 'exact' })
+  .not('make', 'is', null)
+  .order('auction_end_date', { ascending: true, nullsFirst: false })
+  .limit(PAGE_SIZE);
+
+if (error) console.error('Supabase listings query failed:', error.message);
+
+const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—');
+
+const results = (data ?? []).map((r) => ({
+  make:   r.make ?? '',
+  model:  r.model ?? '',
+  year:   r.year as number | null,
+  km:     r.mileage_km as number | null,
+  price:  r.price as number | null,
+  source: cap(r.source),
+  score:  null as number | null,
+  status: 'none' as const,
+}));
+
+const totalCount = count ?? results.length;
 ---
 
 <BaseLayout title="Paieškos rezultatai — AutoBid">
@@ -59,7 +75,7 @@ const results = [
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <div>
         <h1 class="text-2xl font-bold text-zinc-900">
-          <span id="result-count">47 293</span> rezultatai
+          <span id="result-count">{totalCount.toLocaleString('lt-LT')}</span> rezultatai
         </h1>
         <p id="result-subtitle" class="text-sm text-zinc-500 mt-0.5">Visi skelbimai · Rikiuoti pagal pelno balą</p>
       </div>
@@ -106,10 +122,10 @@ const results = [
                 <h3 class="text-sm font-semibold text-zinc-800 group-hover:text-zinc-900 leading-snug min-w-0 truncate">{make} {model}</h3>
                 <div class="flex items-center gap-1 shrink-0">
                   <div class:list={['w-2 h-2 rounded-full shrink-0', st.dot]}/>
-                  <span class="text-xs font-bold text-zinc-700">{score}</span>
+                  <span class="text-xs font-bold text-zinc-700">{score ?? '—'}</span>
                 </div>
               </div>
-              <p class="text-xs text-zinc-400 mb-3">{year} · {fmtKm(km)}</p>
+              <p class="text-xs text-zinc-400 mb-3">{year ?? '—'} · {fmtKm(km)}</p>
               <div class="mt-auto flex items-center justify-between">
                 <span class="text-base font-bold text-zinc-900">{fmtPrice(price)}</span>
                 <span class="text-xs text-[#0344D3] font-medium group-hover:underline">Analizė →</span>
@@ -126,7 +142,7 @@ const results = [
       <button class="px-8 py-3 border border-zinc-300 hover:border-zinc-400 text-zinc-700 text-sm font-medium rounded-xl bg-white hover:bg-zinc-50 transition-colors">
         Rodyti daugiau
       </button>
-      <p class="text-xs text-zinc-400">Rodoma 12 iš 47 293 skelbimų</p>
+      <p class="text-xs text-zinc-400">Rodoma {results.length} iš {totalCount.toLocaleString('lt-LT')} skelbimų</p>
     </div>
 
   </div>

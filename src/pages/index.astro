@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { supabase } from '../lib/supabase';
 
 const carMakes = [
   'Alfa Romeo','Audi','BMW','Chevrolet','Chrysler','Citroën','Dacia','Dodge',
@@ -21,14 +22,25 @@ const years     = Array.from({length:36},(_,i)=>2025-i);
 const sources = ['Autoplius.lt','Auto.lt','Autogidas.lt','Mobile.de','AutoScout24','BCA','Copart'];
 
 
-const deals = [
-  { make:'Volkswagen', model:'Golf 1.6 TDI', year:2018, km:187000, price:8900,  source:'Autoplius.lt' },
-  { make:'BMW',        model:'320d xDrive',  year:2016, km:211000, price:12500, source:'Mobile.de'    },
-  { make:'Toyota',     model:'Yaris Hybrid', year:2021, km:44000,  price:16900, source:'AutoScout24'  },
-  { make:'Skoda',      model:'Octavia 2.0',  year:2019, km:155000, price:10400, source:'Auto.lt'      },
-  { make:'Audi',       model:'A4 2.0 TDI',   year:2017, km:193000, price:11200, source:'Autoplius.lt' },
-  { make:'Volvo',      model:'XC40 D3',      year:2020, km:72000,  price:24900, source:'AutoScout24'  },
-];
+// Featured cars: live from Supabase, pick ones with a real price so the
+// homepage cards look complete. Runs server-side on each request in dev.
+const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—');
+const { data: dealRows } = await supabase
+  .from('listings')
+  .select('make, model, year, mileage_km, price, source')
+  .not('make', 'is', null)
+  .not('price', 'is', null)
+  .order('auction_end_date', { ascending: true, nullsFirst: false })
+  .limit(6);
+
+const deals = (dealRows ?? []).map((r) => ({
+  make:   r.make ?? '',
+  model:  r.model ?? '',
+  year:   r.year as number | null,
+  km:     r.mileage_km as number | null,
+  price:  r.price as number | null,
+  source: cap(r.source),
+}));
 
 const articles = [
   {
@@ -56,10 +68,11 @@ const sourceBadge: Record<string,string> = {
   'Mobile.de':   'bg-sky-100 text-sky-700',
   'AutoScout24': 'bg-emerald-100 text-emerald-700',
   'Auto.lt':     'bg-violet-100 text-violet-700',
+  'Alcopa':      'bg-indigo-100 text-indigo-700',
 };
 
-function fmtPrice(p:number){ return p.toLocaleString('lt-LT')+' €'; }
-function fmtKm(km:number)  { return km.toLocaleString('lt-LT')+' km'; }
+function fmtPrice(p:number|null){ return p==null ? 'Kaina sutartinė' : p.toLocaleString('lt-LT')+' €'; }
+function fmtKm(km:number|null)  { return km==null ? '—' : km.toLocaleString('lt-LT')+' km'; }
 function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
 ---
 
