@@ -1,0 +1,255 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const sources = ['Mobile.de','AutoScout24','Autoplius.lt','Auto.lt','BCA','Copart / IAAI'];
+const countries = ['Vokietija','Lietuva','Latvija','Estija','Lenkija','Nyderlandai','Belgija','Prancūzija','JAV (Copart/IAAI)'];
+const markets   = ['Lietuva','Latvija','Estija','Lenkija'];
+
+const loadingSteps = [
+  'Skaitomi aukciono duomenys',
+  'Analizuojami pažeidimai',
+  'Tikrinamos LT rinkos kainos',
+  'Skaičiuojamas pelnas',
+];
+---
+
+<BaseLayout title="Analizuoti automobilį — AutoBid" noindex={true}>
+<div class="min-h-screen bg-zinc-50">
+
+  <!-- Header -->
+  <div class="bg-white border-b border-zinc-200 px-6 py-10">
+    <div class="max-w-2xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold px-3 py-1.5 rounded-full mb-5">
+        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+        </svg>
+        Demonstracinė versija · tik frontend
+      </div>
+      <h1 class="text-4xl font-bold text-zinc-900 tracking-tight leading-tight mb-3">
+        Analizuoti automobilį
+      </h1>
+      <p class="text-zinc-500 text-base leading-relaxed">
+        Įklijuok aukciono nuorodą ir gauk išsamią DI analizę: rinkos vertę,
+        remonto riziką, maksimalų statymą ir pelno įvertį.
+      </p>
+    </div>
+  </div>
+
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+
+    <!-- ── FORM ── -->
+    <div class="bg-white border border-zinc-200 rounded-2xl p-7 shadow-sm">
+
+      <!-- Auction URL -->
+      <div class="mb-6">
+        <label for="url-input" class="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-2">
+          Aukciono nuoroda
+        </label>
+        <input
+          id="url-input" type="url"
+          placeholder="https://www.mobile.de/fahrzeuge/..."
+          class="w-full px-4 py-3 border border-zinc-300 rounded-xl text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-[#0344D3] transition-colors"
+        />
+        <p class="text-xs text-zinc-400 mt-2">
+          Palaikomos: {sources.join(' · ')}
+        </p>
+      </div>
+
+      <!-- Screenshot upload -->
+      <div class="mb-6">
+        <label class="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-2">
+          Nuotraukos <span class="text-zinc-400 font-normal normal-case">(neprivaloma)</span>
+        </label>
+        <label for="file-input" class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-zinc-200 hover:border-zinc-300 rounded-xl p-7 cursor-pointer transition-colors text-center">
+          <svg class="w-8 h-8 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.25">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/>
+          </svg>
+          <p class="text-xs text-zinc-500">
+            Vilk nuotraukas čia arba <span class="text-[#0344D3]">pasirink failus</span>
+          </p>
+          <p class="text-xs text-zinc-400">PNG, JPG iki 10 MB · Žalos nuotraukos pagerina analizę</p>
+          <input id="file-input" type="file" accept="image/*" multiple class="sr-only"/>
+        </label>
+      </div>
+
+      <!-- Options grid -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div>
+          <label class="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-2">Aukciono šalis</label>
+          <div class="relative">
+            <select class="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm text-zinc-800 focus:outline-none focus:border-[#0344D3] transition-colors bg-white appearance-none">
+              {countries.map(c => <option>{c}</option>)}
+            </select>
+            <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-2">Pardavimo rinka</label>
+          <div class="relative">
+            <select class="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm text-zinc-800 focus:outline-none focus:border-[#0344D3] transition-colors bg-white appearance-none">
+              {markets.map((m, i) => <option selected={i === 0}>{m}</option>)}
+            </select>
+            <svg class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+        </div>
+        <div>
+          <label for="profit-input" class="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-2">
+            Min. norimas pelnas (€)
+          </label>
+          <input id="profit-input" type="number" placeholder="pvz. 800" min="0" step="100"
+            class="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-[#0344D3] transition-colors"/>
+        </div>
+        <div>
+          <label for="transport-input" class="block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-2">
+            Transportas (€) <span class="text-zinc-400 font-normal normal-case">override</span>
+          </label>
+          <input id="transport-input" type="number" placeholder="Numatyta: 650" min="0" step="50"
+            class="w-full px-3 py-2.5 border border-zinc-300 rounded-lg text-sm text-zinc-800 placeholder-zinc-400 focus:outline-none focus:border-[#0344D3] transition-colors"/>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button id="analyze-btn" class="w-full py-3 bg-[#0344D3] hover:bg-[#0240C8] text-white text-sm font-bold rounded-xl flex items-center justify-center gap-2.5 transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1 1 .03 2.828-1.414 2.828H4.213c-1.444 0-2.414-1.828-1.414-2.828L4.2 15.3"/>
+        </svg>
+        Analizuoti automobilį
+      </button>
+    </div>
+
+    <!-- ── LOADING STATE ── -->
+    <div id="loading-state" class="hidden bg-white border border-zinc-200 rounded-2xl p-8">
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <div class="w-5 h-5 border-2 border-[#0344D3] border-t-transparent rounded-full animate-spin shrink-0"/>
+        <span class="text-sm font-semibold text-zinc-700">Analizuojama...</span>
+      </div>
+      <div class="space-y-3 max-w-xs mx-auto" id="loading-steps">
+        {loadingSteps.map((step, i) => (
+          <div
+            data-step={i}
+            class:list={[
+              'flex items-center gap-3 text-sm transition-all duration-300',
+              i === 0 ? 'text-zinc-800' : 'text-zinc-400',
+            ]}
+          >
+            <div data-dot={i} class:list={[
+              'w-3 h-3 rounded-full shrink-0 transition-colors duration-300',
+              i === 0 ? 'bg-[#0344D3]' : 'bg-zinc-200',
+            ]}/>
+            {step}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- ── DEMO RESULT ── -->
+    <div id="demo-result" class="hidden">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="h-px flex-1 bg-zinc-200"/>
+        <span class="text-xs text-zinc-400 font-medium">Demo rezultatas</span>
+        <div class="h-px flex-1 bg-zinc-200"/>
+      </div>
+
+      <div class="bg-white border-2 border-[#0344D3] rounded-2xl p-6 relative">
+        <span class="absolute top-4 right-4 bg-[#0344D3] text-white text-[10px] font-bold px-2.5 py-1 rounded-md tracking-wide">DEMO</span>
+
+        <div class="flex flex-col sm:flex-row sm:items-start gap-4 mb-4 pr-16">
+          <div class="flex-1">
+            <p class="text-xs text-zinc-400 mb-1">Volkswagen Golf 1.6 TDI · 2018 · 187 000 km · Mobile.de</p>
+            <h3 class="text-xl font-bold text-zinc-900">Est. pelnas: €700–€1,800</h3>
+          </div>
+          <span class="shrink-0 self-start bg-amber-100 text-amber-700 text-xs font-bold px-2.5 py-1 rounded-md">GALBŪT</span>
+        </div>
+
+        <!-- Mini score -->
+        <div class="flex items-center gap-3 p-4 bg-zinc-50 rounded-xl mb-4">
+          <div class="relative w-12 h-12 shrink-0">
+            <svg viewBox="0 0 100 100" class="w-full h-full" style="transform:rotate(-90deg)">
+              <circle cx="50" cy="50" r="38" fill="none" stroke="#e4e4e7" stroke-width="12"/>
+              <circle cx="50" cy="50" r="38" fill="none" stroke="#f59e0b" stroke-width="12"
+                stroke-dasharray="238.8" stroke-dashoffset="66.9" stroke-linecap="round"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-sm font-bold text-zinc-900">72</span>
+            </div>
+          </div>
+          <div class="flex-1 grid grid-cols-3 gap-2 text-center">
+            <div>
+              <p class="text-[10px] text-zinc-400 mb-0.5">Maks. statymas</p>
+              <p class="text-sm font-bold text-zinc-900">€8,900</p>
+            </div>
+            <div>
+              <p class="text-[10px] text-zinc-400 mb-0.5">Landed cost</p>
+              <p class="text-sm font-bold text-zinc-900">€11,570</p>
+            </div>
+            <div>
+              <p class="text-[10px] text-zinc-400 mb-0.5">Paklausa LT</p>
+              <p class="text-sm font-bold text-emerald-600">Didelė</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-sm text-zinc-600 mb-5 leading-relaxed">
+          Priekiniai kairiai pažeidimai — vidutinė remonto rizika (€1,200–€2,400).
+          Rekomenduojamas maks. statymas <strong>€8,900</strong>. Lyginamuosius modeliai Lietuvoje
+          parduodami €10,500–€13,700.
+        </p>
+
+        <a href="/auto/demo" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0344D3] hover:bg-[#0240C8] text-white text-sm font-semibold rounded-lg transition-colors">
+          Žiūrėti pilną analizę
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+</BaseLayout>
+
+<script>
+  const btn      = document.getElementById('analyze-btn')    as HTMLButtonElement;
+  const loading  = document.getElementById('loading-state')  as HTMLDivElement;
+  const result   = document.getElementById('demo-result')    as HTMLDivElement;
+
+  btn.addEventListener('click', () => {
+    loading.classList.remove('hidden');
+    result.classList.add('hidden');
+    btn.disabled = true;
+    btn.classList.add('opacity-60', 'cursor-not-allowed');
+
+    // Animate steps progressively
+    const stepEls = document.querySelectorAll<HTMLElement>('[data-step]');
+    const dotEls  = document.querySelectorAll<HTMLElement>('[data-dot]');
+    let current = 0;
+    const interval = setInterval(() => {
+      current++;
+      if (current < stepEls.length) {
+        stepEls[current].classList.remove('text-zinc-400');
+        stepEls[current].classList.add('text-zinc-800');
+        dotEls[current].classList.remove('bg-zinc-200');
+        dotEls[current].classList.add('bg-[#0344D3]');
+      }
+      if (current >= stepEls.length - 1) clearInterval(interval);
+    }, 700);
+
+    setTimeout(() => {
+      loading.classList.add('hidden');
+      result.classList.remove('hidden');
+      btn.disabled = false;
+      btn.classList.remove('opacity-60', 'cursor-not-allowed');
+      // Reset steps for next run
+      stepEls.forEach((el, i) => {
+        el.classList.toggle('text-zinc-800', i === 0);
+        el.classList.toggle('text-zinc-400', i !== 0);
+        dotEls[i].classList.toggle('bg-[#0344D3]', i === 0);
+        dotEls[i].classList.toggle('bg-zinc-200', i !== 0);
+      });
+    }, 3200);
+  });
+</script>
