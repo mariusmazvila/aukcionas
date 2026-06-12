@@ -100,7 +100,7 @@ const totalCount = count ?? results.length;
       {results.map(({ make, model, year, km, price, source, score, status }) => {
         const st = statusMap[status];
         return (
-          <a href="/auto/demo" class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+          <a href={`/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}`} class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
 
             <!-- Image placeholder -->
             <div class="relative h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center shrink-0">

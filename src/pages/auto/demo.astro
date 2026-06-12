@@ -69,7 +69,7 @@ const market = [
         Paieška
       </a>
       <span class="text-zinc-300">/</span>
-      <span class="text-zinc-700 font-medium">{car.make} {car.model} {car.year}</span>
+      <span id="car-breadcrumb" class="text-zinc-700 font-medium">{car.make} {car.model} {car.year}</span>
       <span class="ml-auto text-xs text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-md">Demo</span>
     </div>
   </div>
@@ -82,17 +82,17 @@ const market = [
       <!-- Left -->
       <div class="flex-1 min-w-0">
         <div class="flex flex-wrap items-center gap-2 mb-3">
-          <span class="bg-sky-100 text-sky-700 text-xs font-medium px-2 py-0.5 rounded-md">{car.source}</span>
+          <span id="car-source" class="bg-sky-100 text-sky-700 text-xs font-medium px-2 py-0.5 rounded-md">{car.source}</span>
           <span class="bg-zinc-100 text-zinc-600 text-xs font-medium px-2 py-0.5 rounded-md">Aukcionas</span>
           <span class:list={['text-xs font-bold px-2.5 py-0.5 rounded-md tracking-wide', s.bg, s.text]}>
             {s.label}
           </span>
         </div>
 
-        <h1 class="text-3xl sm:text-4xl font-bold text-zinc-900 leading-tight mb-1">
+        <h1 id="car-title" class="text-3xl sm:text-4xl font-bold text-zinc-900 leading-tight mb-1">
           {car.make} {car.model}
         </h1>
-        <p class="text-zinc-400 text-sm mb-6">
+        <p id="car-subtitle" class="text-zinc-400 text-sm mb-6">
           {car.year} · {car.km.toLocaleString('lt-LT')} km · {car.fuel} · {car.transmission} · DE → LT
         </p>
 
@@ -100,7 +100,7 @@ const market = [
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
           <div class="bg-white border border-zinc-200 rounded-xl p-4">
             <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider mb-1">Dabar. kaina</p>
-            <p class="text-xl font-bold text-zinc-900">€{car.currentBid.toLocaleString('lt-LT')}</p>
+            <p id="car-price" class="text-xl font-bold text-zinc-900">€{car.currentBid.toLocaleString('lt-LT')}</p>
           </div>
           <div class="bg-[#0344D3] rounded-xl p-4">
             <p class="text-[10px] text-blue-200 font-semibold uppercase tracking-wider mb-1">Maks. statymas</p>
@@ -312,4 +312,40 @@ const market = [
     </div>
   </div>
 </div>
+
+<script>
+  const p = new URLSearchParams(window.location.search);
+  const make   = p.get('make')   || '';
+  const model  = p.get('model')  || '';
+  const year   = p.get('year')   || '';
+  const km     = p.get('km')     || '';
+  const price  = p.get('price')  || '';
+  const source = p.get('source') || '';
+
+  if (make || model) {
+    const title = [make, model].filter(Boolean).join(' ');
+    const titleEl = document.getElementById('car-title');
+    const breadEl = document.getElementById('car-breadcrumb');
+    if (titleEl) titleEl.textContent = title;
+    if (breadEl) breadEl.textContent = [title, year].filter(Boolean).join(' ');
+
+    const subtitleParts: string[] = [];
+    if (year) subtitleParts.push(year);
+    if (km)   subtitleParts.push(Number(km).toLocaleString('lt-LT') + ' km');
+    const subtitleEl = document.getElementById('car-subtitle');
+    if (subtitleEl && subtitleParts.length) subtitleEl.textContent = subtitleParts.join(' · ');
+
+    if (price) {
+      const priceEl = document.getElementById('car-price');
+      if (priceEl) priceEl.textContent = '€' + Number(price).toLocaleString('lt-LT');
+    }
+
+    if (source) {
+      const sourceEl = document.getElementById('car-source');
+      if (sourceEl) sourceEl.textContent = source;
+    }
+
+    document.title = [title, year, '— AutoBid analizė'].filter(Boolean).join(' ');
+  }
+</script>
 </BaseLayout>
