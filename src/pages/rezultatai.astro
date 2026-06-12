@@ -23,15 +23,15 @@ const statusMap = {
   none:  { label: 'NAUJAS',  chip: 'bg-zinc-100    text-zinc-500',    dot: 'bg-zinc-300'    },
 };
 
-// Live data from Supabase. In `astro dev` this runs per-request, so refreshing
-// the page reflects whatever the scraper last synced.
 const PAGE_SIZE = 60;
-const { data, count, error } = await supabase
-  .from('listings')
-  .select('make, model, year, mileage_km, price, source, auction_end_date', { count: 'exact' })
-  .not('make', 'is', null)
-  .order('auction_end_date', { ascending: true, nullsFirst: false })
-  .limit(PAGE_SIZE);
+const { data, count, error } = supabase
+  ? await supabase
+      .from('listings')
+      .select('make, model, year, mileage_km, price, source, auction_end_date', { count: 'exact' })
+      .not('make', 'is', null)
+      .order('auction_end_date', { ascending: true, nullsFirst: false })
+      .limit(PAGE_SIZE)
+  : { data: [], count: 0, error: null };
 
 if (error) console.error('Supabase listings query failed:', error.message);
 

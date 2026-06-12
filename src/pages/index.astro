@@ -25,13 +25,15 @@ const sources = ['Autoplius.lt','Auto.lt','Autogidas.lt','Mobile.de','AutoScout2
 // Featured cars: live from Supabase, pick ones with a real price so the
 // homepage cards look complete. Runs server-side on each request in dev.
 const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—');
-const { data: dealRows } = await supabase
-  .from('listings')
-  .select('make, model, year, mileage_km, price, source')
-  .not('make', 'is', null)
-  .not('price', 'is', null)
-  .order('auction_end_date', { ascending: true, nullsFirst: false })
-  .limit(6);
+const { data: dealRows } = supabase
+  ? await supabase
+      .from('listings')
+      .select('make, model, year, mileage_km, price, source')
+      .not('make', 'is', null)
+      .not('price', 'is', null)
+      .order('auction_end_date', { ascending: true, nullsFirst: false })
+      .limit(6)
+  : { data: [] };
 
 const deals = (dealRows ?? []).map((r) => ({
   make:   r.make ?? '',
