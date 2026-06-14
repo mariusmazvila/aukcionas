@@ -5,6 +5,14 @@ import { supabase } from '../lib/supabase';
 const fmtPrice = (n: number | null) => (n == null ? 'Kaina sutartinė' : '€' + n.toLocaleString('lt-LT'));
 const fmtKm    = (n: number | null) => (n == null ? '—' : n.toLocaleString('lt-LT') + ' km');
 
+// Scraper stores fuel/transmission in English — show Lithuanian labels.
+const fuelLabel: Record<string,string> = {
+  diesel: 'Dyzelis', petrol: 'Benzinas', electric: 'Elektra', hybrid: 'Hibridas',
+};
+const gearLabel: Record<string,string> = {
+  automatic: 'Automatinė', manual: 'Mechaninė',
+};
+
 const sourceBadge: Record<string,string> = {
   'Autoplius.lt': 'bg-orange-100 text-orange-700',
   'Mobile.de':    'bg-sky-100 text-sky-700',
@@ -27,7 +35,7 @@ const PAGE_SIZE = 60;
 const { data, count, error } = supabase
   ? await supabase
       .from('listings')
-      .select('make, model, year, mileage_km, price, source, auction_end_date', { count: 'exact' })
+      .select('make, model, year, mileage_km, price, source, auction_end_date, fuel_type, transmission, image_urls', { count: 'exact' })
       .not('make', 'is', null)
       .order('auction_end_date', { ascending: true, nullsFirst: false })
       .limit(PAGE_SIZE)
@@ -37,6 +45,10 @@ if (error) console.error('Supabase listings query failed:', error.message);
 
 const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—');
 
+// image_urls is a jsonb array of photo URLs; show the first as the card photo.
+const firstImage = (v: unknown): string | null =>
+  Array.isArray(v) && v.length > 0 && typeof v[0] === 'string' ? v[0] : null;
+
 const results = (data ?? []).map((r) => ({
   make:   r.make ?? '',
   model:  r.model ?? '',
@@ -44,6 +56,9 @@ const results = (data ?? []).map((r) => ({
   km:     r.mileage_km as number | null,
   price:  r.price as number | null,
   source: cap(r.source),
+  fuel:   fuelLabel[r.fuel_type as string] ?? null,
+  gear:   gearLabel[r.transmission as string] ?? null,
+  image:  firstImage(r.image_urls),
   score:  null as number | null,
   status: 'none' as const,
 }));
@@ -97,17 +112,23 @@ const totalCount = count ?? results.length;
 
     <!-- Results grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-      {results.map(({ make, model, year, km, price, source, score, status }) => {
+      {results.map(({ make, model, year, km, price, source, fuel, gear, image, score, status }) => {
         const st = statusMap[status];
+        const meta = [year ?? '—', fmtKm(km), fuel, gear].filter(Boolean).join(' · ');
         return (
           <a href={`/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}`} class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
 
-            <!-- Image placeholder -->
-            <div class="relative h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center shrink-0">
-              <svg class="w-12 h-12 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.75">
-                <circle cx="6" cy="17.5" r="1.75" stroke-width="1"/><circle cx="18" cy="17.5" r="1.75" stroke-width="1"/>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4.25 17.5H3V13l2-5h14l2 5v4.5h-1.25M7.75 17.5h8.5M8 8l2-2.5h4l2 2.5"/>
-              </svg>
+            <!-- Photo (falls back to a placeholder car icon when none was scraped) -->
+            <div class="relative h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center shrink-0 overflow-hidden">
+              {image ? (
+                <img src={image} alt={`${make} ${model}`} loading="lazy" decoding="async"
+                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-200"/>
+              ) : (
+                <svg class="w-12 h-12 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.75">
+                  <circle cx="6" cy="17.5" r="1.75" stroke-width="1"/><circle cx="18" cy="17.5" r="1.75" stroke-width="1"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.25 17.5H3V13l2-5h14l2 5v4.5h-1.25M7.75 17.5h8.5M8 8l2-2.5h4l2 2.5"/>
+                </svg>
+              )}
               <span class:list={['absolute top-2.5 left-2.5 px-1.5 py-0.5 rounded-md text-xs font-medium', sourceBadge[source] ?? 'bg-zinc-100 text-zinc-600']}>
                 {source}
               </span>
@@ -125,7 +146,7 @@ const totalCount = count ?? results.length;
                   <span class="text-xs font-bold text-zinc-700">{score ?? '—'}</span>
                 </div>
               </div>
-              <p class="text-xs text-zinc-400 mb-3">{year ?? '—'} · {fmtKm(km)}</p>
+              <p class="text-xs text-zinc-400 mb-3">{meta}</p>
               <div class="mt-auto flex items-center justify-between">
                 <span class="text-base font-bold text-zinc-900">{fmtPrice(price)}</span>
                 <span class="text-xs text-[#0344D3] font-medium group-hover:underline">Analizė →</span>
