@@ -32,13 +32,20 @@ const statusMap = {
 };
 
 const PAGE_SIZE = 60;
+// Hide already-ended (sold) auctions: only surface listings whose auction date
+// is today or later. NOTE: this date is fixed at build time on the static site,
+// so rebuild when the data changes; the client also prunes cards that expire
+// after the build (see the script at the bottom).
+const today = new Date().toISOString().slice(0, 10);
+const SELECT = 'make, model, year, mileage_km, price, source, auction_end_date, fuel_type, transmission, image_urls';
 const { data, count, error } = supabase
   ? await supabase
       .from('listings')
-      .select('make, model, year, mileage_km, price, source, auction_end_date, fuel_type, transmission, image_urls', { count: 'exact' })
+      .select(SELECT, { count: 'exact' })
       .not('make', 'is', null)
+      .gte('auction_end_date', today)
       .order('auction_end_date', { ascending: true, nullsFirst: false })
-      .limit(PAGE_SIZE)
+      .range(0, PAGE_SIZE - 1)
   : { data: [], count: 0, error: null };
 
 if (error) console.error('Supabase listings query failed:', error.message);
@@ -59,6 +66,7 @@ const results = (data ?? []).map((r) => ({
   fuel:   fuelLabel[r.fuel_type as string] ?? null,
   gear:   gearLabel[r.transmission as string] ?? null,
   image:  firstImage(r.image_urls),
+  end:    (r.auction_end_date as string | null) ?? null,
   score:  null as number | null,
   status: 'none' as const,
 }));
@@ -111,12 +119,12 @@ const totalCount = count ?? results.length;
     </div>
 
     <!-- Results grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-      {results.map(({ make, model, year, km, price, source, fuel, gear, image, score, status }) => {
+    <div id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
+      {results.map(({ make, model, year, km, price, source, fuel, gear, image, end, score, status }) => {
         const st = statusMap[status];
         const meta = [year ?? '—', fmtKm(km), fuel, gear].filter(Boolean).join(' · ');
         return (
-          <a href={`/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}`} class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+          <a data-end={end ?? ''} href={`/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}`} class="card group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
 
             <!-- Photo (falls back to a placeholder car icon when none was scraped) -->
             <div class="relative h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center shrink-0 overflow-hidden">
@@ -160,10 +168,12 @@ const totalCount = count ?? results.length;
 
     <!-- Load more -->
     <div class="flex flex-col items-center gap-3 pb-8">
-      <button class="px-8 py-3 border border-zinc-300 hover:border-zinc-400 text-zinc-700 text-sm font-medium rounded-xl bg-white hover:bg-zinc-50 transition-colors">
+      <button id="load-more" data-total={totalCount} data-page-size={PAGE_SIZE} data-build-date={today}
+              style={results.length >= totalCount ? 'display:none' : ''}
+              class="px-8 py-3 border border-zinc-300 hover:border-zinc-400 text-zinc-700 text-sm font-medium rounded-xl bg-white hover:bg-zinc-50 transition-colors disabled:opacity-50">
         Rodyti daugiau
       </button>
-      <p class="text-xs text-zinc-400">Rodoma {results.length} iš {totalCount.toLocaleString('lt-LT')} skelbimų</p>
+      <p class="text-xs text-zinc-400">Rodoma <span id="shown-count">{results.length}</span> iš <span id="total-count">{totalCount.toLocaleString('lt-LT')}</span> skelbimų</p>
     </div>
 
   </div>
@@ -208,4 +218,121 @@ const totalCount = count ?? results.length;
     document.getElementById('result-subtitle')!.textContent =
       [make, model].filter(Boolean).join(' ') + ' · Rikiuoti pagal pelno balą';
   }
+</script>
+
+<script>
+  // "Rodyti daugiau" pagination + drop auctions that ended after the build.
+  import { createClient } from '@supabase/supabase-js';
+
+  const PAGE_SIZE = 60;
+  const clientToday = new Date().toISOString().slice(0, 10);
+
+  const url = import.meta.env.PUBLIC_SUPABASE_URL;
+  const anon = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const sb = url && anon ? createClient(url, anon) : null;
+
+  const fuelLabel: Record<string,string> = { diesel:'Dyzelis', petrol:'Benzinas', electric:'Elektra', hybrid:'Hibridas' };
+  const gearLabel: Record<string,string> = { automatic:'Automatinė', manual:'Mechaninė' };
+  const sourceBadge: Record<string,string> = {
+    'Autoplius.lt':'bg-orange-100 text-orange-700','Mobile.de':'bg-sky-100 text-sky-700',
+    'AutoScout24':'bg-emerald-100 text-emerald-700','Auto.lt':'bg-violet-100 text-violet-700',
+    'BCA':'bg-rose-100 text-rose-700','Copart':'bg-amber-100 text-amber-700','Alcopa':'bg-indigo-100 text-indigo-700',
+  };
+
+  const fmtPrice = (n: number | null) => (n == null ? 'Kaina sutartinė' : '€' + n.toLocaleString('lt-LT'));
+  const fmtKm    = (n: number | null) => (n == null ? '—' : n.toLocaleString('lt-LT') + ' km');
+  const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—');
+  const firstImage = (v: unknown) => (Array.isArray(v) && v.length > 0 && typeof v[0] === 'string' ? v[0] : null);
+  const esc = (s: string) => s.replace(/[&<>"']/g, (c) => (({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'} as Record<string,string>)[c]));
+
+  const PLACEHOLDER = `<svg class="w-12 h-12 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.75"><circle cx="6" cy="17.5" r="1.75" stroke-width="1"></circle><circle cx="18" cy="17.5" r="1.75" stroke-width="1"></circle><path stroke-linecap="round" stroke-linejoin="round" d="M4.25 17.5H3V13l2-5h14l2 5v4.5h-1.25M7.75 17.5h8.5M8 8l2-2.5h4l2 2.5"></path></svg>`;
+
+  function cardHtml(r: any) {
+    const make = r.make ?? '', model = r.model ?? '';
+    const year = r.year, km = r.mileage_km, price = r.price;
+    const source = cap(r.source);
+    const fuel = fuelLabel[r.fuel_type] ?? null, gear = gearLabel[r.transmission] ?? null;
+    const image = firstImage(r.image_urls);
+    const meta = [year ?? '—', fmtKm(km), fuel, gear].filter(Boolean).join(' · ');
+    const badge = sourceBadge[source] ?? 'bg-zinc-100 text-zinc-600';
+    const title = esc(`${make} ${model}`.trim());
+    const href = `/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}`;
+    const photo = image
+      ? `<img src="${esc(image)}" alt="${title}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-200">`
+      : PLACEHOLDER;
+    return `<a data-end="${esc(r.auction_end_date ?? '')}" href="${href}" class="card group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+      <div class="relative h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center shrink-0 overflow-hidden">
+        ${photo}
+        <span class="absolute top-2.5 left-2.5 px-1.5 py-0.5 rounded-md text-xs font-medium ${badge}">${esc(source)}</span>
+        <span class="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold tracking-wide bg-zinc-100 text-zinc-500">NAUJAS</span>
+      </div>
+      <div class="p-4 flex flex-col flex-1">
+        <div class="flex items-start justify-between gap-2 mb-1">
+          <h3 class="text-sm font-semibold text-zinc-800 group-hover:text-zinc-900 leading-snug min-w-0 truncate">${title}</h3>
+          <div class="flex items-center gap-1 shrink-0"><div class="w-2 h-2 rounded-full shrink-0 bg-zinc-300"></div><span class="text-xs font-bold text-zinc-700">—</span></div>
+        </div>
+        <p class="text-xs text-zinc-400 mb-3">${esc(meta)}</p>
+        <div class="mt-auto flex items-center justify-between">
+          <span class="text-base font-bold text-zinc-900">${fmtPrice(price)}</span>
+          <span class="text-xs text-[#0344D3] font-medium group-hover:underline">Analizė →</span>
+        </div>
+      </div>
+    </a>`;
+  }
+
+  const grid = document.getElementById('results-grid');
+  const btn = document.getElementById('load-more') as HTMLButtonElement | null;
+  const shownEl = document.getElementById('shown-count');
+  // Use the build-time date for the query so range() pagination stays aligned
+  // with what the server already rendered; clientToday only prunes visually.
+  const buildDate = btn?.dataset.buildDate || clientToday;
+  const total = btn ? Number(btn.dataset.total ?? 0) : 0;
+
+  const refreshShown = () => {
+    if (shownEl && grid) shownEl.textContent = grid.querySelectorAll('.card').length.toLocaleString('lt-LT');
+  };
+
+  // DB cursor = how many rows the server already consumed (PAGE_SIZE), counted
+  // before any visual pruning so the next range() doesn't skip/duplicate rows.
+  let offset = grid ? grid.querySelectorAll('.card').length : 0;
+
+  // Prune cards that ended after the build date but before today.
+  grid?.querySelectorAll<HTMLElement>('.card').forEach((el) => {
+    const end = el.dataset.end;
+    if (end && end < clientToday) el.remove();
+  });
+  refreshShown();
+  if (btn && offset >= total) btn.style.display = 'none';
+
+  async function loadMore() {
+    if (!sb || !btn || !grid) return;
+    btn.disabled = true;
+    btn.textContent = 'Kraunama…';
+    const { data, error } = await sb
+      .from('listings')
+      .select('make, model, year, mileage_km, price, source, auction_end_date, fuel_type, transmission, image_urls')
+      .not('make', 'is', null)
+      .gte('auction_end_date', buildDate)
+      .order('auction_end_date', { ascending: true, nullsFirst: false })
+      .range(offset, offset + PAGE_SIZE - 1);
+    if (error) {
+      console.error('load more failed:', error.message);
+      btn.textContent = 'Bandyti dar kartą';
+      btn.disabled = false;
+      return;
+    }
+    const rows = data ?? [];
+    offset += rows.length;  // advance the DB cursor by everything fetched
+    const fresh = rows.filter((r: any) => !(r.auction_end_date && r.auction_end_date < clientToday));
+    grid.insertAdjacentHTML('beforeend', fresh.map(cardHtml).join(''));
+    refreshShown();
+    if (rows.length < PAGE_SIZE || offset >= total) {
+      btn.style.display = 'none';
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Rodyti daugiau';
+    }
+  }
+
+  btn?.addEventListener('click', loadMore);
 </script>

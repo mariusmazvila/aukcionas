@@ -31,6 +31,7 @@ const { data: dealRows } = supabase
       .select('make, model, year, mileage_km, price, source, image_urls')
       .not('make', 'is', null)
       .not('price', 'is', null)
+      .gte('auction_end_date', new Date().toISOString().slice(0, 10))
       .order('auction_end_date', { ascending: true, nullsFirst: false })
       .limit(6)
   : { data: [] };
