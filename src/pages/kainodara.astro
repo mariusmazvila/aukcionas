@@ -5,16 +5,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout
   title="Kainodara"
   description="AutoBid kainodara — pradėk nemokamai, mokėk tik kai reikia daugiau."
+  solidHeader={true}
 >
 
-  <section class="bg-white border-b border-zinc-100 px-6 py-16">
+  <!-- Pilno puslapio fonas — fixed, lieka vietoje scroll'inant -->
+  <div class="fixed inset-0 -z-10 bg-cover bg-center" style="background-image:url('/images/car-girl-3.webp');background-position:center 30%;" aria-hidden="true"></div>
+  <div class="fixed inset-0 -z-10 bg-zinc-950/70" aria-hidden="true"></div>
+
+  <section class="px-6 py-24">
     <div class="max-w-3xl mx-auto">
-      <h1 class="text-5xl sm:text-6xl font-bold text-zinc-900 tracking-tight leading-[1.1] mb-4">Kainodara</h1>
-      <p class="text-lg text-zinc-500">Pradėk nemokamai. Plėsk kai reikia.</p>
+      <h1 class="text-5xl sm:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-4">Kainodara</h1>
+      <p class="text-lg text-white/70">Pradėk nemokamai. Plėsk kai reikia.</p>
     </div>
   </section>
 
-  <section class="bg-white px-6 py-14">
+  <section class="px-6 py-14">
     <div class="max-w-5xl mx-auto">
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -82,9 +87,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   </section>
 
   <!-- FAQ -->
-  <section class="bg-zinc-50 border-t border-zinc-200 px-6 py-14">
+  <section class="px-6 py-14">
     <div class="max-w-2xl mx-auto">
-      <h2 class="text-xl font-bold text-zinc-900 mb-6">Dažni klausimai</h2>
+      <h2 class="text-xl font-bold text-white mb-6">Dažni klausimai</h2>
       <div id="faq" class="space-y-2">
         {[
           { q: 'Ar tikrai nereikia kredito kortelės?', a: 'Taip. Nemokamas planas prieinamas be jokios mokėjimo informacijos.' },

@@ -4,11 +4,11 @@
   --color-brand:       #0344D3;
   --color-brand-hover: #0240C8;
   --color-brand-light: #E8EEFB;
-  --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 * {
-  font-family: 'DM Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 html { scroll-behavior: smooth; }

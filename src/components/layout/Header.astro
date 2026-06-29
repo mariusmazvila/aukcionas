@@ -7,9 +7,15 @@ function isActive(href: string) {
   if (href === '/') return pathname === '/';
   return pathname.startsWith(href);
 }
+
+// Navbaras visada baltas, meniu — juodas, plonas svoris (Tesla stilius).
+const linkBase = 'text-black hover:text-zinc-500';
 ---
 
-<header class="sticky top-0 z-50 bg-white border-b border-zinc-200">
+<header
+  class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-zinc-200 shadow-sm"
+  id="site-header"
+>
   <div class="max-w-6xl mx-auto px-6">
     <div class="flex items-center justify-between h-14">
 
@@ -22,8 +28,8 @@ function isActive(href: string) {
           <a
             href={href}
             class:list={[
-              'px-3 py-1.5 text-sm transition-colors',
-              isActive(href) ? 'text-[#0344D3]' : 'text-zinc-900 hover:text-zinc-600',
+              'nav-link px-3 py-1.5 text-sm font-normal tracking-wide transition-colors',
+              linkBase,
             ]}
             aria-current={isActive(href) ? 'page' : undefined}
           >
@@ -33,10 +39,10 @@ function isActive(href: string) {
       </nav>
 
       <div class="hidden md:flex items-center gap-3">
-        <a href="/prisijungti" class="text-sm text-zinc-900 hover:text-zinc-600 transition-colors">
+        <a href="/prisijungti" class:list={['nav-link text-sm font-normal tracking-wide transition-colors', linkBase]}>
           Prisijungti
         </a>
-        <a href="/registracija" class="px-3 py-1.5 bg-[#0344D3] hover:bg-[#0240C8] text-white text-sm font-medium transition-colors">
+        <a href="/registracija" class="px-3 py-1.5 bg-[#0344D3] hover:bg-[#0240C8] text-white text-sm font-medium rounded-lg transition-colors">
           Registracija
         </a>
       </div>
@@ -47,7 +53,7 @@ function isActive(href: string) {
         aria-expanded="false"
         aria-controls="mobile-menu"
         aria-label="Meniu"
-        class="md:hidden p-1.5 text-zinc-500 hover:text-zinc-900 transition-colors"
+        class="md:hidden p-1.5 text-black hover:text-zinc-500 transition-colors"
       >
         <svg id="icon-menu" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -60,21 +66,18 @@ function isActive(href: string) {
     </div>
   </div>
 
-  <div id="mobile-menu" class="hidden md:hidden border-t border-zinc-100 bg-white">
+  <div id="mobile-menu" class="hidden md:hidden border-t border-zinc-200 bg-white">
     <nav class="max-w-6xl mx-auto px-6 py-3 flex flex-col">
       {mainNav.map(({ label, href }) => (
         <a
           href={href}
-          class:list={[
-            'py-2.5 text-sm border-b border-zinc-100',
-            isActive(href) ? 'text-[#0344D3]' : 'text-zinc-600 hover:text-zinc-900',
-          ]}
+          class="py-2.5 text-sm font-normal tracking-wide border-b border-zinc-100 text-black hover:text-zinc-500"
         >
           {label}
         </a>
       ))}
       <div class="pt-3 flex flex-col gap-2">
-        <a href="/prisijungti" class="py-2 text-sm text-zinc-600 text-center border border-zinc-200 hover:border-zinc-400 hover:text-zinc-900 transition-colors">Prisijungti</a>
+        <a href="/prisijungti" class="py-2 text-sm text-black text-center border border-zinc-200 hover:border-zinc-400 hover:text-zinc-500 transition-colors">Prisijungti</a>
         <a href="/registracija" class="py-2 bg-[#0344D3] hover:bg-[#0240C8] text-white text-sm font-medium text-center transition-colors">Registracija</a>
       </div>
     </nav>

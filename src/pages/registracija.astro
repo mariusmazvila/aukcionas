@@ -2,15 +2,22 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Registracija" noindex={true}>
-  <div class="min-h-screen bg-white flex items-center justify-center px-6 py-16">
+<BaseLayout title="Registracija" noindex={true} solidHeader={true}>
+  <div class="relative min-h-screen flex items-center justify-center px-6 py-16">
+    <div
+      class="absolute inset-0 -z-10 bg-cover bg-center"
+      style="background-image: url('/images/old-car-1.webp')"
+      aria-hidden="true"
+    ></div>
+    <div class="absolute inset-0 -z-10 bg-black/55" aria-hidden="true"></div>
+
     <div class="w-full max-w-sm">
 
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-zinc-900 tracking-tight">Sukurti paskyrą</h1>
-        <p class="mt-2 text-sm text-zinc-500">
+        <h1 class="text-3xl font-bold text-white tracking-tight">Sukurti paskyrą</h1>
+        <p class="mt-2 text-sm text-white/70">
           Jau turi paskyrą?{' '}
-          <a href="/prisijungti" class="text-[#0344D3] hover:text-[#0240C8] transition-colors font-medium">Prisijungti</a>
+          <a href="/prisijungti" class="text-white hover:text-white/80 transition-colors font-medium underline underline-offset-2">Prisijungti</a>
         </p>
       </div>
 
@@ -40,10 +47,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </form>
       </div>
 
-      <p class="mt-5 text-xs text-center text-zinc-400">
-        <a href="/privatumas" class="hover:text-zinc-600 transition-colors">Privatumo politika</a>
+      <p class="mt-5 text-xs text-center text-white/60">
+        <a href="/privatumas" class="hover:text-white/90 transition-colors">Privatumo politika</a>
         {' · '}
-        <a href="/salygos" class="hover:text-zinc-600 transition-colors">Naudojimosi sąlygos</a>
+        <a href="/salygos" class="hover:text-white/90 transition-colors">Naudojimosi sąlygos</a>
       </p>
 
     </div>
