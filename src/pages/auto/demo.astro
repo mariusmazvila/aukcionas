@@ -118,6 +118,13 @@ const market = [
 
         <!-- Actions -->
         <div class="flex flex-wrap gap-3">
+          <a id="auction-link" href="#" target="_blank" rel="noopener noreferrer"
+             class="hidden items-center gap-2 px-4 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-medium rounded-lg transition-colors">
+            Peržiūrėti aukcione
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+            </svg>
+          </a>
           <button class="flex items-center gap-2 px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-medium rounded-lg transition-colors">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
               <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
@@ -325,6 +332,17 @@ const market = [
   const backBtn = document.getElementById('back-btn') as HTMLAnchorElement | null;
   if (backBtn && document.referrer && new URL(document.referrer).pathname.startsWith('/rezultatai')) {
     backBtn.href = document.referrer;
+  }
+
+  // Original auction link — only shown when the card passed a valid http(s) url.
+  const auctionUrl = p.get('url') || '';
+  if (/^https?:\/\//i.test(auctionUrl)) {
+    const link = document.getElementById('auction-link') as HTMLAnchorElement | null;
+    if (link) {
+      link.href = auctionUrl;
+      link.classList.remove('hidden');
+      link.classList.add('inline-flex');
+    }
   }
 
   if (make || model) {

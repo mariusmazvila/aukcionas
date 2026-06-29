@@ -28,7 +28,7 @@ const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).to
 const { data: dealRows } = supabase
   ? await supabase
       .from('listings')
-      .select('make, model, year, mileage_km, price, source, image_urls')
+      .select('*')
       .not('make', 'is', null)
       .not('price', 'is', null)
       .gte('auction_end_date', new Date().toISOString().slice(0, 10))
@@ -39,6 +39,16 @@ const { data: dealRows } = supabase
 const firstImage = (v: unknown): string | null =>
   Array.isArray(v) && v.length > 0 && typeof v[0] === 'string' ? v[0] : null;
 
+// Original auction URL — column name is backend-owned, so probe common names.
+const URL_KEYS = ['url', 'listing_url', 'source_url', 'auction_url', 'link', 'external_url', 'detail_url', 'href'];
+const pickUrl = (r: Record<string, unknown>): string | null => {
+  for (const k of URL_KEYS) {
+    const v = r[k];
+    if (typeof v === 'string' && /^https?:\/\//i.test(v)) return v;
+  }
+  return null;
+};
+
 const deals = (dealRows ?? []).map((r) => ({
   make:   r.make ?? '',
   model:  r.model ?? '',
@@ -47,6 +57,7 @@ const deals = (dealRows ?? []).map((r) => ({
   price:  r.price as number | null,
   source: cap(r.source),
   image:  firstImage(r.image_urls),
+  url:    pickUrl(r),
 }));
 
 const articles = [
@@ -307,8 +318,8 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {deals.map(({ make, model, year, km, price, source, image }) => (
-          <a href={`/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}`} class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+        {deals.map(({ make, model, year, km, price, source, image, url }) => (
+          <a href={`/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (url ? `&url=${encodeURIComponent(url)}` : '')} class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
             <div class="relative w-full h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center overflow-hidden">
               {image ? (
                 <img src={image} alt={`${make} ${model}`} loading="lazy" decoding="async"

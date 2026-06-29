@@ -37,7 +37,9 @@ const PAGE_SIZE = 60;
 // so rebuild when the data changes; the client also prunes cards that expire
 // after the build (see the script at the bottom).
 const today = new Date().toISOString().slice(0, 10);
-const SELECT = 'make, model, year, mileage_km, price, source, auction_end_date, fuel_type, transmission, image_urls';
+// Select '*' so we also get the original auction URL — its exact column name
+// isn't documented here (backend-owned schema), so we probe candidate names.
+const SELECT = '*';
 const { data, count, error } = supabase
   ? await supabase
       .from('listings')
@@ -56,6 +58,17 @@ const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).to
 const firstImage = (v: unknown): string | null =>
   Array.isArray(v) && v.length > 0 && typeof v[0] === 'string' ? v[0] : null;
 
+// The scraped listing's original auction URL — column name unknown, so try the
+// common ones and accept the first that looks like an http(s) link.
+const URL_KEYS = ['url', 'listing_url', 'source_url', 'auction_url', 'link', 'external_url', 'detail_url', 'href'];
+const pickUrl = (r: Record<string, unknown>): string | null => {
+  for (const k of URL_KEYS) {
+    const v = r[k];
+    if (typeof v === 'string' && /^https?:\/\//i.test(v)) return v;
+  }
+  return null;
+};
+
 const results = (data ?? []).map((r) => ({
   make:   r.make ?? '',
   model:  r.model ?? '',
@@ -67,6 +80,7 @@ const results = (data ?? []).map((r) => ({
   gear:   gearLabel[r.transmission as string] ?? null,
   image:  firstImage(r.image_urls),
   end:    (r.auction_end_date as string | null) ?? null,
+  url:    pickUrl(r),
   score:  null as number | null,
   status: 'none' as const,
 }));
@@ -120,11 +134,12 @@ const totalCount = count ?? results.length;
 
     <!-- Results grid -->
     <div id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-      {results.map(({ make, model, year, km, price, source, fuel, gear, image, end, score, status }) => {
+      {results.map(({ make, model, year, km, price, source, fuel, gear, image, end, url, score, status }) => {
         const st = statusMap[status];
         const meta = [year ?? '—', fmtKm(km), fuel, gear].filter(Boolean).join(' · ');
+        const href = `/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (url ? `&url=${encodeURIComponent(url)}` : '');
         return (
-          <a data-end={end ?? ''} href={`/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}`} class="card group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+          <a data-end={end ?? ''} href={href} class="card group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
 
             <!-- Photo (falls back to a placeholder car icon when none was scraped) -->
             <div class="relative h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center shrink-0 overflow-hidden">
@@ -243,6 +258,11 @@ const totalCount = count ?? results.length;
   const fmtKm    = (n: number | null) => (n == null ? '—' : n.toLocaleString('lt-LT') + ' km');
   const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—');
   const firstImage = (v: unknown) => (Array.isArray(v) && v.length > 0 && typeof v[0] === 'string' ? v[0] : null);
+  const URL_KEYS = ['url','listing_url','source_url','auction_url','link','external_url','detail_url','href'];
+  const pickUrl = (r: any): string | null => {
+    for (const k of URL_KEYS) { const v = r[k]; if (typeof v === 'string' && /^https?:\/\//i.test(v)) return v; }
+    return null;
+  };
   const esc = (s: string) => s.replace(/[&<>"']/g, (c) => (({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'} as Record<string,string>)[c]));
 
   const PLACEHOLDER = `<svg class="w-12 h-12 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.75"><circle cx="6" cy="17.5" r="1.75" stroke-width="1"></circle><circle cx="18" cy="17.5" r="1.75" stroke-width="1"></circle><path stroke-linecap="round" stroke-linejoin="round" d="M4.25 17.5H3V13l2-5h14l2 5v4.5h-1.25M7.75 17.5h8.5M8 8l2-2.5h4l2 2.5"></path></svg>`;
@@ -256,7 +276,8 @@ const totalCount = count ?? results.length;
     const meta = [year ?? '—', fmtKm(km), fuel, gear].filter(Boolean).join(' · ');
     const badge = sourceBadge[source] ?? 'bg-zinc-100 text-zinc-600';
     const title = esc(`${make} ${model}`.trim());
-    const href = `/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}`;
+    const auctionUrl = pickUrl(r);
+    const href = `/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (auctionUrl ? `&url=${encodeURIComponent(auctionUrl)}` : '');
     const photo = image
       ? `<img src="${esc(image)}" alt="${title}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-200">`
       : PLACEHOLDER;
@@ -312,7 +333,7 @@ const totalCount = count ?? results.length;
   // Search sends Lithuanian fuel labels; the DB stores English.
   const fuelToDb: Record<string,string> = { 'Dyzelis':'diesel', 'Benzinas':'petrol', 'Elektra':'electric', 'Hibridas':'hybrid' };
 
-  const COLS = 'make, model, year, mileage_km, price, source, auction_end_date, fuel_type, transmission, image_urls';
+  const COLS = '*';  // include the auction URL column (name probed by pickUrl)
   function buildQuery(withCount: boolean) {
     let q = sb!
       .from('listings')
