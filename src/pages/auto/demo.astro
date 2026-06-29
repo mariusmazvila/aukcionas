@@ -76,6 +76,20 @@ const market = [
 
   <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
 
+    <!-- Vehicle photo — only the first image is shown (privacy); the "+N" badge
+         links to the original auction listing for the rest. Filled by fillReal. -->
+    <div id="car-photo-wrap" class="hidden relative mb-6 w-full sm:max-w-md rounded-2xl overflow-hidden border border-zinc-200 bg-zinc-100">
+      <img id="car-photo" src="" alt="" class="w-full aspect-[4/3] object-cover" />
+      <a id="car-photo-more" href="#" target="_blank" rel="noopener noreferrer"
+         title="Visos nuotraukos originaliame skelbime"
+         class="hidden absolute bottom-3 right-3 items-center gap-1.5 pl-2.5 pr-3 py-1.5 rounded-lg bg-black/60 hover:bg-black/75 text-white text-sm font-semibold backdrop-blur-sm transition-colors">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        <span id="car-photo-more-label">nuotraukos</span>
+      </a>
+    </div>
+
     <!-- ── HERO ROW ── -->
     <div class="flex flex-col lg:flex-row lg:items-start gap-6 mb-8">
 
@@ -104,9 +118,9 @@ const market = [
           </div>
           <div class="bg-brand-gradient rounded-xl p-4">
             <p class="text-[10px] text-blue-200 font-semibold uppercase tracking-wider mb-1">
-              Maks. statymas <span class="ml-0.5 text-[8px] bg-white/20 text-white px-1 py-0.5 rounded align-middle">DEMO</span>
+              Maks. statymas <span id="demo-maxbid" class="ml-0.5 text-[8px] bg-white/20 text-white px-1 py-0.5 rounded align-middle">DEMO</span>
             </p>
-            <p class="text-xl font-bold text-white">€{car.maxBid.toLocaleString('lt-LT')}</p>
+            <p id="m-maxbid" class="text-xl font-bold text-white">€{car.maxBid.toLocaleString('lt-LT')}</p>
           </div>
           <div class="bg-white border border-zinc-200 rounded-xl p-4">
             <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider mb-1">
@@ -116,9 +130,9 @@ const market = [
           </div>
           <div class="bg-white border border-zinc-200 rounded-xl p-4">
             <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider mb-1">
-              Est. pelnas <span class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded align-middle">DEMO</span>
+              Est. pelnas <span id="demo-profit" class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded align-middle">DEMO</span>
             </p>
-            <p class="text-sm font-bold text-emerald-600">€{car.profit.min}–€{car.profit.max}</p>
+            <p id="m-profit" class="text-sm font-bold text-emerald-600">€{car.profit.min}–€{car.profit.max}</p>
           </div>
         </div>
 
@@ -151,18 +165,18 @@ const market = [
         <div class="relative w-36 h-36">
           <svg viewBox="0 0 100 100" class="w-full h-full" style="transform:rotate(-90deg)">
             <circle cx="50" cy="50" r={r} fill="none" stroke="#e4e4e7" stroke-width="9"/>
-            <circle cx="50" cy="50" r={r} fill="none" stroke={s.accent} stroke-width="9"
+            <circle id="score-ring" cx="50" cy="50" r={r} fill="none" stroke={s.accent} stroke-width="9"
               stroke-dasharray={circ} stroke-dashoffset={dash} stroke-linecap="round"/>
           </svg>
           <div class="absolute inset-0 flex flex-col items-center justify-center">
-            <span class="text-4xl font-bold text-zinc-900">{car.profitScore}</span>
+            <span id="m-score" class="text-4xl font-bold text-zinc-900">{car.profitScore}</span>
             <span class="text-xs text-zinc-400">/ 100</span>
           </div>
         </div>
         <p class="text-xs text-zinc-500 mt-2 font-medium">
-          Pelno balas <span class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded align-middle">DEMO</span>
+          Pelno balas <span id="demo-score" class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded align-middle">DEMO</span>
         </p>
-        <p class:list={['text-xs mt-0.5 font-medium', s.text]}>{s.msg}</p>
+        <p id="score-msg" class:list={['text-xs mt-0.5 font-medium', s.text]}>{s.msg}</p>
       </div>
 
     </div>
@@ -175,6 +189,48 @@ const market = [
       <section id="real-specs" class="hidden bg-white border border-zinc-200 rounded-2xl p-6">
         <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Automobilio duomenys</h2>
         <dl id="real-specs-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4 text-sm"></dl>
+      </section>
+
+      <!-- Real on-demand profit analysis (A+B): market value from our own
+           comparables + the reseller's own cost params (localStorage). -->
+      <section class="bg-white border border-zinc-200 rounded-2xl p-6">
+        <div class="flex items-center justify-between gap-4 mb-1">
+          <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Pelno analizė</h2>
+          <button id="toggle-costs" type="button" class="text-xs text-[#0344D3] hover:underline">Mano kaštai</button>
+        </div>
+        <p class="text-xs text-zinc-400 mb-4">Skaičiuojama iš panašių skelbimų mūsų bazėje ir tavo nurodytos savikainos.</p>
+
+        <!-- Reseller cost params — saved to localStorage, used by the formula. -->
+        <div id="cost-panel" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4 p-4 bg-zinc-50 border border-zinc-100 rounded-xl">
+          <label class="text-[11px] text-zinc-500 font-medium">Aukciono mokestis, %
+            <input id="p-fee" type="number" min="0" step="0.5" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
+          </label>
+          <label class="text-[11px] text-zinc-500 font-medium">Transportas, €
+            <input id="p-transport" type="number" min="0" step="50" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
+          </label>
+          <label class="text-[11px] text-zinc-500 font-medium">Remontas, €
+            <input id="p-repair" type="number" min="0" step="50" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
+          </label>
+          <label class="text-[11px] text-zinc-500 font-medium">Paruošimas, €
+            <input id="p-prep" type="number" min="0" step="50" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
+          </label>
+          <label class="text-[11px] text-zinc-500 font-medium">Saugos rezervas, €
+            <input id="p-reserve" type="number" min="0" step="50" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
+          </label>
+          <label class="text-[11px] text-zinc-500 font-medium">Norimas pelnas, €
+            <input id="p-target" type="number" min="0" step="100" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
+          </label>
+          <div class="col-span-2 sm:col-span-3 flex justify-end">
+            <button id="save-costs" type="button" class="px-3 py-1.5 text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg transition-colors">Išsaugoti kaštus</button>
+          </div>
+        </div>
+
+        <button id="run-analysis" type="button" class="w-full py-3 bg-brand-gradient hover:opacity-90 text-white text-sm font-semibold rounded-xl transition-colors">
+          Išsami analizė
+        </button>
+
+        <div id="analysis-results" class="hidden mt-5"></div>
+        <p id="analysis-error" class="hidden mt-3 text-sm text-amber-700"></p>
       </section>
 
       <!-- 1. Summary recommendation -->
@@ -246,8 +302,16 @@ const market = [
 
       <!-- 4. Damage analysis -->
       <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Žalos analizė <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
-        <div class="space-y-3">
+        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
+          Žalos analizė <span id="demo-damage" class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span>
+        </h2>
+
+        <!-- Real AI results (filled by "Išsami analizė"); hidden until then -->
+        <div id="damage-results" class="hidden"></div>
+        <p id="damage-error" class="hidden text-sm text-amber-700 mb-3"></p>
+
+        <!-- Demo placeholder — hidden once real analysis runs -->
+        <div id="damage-demo" class="space-y-3">
           {damage.map(d => (
             <div class="flex items-start gap-4 p-4 border border-zinc-100 rounded-xl hover:border-zinc-200 transition-colors">
               <div class:list={[
@@ -337,6 +401,7 @@ const market = [
 
 <script>
   import { createClient } from '@supabase/supabase-js';
+  import { analyze, DEFAULT_PARAMS, defaultRepairForCondition, type CostParams, type AnalysisResult } from '../../lib/analysis';
 
   const p = new URLSearchParams(window.location.search);
   const make   = p.get('make')   || '';
@@ -345,6 +410,11 @@ const market = [
   const km     = p.get('km')     || '';
   const price  = p.get('price')  || '';
   const source = p.get('source') || '';
+
+  const sbUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const sbKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  const sb = sbUrl && sbKey ? createClient(sbUrl, sbKey) : null;
+  let currentListing: any = null;
 
   const backBtn = document.getElementById('back-btn') as HTMLAnchorElement | null;
   if (backBtn && document.referrer && new URL(document.referrer).pathname.startsWith('/rezultatai')) {
@@ -409,12 +479,9 @@ const market = [
 
   // ── Authoritative real data from Supabase (by listing id) ──────────────────
   const id = p.get('id');
-  const sbUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-  const sbKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-  if (id && sbUrl && sbKey) {
-    const sb = createClient(sbUrl, sbKey);
+  if (id && sb) {
     sb.from('listings').select('*').eq('id', id).single().then(({ data, error }) => {
-      if (!error && data) fillReal(data);
+      if (!error && data) { currentListing = data; fillReal(data); initRepairDefault(data); }
     });
   }
 
@@ -496,6 +563,233 @@ const market = [
       ).join('');
       document.getElementById('real-specs')?.classList.remove('hidden');
     }
+
+    // Single photo + "+N" badge linking to the auction (we don't show the rest).
+    const imgs = Array.isArray(r.image_urls) ? r.image_urls.filter((x: unknown) => typeof x === 'string') : [];
+    if (imgs.length) {
+      const wrap = document.getElementById('car-photo-wrap');
+      const img = document.getElementById('car-photo') as HTMLImageElement | null;
+      if (wrap && img) {
+        img.alt = title || 'Automobilis';
+        img.onerror = () => wrap.classList.add('hidden');
+        img.src = imgs[0];
+        wrap.classList.remove('hidden');
+
+        const more = imgs.length - 1;
+        const moreEl = document.getElementById('car-photo-more') as HTMLAnchorElement | null;
+        const labelEl = document.getElementById('car-photo-more-label');
+        if (more > 0 && moreEl && labelEl && typeof r.url === 'string' && /^https?:\/\//i.test(r.url)) {
+          labelEl.textContent = `+${more} nuotraukos`;
+          moreEl.href = r.url;
+          moreEl.classList.remove('hidden');
+          moreEl.classList.add('inline-flex');
+        }
+      }
+    }
+  }
+
+  // ── Reseller cost params (localStorage) ────────────────────────────────────
+  const PARAMS_KEY = 'autobid_costs';
+  const $ = (id2: string) => document.getElementById(id2) as HTMLInputElement | null;
+
+  function loadParams(): CostParams {
+    try { return { ...DEFAULT_PARAMS, ...JSON.parse(localStorage.getItem(PARAMS_KEY) || '{}') }; }
+    catch { return { ...DEFAULT_PARAMS }; }
+  }
+  function paramsToForm(v: CostParams) {
+    if ($('p-fee'))       $('p-fee')!.value       = String(v.auctionFeePct);
+    if ($('p-transport')) $('p-transport')!.value = String(v.transport);
+    if ($('p-repair'))    $('p-repair')!.value    = String(v.repair);
+    if ($('p-prep'))      $('p-prep')!.value      = String(v.prep);
+    if ($('p-reserve'))   $('p-reserve')!.value   = String(v.reserve);
+    if ($('p-target'))    $('p-target')!.value    = String(v.targetProfit);
+  }
+  function formToParams(): CostParams {
+    const n = (id2: string, d: number) => { const v = Number($(id2)?.value); return isFinite(v) && v >= 0 ? v : d; };
+    return {
+      auctionFeePct: n('p-fee', DEFAULT_PARAMS.auctionFeePct),
+      transport:     n('p-transport', DEFAULT_PARAMS.transport),
+      repair:        n('p-repair', DEFAULT_PARAMS.repair),
+      prep:          n('p-prep', DEFAULT_PARAMS.prep),
+      reserve:       n('p-reserve', DEFAULT_PARAMS.reserve),
+      targetProfit:  n('p-target', DEFAULT_PARAMS.targetProfit),
+    };
+  }
+  let userParams = loadParams();
+  paramsToForm(userParams);
+
+  // Prefill repair estimate from the car's condition the first time only.
+  function initRepairDefault(rec: any) {
+    if (!localStorage.getItem(PARAMS_KEY) && rec?.condition && $('p-repair')) {
+      const rep = defaultRepairForCondition(rec.condition);
+      $('p-repair')!.value = String(rep);
+      userParams.repair = rep;
+    }
+  }
+
+  document.getElementById('toggle-costs')?.addEventListener('click', () => {
+    document.getElementById('cost-panel')?.classList.toggle('hidden');
+  });
+  document.getElementById('save-costs')?.addEventListener('click', () => {
+    userParams = formToParams();
+    localStorage.setItem(PARAMS_KEY, JSON.stringify(userParams));
+    document.getElementById('cost-panel')?.classList.add('hidden');
+  });
+
+  // ── Run analysis (A+B, client-side) ────────────────────────────────────────
+  document.getElementById('run-analysis')?.addEventListener('click', async () => {
+    document.getElementById('analysis-error')!.classList.add('hidden');
+
+    const rec = currentListing || {};
+    const mk  = rec.make ?? make;
+    const md  = rec.model ?? model;
+    const yr  = rec.year ?? (year ? Number(year) : null);
+    const mil = rec.mileage_km ?? (km ? Number(km) : null);
+    const prc = rec.price ?? (price ? Number(price) : null);
+
+    if (!sb) return showErr('Nepavyko prisijungti prie duomenų bazės.');
+    if (prc == null || !isFinite(Number(prc))) return showErr('Šis skelbimas neturi kainos — pelno analizė negalima.');
+    if (!mk || !md) return showErr('Trūksta markės / modelio analizei.');
+
+    const btn = document.getElementById('run-analysis') as HTMLButtonElement;
+    btn.disabled = true; btn.textContent = 'Analizuojama…';
+
+    // 1) AI damage analysis (if photos + key available). It renders the damage
+    //    section and feeds the repair estimate into the cost params below.
+    await runDamageAnalysis(rec);
+
+    let q = sb.from('listings').select('price, mileage_km, year, source')
+      .ilike('make', mk).ilike('model', `%${md}%`).not('price', 'is', null);
+    if (yr != null) q = q.gte('year', yr - 1).lte('year', yr + 1);
+    const { data: compsRaw, error } = await q.limit(300);
+
+    btn.disabled = false; btn.textContent = 'Perskaičiuoti';
+    if (error) return showErr('Nepavyko gauti palyginamų skelbimų.');
+
+    let comps = (compsRaw || []) as any[];
+    if (mil != null) comps = comps.filter((c) => c.mileage_km == null || Math.abs(c.mileage_km - mil) <= mil * 0.3);
+
+    userParams = formToParams();
+    const a = analyze({ price: Number(prc), mileage_km: mil, comps, params: userParams });
+    renderAnalysis(a);
+    updateMetrics(a);
+  });
+
+  function showErr(msg: string) {
+    const errEl = document.getElementById('analysis-error')!;
+    errEl.textContent = msg;
+    errEl.classList.remove('hidden');
+  }
+
+  const eur = (n: number | null) => (n == null ? '—' : '€' + Math.round(n).toLocaleString('lt-LT'));
+
+  function renderAnalysis(a: AnalysisResult) {
+    const resEl = document.getElementById('analysis-results')!;
+    if (a.resale == null) {
+      resEl.innerHTML = `<div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">Per mažai palyginamų skelbimų rinkos vertei nustatyti. Reikia daugiau šio modelio duomenų bazėje.</div>`;
+      resEl.classList.remove('hidden');
+      return;
+    }
+    const confLabel = { low: 'žemas', medium: 'vidutinis', high: 'aukštas' }[a.confidence];
+    const profitColor = (a.profit ?? 0) >= 0 ? 'text-emerald-600' : 'text-red-600';
+    const rows = a.breakdown.map((b) =>
+      `<div class="flex justify-between py-1.5 border-b border-zinc-100 text-sm"><span class="text-zinc-500">${b.label}</span><span class="text-zinc-800 font-medium">${eur(b.value)}</span></div>`
+    ).join('');
+    resEl.innerHTML = `
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        <div class="bg-zinc-50 rounded-xl p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Rinkos vertė (LT)</p><p class="text-lg font-bold text-zinc-900">${eur(a.resale)}</p></div>
+        <div class="bg-zinc-50 rounded-xl p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Savikaina</p><p class="text-lg font-bold text-zinc-900">${eur(a.landed)}</p></div>
+        <div class="bg-zinc-50 rounded-xl p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Pelnas</p><p class="text-lg font-bold ${profitColor}">${eur(a.profit)}</p></div>
+        <div class="bg-zinc-50 rounded-xl p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Maks. statymas</p><p class="text-lg font-bold text-zinc-900">${eur(a.maxBid)}</p></div>
+      </div>
+      <div class="mb-4">
+        <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">Savikainos išklotinė</p>
+        ${rows}
+        <div class="flex justify-between py-2 text-sm font-bold"><span class="text-zinc-700">Iš viso</span><span class="text-zinc-900">${eur(a.landed)}</span></div>
+      </div>
+      <p class="text-xs text-zinc-400">Pagrįsta ${a.compCount} panašiais skelbimais (${a.resaleBasis === 'LT' ? 'LT rinka' : 'visi šaltiniai'}) · pasitikėjimas: ${confLabel}${a.margin != null ? ` · marža ${(a.margin * 100).toFixed(0)}%` : ''}</p>
+    `;
+    resEl.classList.remove('hidden');
+  }
+
+  function updateMetrics(a: AnalysisResult) {
+    if (a.maxBid != null) { const el = document.getElementById('m-maxbid'); if (el) el.textContent = '€' + a.maxBid.toLocaleString('lt-LT'); document.getElementById('demo-maxbid')?.remove(); }
+    if (a.profit != null) { const el = document.getElementById('m-profit'); if (el) el.textContent = '€' + a.profit.toLocaleString('lt-LT'); document.getElementById('demo-profit')?.remove(); }
+    if (a.score != null) {
+      const el = document.getElementById('m-score'); if (el) el.textContent = String(a.score);
+      const ring = document.getElementById('score-ring');
+      if (ring) { const circ = 2 * Math.PI * 38; ring.setAttribute('stroke-dashoffset', String((1 - a.score / 100) * circ)); }
+      document.getElementById('demo-score')?.remove();
+      const msg = document.getElementById('score-msg'); if (msg) msg.textContent = a.score >= 70 ? 'Geras potencialas' : a.score >= 45 ? 'Vidutinis potencialas' : 'Didelė rizika';
+    }
+  }
+
+  // ── AI damage analysis (Stage C) — part of "Išsami analizė" ─────────────────
+  // Calls the Supabase Edge Function, renders the damage section, and writes the
+  // repair midpoint into the cost params so the profit math includes it.
+  // Failures are non-fatal: profit analysis still runs without it.
+  async function runDamageAnalysis(rec: any): Promise<void> {
+    const errEl = document.getElementById('damage-error')!;
+    errEl.classList.add('hidden');
+    const imgs = Array.isArray(rec?.image_urls)
+      ? rec.image_urls.filter((x: any) => typeof x === 'string' && /^https?:\/\//i.test(x))
+      : [];
+    if (!sb || !sbUrl || !sbKey || !imgs.length) return; // can't / nothing to analyse — skip silently
+    try {
+      const resp = await fetch(`${sbUrl}/functions/v1/analyze-damage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: sbKey, Authorization: `Bearer ${sbKey}` },
+        body: JSON.stringify({ images: imgs, make: rec.make, model: rec.model, year: rec.year }),
+      });
+      const data = await resp.json();
+      if (!resp.ok || !data.report) throw new Error(data.error || 'klaida');
+      const rep = data.report;
+      renderDamage(rep);
+      // Feed the repair midpoint into the cost params (used by the profit math).
+      const r0 = rep.estimated_repair_eur || {};
+      const mid = Math.round(((Number(r0.min) || 0) + (Number(r0.max) || 0)) / 2);
+      if (mid > 0 && $('p-repair')) {
+        $('p-repair')!.value = String(mid);
+        localStorage.setItem(PARAMS_KEY, JSON.stringify({ ...loadParams(), repair: mid }));
+      }
+    } catch (e: any) {
+      errEl.textContent = 'Žalos analizė (DI) nepavyko — pelno analizė atlikta be jos.';
+      errEl.classList.remove('hidden');
+    }
+  }
+
+  function renderDamage(rep: any) {
+    const sevLabel: Record<string, string> = { low: 'Maža', medium: 'Vidutinė', high: 'Didelė' };
+    const sevDot: Record<string, string> = { low: 'bg-emerald-400', medium: 'bg-amber-400', high: 'bg-red-500' };
+    const sevChip: Record<string, string> = { low: 'bg-emerald-100 text-emerald-700', medium: 'bg-amber-100 text-amber-700', high: 'bg-red-100 text-red-700' };
+    const esc = (s: any) => String(s).replace(/[&<>"']/g, (c) => (({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]));
+    const items = Array.isArray(rep.damages) ? rep.damages : [];
+    const r0 = rep.estimated_repair_eur || {};
+    const repMin = Number(r0.min) || 0, repMax = Number(r0.max) || 0;
+    const rows = items.length
+      ? items.map((d: any) => `
+        <div class="flex items-start gap-4 p-4 border border-zinc-100 rounded-xl">
+          <div class="mt-1 w-2.5 h-2.5 rounded-full shrink-0 ${sevDot[d.severity] || 'bg-zinc-300'}"></div>
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <p class="text-sm font-semibold text-zinc-800">${esc(d.area)}</p>
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-md ${sevChip[d.severity] || 'bg-zinc-100 text-zinc-600'}">${sevLabel[d.severity] || '—'} rizika</span>
+              ${d.estimated_cost_eur != null ? `<span class="text-xs text-zinc-500">~€${Number(d.estimated_cost_eur).toLocaleString('lt-LT')}</span>` : ''}
+            </div>
+            <p class="text-xs text-zinc-500 leading-relaxed">${esc(d.description)}</p>
+          </div>
+        </div>`).join('')
+      : `<p class="text-sm text-zinc-500">Matomų pažeidimų nuotraukose nenustatyta.</p>`;
+    const resEl = document.getElementById('damage-results')!;
+    resEl.innerHTML = `
+      ${rep.summary ? `<p class="text-sm text-zinc-700 mb-4 border-l-4 border-amber-300 pl-4 py-1">${esc(rep.summary)}</p>` : ''}
+      <div class="space-y-3">${rows}</div>
+      <div class="mt-4 pt-4 border-t border-zinc-100">
+        <p class="text-sm"><span class="text-zinc-500">Numatoma remonto sąmata:</span> <span class="font-bold text-zinc-900">€${repMin.toLocaleString('lt-LT')}–€${repMax.toLocaleString('lt-LT')}</span> <span class="text-xs text-zinc-400">— įskaičiuota į pelno analizę</span></p>
+      </div>`;
+    resEl.classList.remove('hidden');
+    document.getElementById('damage-demo')?.classList.add('hidden');
+    document.getElementById('demo-damage')?.remove();
   }
 </script>
 </BaseLayout>
