@@ -103,15 +103,21 @@ const market = [
             <p id="car-price" class="text-xl font-bold text-zinc-900">€{car.currentBid.toLocaleString('lt-LT')}</p>
           </div>
           <div class="bg-brand-gradient rounded-xl p-4">
-            <p class="text-[10px] text-blue-200 font-semibold uppercase tracking-wider mb-1">Maks. statymas</p>
+            <p class="text-[10px] text-blue-200 font-semibold uppercase tracking-wider mb-1">
+              Maks. statymas <span class="ml-0.5 text-[8px] bg-white/20 text-white px-1 py-0.5 rounded align-middle">DEMO</span>
+            </p>
             <p class="text-xl font-bold text-white">€{car.maxBid.toLocaleString('lt-LT')}</p>
           </div>
           <div class="bg-white border border-zinc-200 rounded-xl p-4">
-            <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider mb-1">Baigiasi per</p>
-            <p class="text-xl font-bold text-zinc-900">{car.endsIn}</p>
+            <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider mb-1">
+              Baigiasi per <span id="ends-demo" class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded align-middle">DEMO</span>
+            </p>
+            <p id="car-ends" class="text-xl font-bold text-zinc-900">{car.endsIn}</p>
           </div>
           <div class="bg-white border border-zinc-200 rounded-xl p-4">
-            <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider mb-1">Est. pelnas</p>
+            <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider mb-1">
+              Est. pelnas <span class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded align-middle">DEMO</span>
+            </p>
             <p class="text-sm font-bold text-emerald-600">€{car.profit.min}–€{car.profit.max}</p>
           </div>
         </div>
@@ -153,7 +159,9 @@ const market = [
             <span class="text-xs text-zinc-400">/ 100</span>
           </div>
         </div>
-        <p class="text-xs text-zinc-500 mt-2 font-medium">Pelno balas</p>
+        <p class="text-xs text-zinc-500 mt-2 font-medium">
+          Pelno balas <span class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded align-middle">DEMO</span>
+        </p>
         <p class:list={['text-xs mt-0.5 font-medium', s.text]}>{s.msg}</p>
       </div>
 
@@ -162,9 +170,16 @@ const market = [
     <!-- ── SECTIONS ── -->
     <div class="space-y-5">
 
+      <!-- 0. Real scraped vehicle data — filled client-side from Supabase by id.
+           Hidden until a listing is loaded; everything here is real (no DEMO). -->
+      <section id="real-specs" class="hidden bg-white border border-zinc-200 rounded-2xl p-6">
+        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Automobilio duomenys</h2>
+        <dl id="real-specs-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4 text-sm"></dl>
+      </section>
+
       <!-- 1. Summary recommendation -->
       <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Rekomendacija</h2>
+        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Rekomendacija <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
         <div class="border-l-4 border-amber-300 pl-4 py-1">
           <p class="text-base text-zinc-800 leading-relaxed">
             Potencialiai pelningas sandoris, tačiau verta statyti ne daugiau nei
@@ -176,7 +191,7 @@ const market = [
 
       <!-- 2. Financial breakdown -->
       <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Finansinė analizė</h2>
+        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Finansinė analizė <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
         <div>
           {costs.map(row => (
             <div class:list={[
@@ -203,7 +218,7 @@ const market = [
 
       <!-- 3. Max bid calculator -->
       <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Maksimalaus statymo skaičiuoklė</h2>
+        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Maksimalaus statymo skaičiuoklė <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {scenarios.map(sc => (
             <div class:list={[
@@ -231,7 +246,7 @@ const market = [
 
       <!-- 4. Damage analysis -->
       <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Žalos analizė</h2>
+        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Žalos analizė <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
         <div class="space-y-3">
           {damage.map(d => (
             <div class="flex items-start gap-4 p-4 border border-zinc-100 rounded-xl hover:border-zinc-200 transition-colors">
@@ -259,7 +274,7 @@ const market = [
 
       <!-- 5. Market comparison -->
       <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Rinkos palyginimas (LT)</h2>
+        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Rinkos palyginimas (LT) <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
         <div class="space-y-3 mb-4">
           {market.map(m => (
             <div class="flex items-center gap-3">
@@ -276,7 +291,7 @@ const market = [
 
       <!-- 6. Liquidity / demand -->
       <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Paklausa ir likvidumas</h2>
+        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Paklausa ir likvidumas <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
           <div>
             <p class="text-xs text-zinc-400 mb-1">Paklausa LT</p>
@@ -306,7 +321,7 @@ const market = [
             </svg>
           </div>
           <div>
-            <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">DI pastabos</p>
+            <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">DI pastabos <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></p>
             <p class="text-sm text-zinc-400 leading-relaxed">
               Ši analizė parengta remiantis aukciono duomenimis, matomais pažeidimais ir rinkos palyginimu.
               Prieš dalyvaudami aukcione visada apžiūrėkite transporto priemonę arba paprašykite profesionalios
@@ -321,6 +336,8 @@ const market = [
 </div>
 
 <script>
+  import { createClient } from '@supabase/supabase-js';
+
   const p = new URLSearchParams(window.location.search);
   const make   = p.get('make')   || '';
   const model  = p.get('model')  || '';
@@ -332,6 +349,25 @@ const market = [
   const backBtn = document.getElementById('back-btn') as HTMLAnchorElement | null;
   if (backBtn && document.referrer && new URL(document.referrer).pathname.startsWith('/rezultatai')) {
     backBtn.href = document.referrer;
+  }
+
+  // Real auction end date (scraped) → live countdown, replacing the demo value.
+  const end = p.get('end') || '';
+  const endDate = end ? new Date(end) : null;
+  if (endDate && !isNaN(endDate.getTime())) {
+    const endsEl = document.getElementById('car-ends');
+    const ms = endDate.getTime() - Date.now();
+    if (endsEl) {
+      if (ms > 0) {
+        const d = Math.floor(ms / 86400000);
+        const h = Math.floor((ms % 86400000) / 3600000);
+        endsEl.textContent = d > 0 ? `${d}d ${h}val` : `${h}val`;
+      } else {
+        endsEl.textContent = 'Pasibaigęs';
+      }
+    }
+    // Real data now — drop the DEMO marker on this metric.
+    document.getElementById('ends-demo')?.remove();
   }
 
   // Original auction link — only shown when the card passed a valid http(s) url.
@@ -369,6 +405,97 @@ const market = [
     }
 
     document.title = [title, year, '— AutoBid analizė'].filter(Boolean).join(' ');
+  }
+
+  // ── Authoritative real data from Supabase (by listing id) ──────────────────
+  const id = p.get('id');
+  const sbUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+  const sbKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  if (id && sbUrl && sbKey) {
+    const sb = createClient(sbUrl, sbKey);
+    sb.from('listings').select('*').eq('id', id).single().then(({ data, error }) => {
+      if (!error && data) fillReal(data);
+    });
+  }
+
+  function fillReal(r: any) {
+    const fuelLabel: Record<string, string> = { diesel: 'Dyzelis', petrol: 'Benzinas', electric: 'Elektra', hybrid: 'Hibridas', lpg: 'Dujos (LPG)' };
+    const gearLabel: Record<string, string> = { automatic: 'Automatinė', manual: 'Mechaninė' };
+    const cap = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '');
+    const num = (n: any) => Number(n).toLocaleString('lt-LT');
+    const esc = (s: string) => s.replace(/[&<>"']/g, (c) => (({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]));
+    const fuel = fuelLabel[String(r.fuel_type).toLowerCase()] ?? r.fuel_type ?? null;
+    const gear = gearLabel[String(r.transmission).toLowerCase()] ?? r.transmission ?? null;
+
+    // Price with the real scraped currency.
+    if (r.price != null) {
+      const priceEl = document.getElementById('car-price');
+      if (priceEl) {
+        let txt: string;
+        try { txt = new Intl.NumberFormat('lt-LT', { style: 'currency', currency: r.currency || 'EUR', maximumFractionDigits: 0 }).format(Number(r.price)); }
+        catch { txt = num(r.price) + (r.currency ? ' ' + r.currency : ''); }
+        priceEl.textContent = txt;
+      }
+    }
+
+    const title = [r.make, r.model].filter(Boolean).join(' ').trim();
+    if (title) {
+      document.getElementById('car-title')!.textContent = title;
+      document.getElementById('car-breadcrumb')!.textContent = [title, r.year].filter(Boolean).join(' ');
+      document.title = [title, r.year, '— AutoBid analizė'].filter(Boolean).join(' ');
+    }
+    const loc = [r.location_city, r.location_country].filter(Boolean).join(', ');
+    const sub = [r.year, r.mileage_km != null ? num(r.mileage_km) + ' km' : null, fuel, gear, loc || null].filter(Boolean).join(' · ');
+    if (sub) document.getElementById('car-subtitle')!.textContent = sub;
+    if (r.source) document.getElementById('car-source')!.textContent = cap(r.source);
+
+    // Authoritative end-date countdown.
+    if (r.auction_end_date) {
+      const dt = new Date(r.auction_end_date);
+      const endsEl = document.getElementById('car-ends');
+      if (!isNaN(dt.getTime()) && endsEl) {
+        const ms = dt.getTime() - Date.now();
+        if (ms > 0) {
+          const d = Math.floor(ms / 86400000), h = Math.floor((ms % 86400000) / 3600000);
+          endsEl.textContent = d > 0 ? `${d}d ${h}val` : `${h}val`;
+        } else {
+          endsEl.textContent = 'Pasibaigęs';
+        }
+        document.getElementById('ends-demo')?.remove();
+      }
+    }
+
+    // Auction link.
+    if (typeof r.url === 'string' && /^https?:\/\//i.test(r.url)) {
+      const link = document.getElementById('auction-link') as HTMLAnchorElement | null;
+      if (link) { link.href = r.url; link.classList.remove('hidden'); link.classList.add('inline-flex'); }
+    }
+
+    // Full real spec list — only fields that are actually present.
+    const fmtDate = (d: string) => { const x = new Date(d); return isNaN(x.getTime()) ? d : x.toLocaleDateString('lt-LT'); };
+    const specs: [string, string | null][] = [
+      ['Komplektacija', r.trim ?? null],
+      ['Kuras', fuel],
+      ['Pavarų dėžė', gear],
+      ['Variklis', r.engine_cc != null ? num(r.engine_cc) + ' cm³' : null],
+      ['CO₂', r.co2_g_km != null ? r.co2_g_km + ' g/km' : null],
+      ['Spalva', r.color ?? null],
+      ['Kėbulas', r.body_type ?? null],
+      ['Būklė', r.condition ?? null],
+      ['Pirma registracija', r.first_registration_date ? fmtDate(r.first_registration_date) : null],
+      ['Registracija', r.registration ?? null],
+      ['VIN', r.vin ?? null],
+      ['Vieta', loc || null],
+      ['PVM atskaitomas', r.vat_recoverable ?? null],
+    ];
+    const grid = document.getElementById('real-specs-grid');
+    const rows = specs.filter(([, v]) => v != null && String(v).trim() !== '');
+    if (grid && rows.length) {
+      grid.innerHTML = rows.map(([k, v]) =>
+        `<div><dt class="text-[11px] uppercase tracking-wide text-zinc-400 mb-0.5">${k}</dt><dd class="text-zinc-800 font-medium break-words">${esc(String(v))}</dd></div>`
+      ).join('');
+      document.getElementById('real-specs')?.classList.remove('hidden');
+    }
   }
 </script>
 </BaseLayout>

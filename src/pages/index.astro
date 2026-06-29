@@ -31,7 +31,7 @@ const { data: dealRows } = supabase
       .select('*')
       .not('make', 'is', null)
       .not('price', 'is', null)
-      .gte('auction_end_date', new Date().toISOString().slice(0, 10))
+      .gte('auction_end_date', new Date().toISOString())
       .order('auction_end_date', { ascending: true, nullsFirst: false })
       .limit(6)
   : { data: [] };
@@ -53,19 +53,15 @@ const pickUrl = (r: Record<string, unknown>): string | null => {
   return fallback;
 };
 
-// Skip the link for ended/sold auctions (they redirect to generic pages).
-const todayStr = new Date().toISOString().slice(0, 10);
+// Skip the link for ended auctions (they redirect to generic pages). The only
+// liveness signal in the schema is auction_end_date.
 const isLive = (r: Record<string, unknown>): boolean => {
   const end = r.auction_end_date;
-  if (typeof end === 'string' && end.slice(0, 10) < todayStr) return false;
-  if (r.sold === true || r.is_sold === true) return false;
-  if (r.is_active === false || r.active === false || r.available === false) return false;
-  const st = String(r.status ?? '').toLowerCase();
-  if (/sold|ended|inactive|expired|closed|parduot|pasibaig/.test(st)) return false;
-  return true;
+  return typeof end === 'string' && new Date(end).getTime() >= Date.now();
 };
 
 const deals = (dealRows ?? []).map((r) => ({
+  id:     r.id,
   make:   r.make ?? '',
   model:  r.model ?? '',
   year:   r.year as number | null,
@@ -73,6 +69,7 @@ const deals = (dealRows ?? []).map((r) => ({
   price:  r.price as number | null,
   source: cap(r.source),
   image:  firstImage(r.image_urls),
+  end:    (r.auction_end_date as string | null) ?? null,
   url:    isLive(r) ? pickUrl(r) : null,
 }));
 
@@ -334,8 +331,8 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {deals.map(({ make, model, year, km, price, source, image, url }) => (
-          <a href={`/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (url ? `&url=${encodeURIComponent(url)}` : '')} class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+        {deals.map(({ id, make, model, year, km, price, source, image, end, url }) => (
+          <a href={`/auto/demo?id=${id ?? ''}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (end ? `&end=${encodeURIComponent(end)}` : '') + (url ? `&url=${encodeURIComponent(url)}` : '')} class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
             <div class="relative w-full h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center overflow-hidden">
               {image ? (
                 <img src={image} alt={`${make} ${model}`} loading="lazy" decoding="async"
