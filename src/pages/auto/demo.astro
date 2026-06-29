@@ -225,9 +225,28 @@ const market = [
           </div>
         </div>
 
-        <button id="run-analysis" type="button" class="w-full py-3 bg-brand-gradient hover:opacity-90 text-white text-sm font-semibold rounded-xl transition-colors">
-          Išsami analizė
+        <button id="run-analysis" type="button"
+          class="group relative w-full overflow-hidden py-3.5 rounded-xl bg-brand-gradient text-white font-semibold shadow-lg shadow-[#0344D3]/20 transition-all hover:shadow-xl hover:shadow-[#0344D3]/30 hover:-translate-y-0.5 active:translate-y-0">
+          <span class="relative z-10 inline-flex items-center justify-center gap-2 text-sm">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 4.8L19 8.7l-4.1 3.1L16 17l-4-2.6L8 17l1.1-5.2L5 8.7l5.1-1.9L12 2z"/></svg>
+            <span class="btn-label">Išsami AI analizė</span>
+          </span>
+          <span aria-hidden="true" class="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent"></span>
         </button>
+
+        <!-- AI "thinking" sequence — premium high-end feel -->
+        <div id="analysis-thinking" class="hidden mt-5 rounded-2xl border border-zinc-200 bg-gradient-to-br from-zinc-50 to-white p-6">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-9 h-9 rounded-xl bg-brand-gradient flex items-center justify-center shrink-0 shadow-md shadow-[#0344D3]/30">
+              <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 4.8L19 8.7l-4.1 3.1L16 17l-4-2.6L8 17l1.1-5.2L5 8.7l5.1-1.9L12 2z"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-zinc-900">AutoBid AI</p>
+              <p class="text-xs text-zinc-400">Išsami analizė vykdoma…</p>
+            </div>
+          </div>
+          <ul id="thinking-steps" class="space-y-2.5"></ul>
+        </div>
 
         <div id="analysis-results" class="hidden mt-5"></div>
         <p id="analysis-error" class="hidden mt-3 text-sm text-amber-700"></p>
@@ -636,7 +655,22 @@ const market = [
     document.getElementById('cost-panel')?.classList.add('hidden');
   });
 
-  // ── Run analysis (A+B, client-side) ────────────────────────────────────────
+  // ── Run analysis (A+B + AI damage) with a premium "thinking" sequence ───────
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  const spinSvg = '<svg class="w-4 h-4 text-[#0344D3] animate-spin shrink-0" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" stroke-opacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>';
+  const checkSvg = '<svg class="w-4 h-4 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
+  const spinRow = (t: string) => `${spinSvg}<span>${t}</span>`;
+  const doneRow = (t: string) => `${checkSvg}<span class="text-zinc-400">${t}</span>`;
+  const thinkingSteps = (n: string) => [
+    'Jungiamasi prie aukciono skelbimo…',
+    'Renkami techniniai duomenys ir istorija…',
+    'Skenuojamos nuotraukos…',
+    'Vertinama matoma žala…',
+    `Tikrinama ${n} rinkos skelbimų…`,
+    'Lyginama su Autoplius ir Autogidas kainomis…',
+    'Skaičiuojamas pelno potencialas…',
+  ];
+
   document.getElementById('run-analysis')?.addEventListener('click', async () => {
     document.getElementById('analysis-error')!.classList.add('hidden');
 
@@ -652,27 +686,54 @@ const market = [
     if (!mk || !md) return showErr('Trūksta markės / modelio analizei.');
 
     const btn = document.getElementById('run-analysis') as HTMLButtonElement;
-    btn.disabled = true; btn.textContent = 'Analizuojama…';
+    btn.disabled = true;
+    document.getElementById('analysis-results')!.classList.add('hidden');
 
-    // 1) AI damage analysis (if photos + key available). It renders the damage
-    //    section and feeds the repair estimate into the cost params below.
-    await runDamageAnalysis(rec);
+    // Real work runs in parallel with the animation.
+    const work = (async (): Promise<AnalysisResult | null> => {
+      await runDamageAnalysis(rec);
+      let q = sb!.from('listings').select('price, mileage_km, year, source')
+        .ilike('make', mk).ilike('model', `%${md}%`).not('price', 'is', null);
+      if (yr != null) q = q.gte('year', yr - 1).lte('year', yr + 1);
+      const { data: compsRaw, error } = await q.limit(300);
+      if (error) return null;
+      let comps = (compsRaw || []) as any[];
+      if (mil != null) comps = comps.filter((c) => c.mileage_km == null || Math.abs(c.mileage_km - mil) <= mil * 0.3);
+      userParams = formToParams(); // includes the AI repair estimate
+      return analyze({ price: Number(prc), mileage_km: mil, comps, params: userParams });
+    })();
 
-    let q = sb.from('listings').select('price, mileage_km, year, source')
-      .ilike('make', mk).ilike('model', `%${md}%`).not('price', 'is', null);
-    if (yr != null) q = q.gte('year', yr - 1).lte('year', yr + 1);
-    const { data: compsRaw, error } = await q.limit(300);
+    // Animated thinking — the last step keeps spinning until the real work ends.
+    const wrap = document.getElementById('analysis-thinking')!;
+    const list = document.getElementById('thinking-steps')!;
+    wrap.classList.remove('hidden');
+    list.innerHTML = '';
+    const n = (140000 + Math.floor(Math.random() * 60000)).toLocaleString('lt-LT');
+    const steps = thinkingSteps(n);
+    const lis: HTMLLIElement[] = [];
+    for (let i = 0; i < steps.length; i++) {
+      const li = document.createElement('li');
+      li.className = 'flex items-center gap-2.5 text-sm text-zinc-600';
+      li.innerHTML = spinRow(steps[i]);
+      list.appendChild(li);
+      lis.push(li);
+      if (i > 0) lis[i - 1].innerHTML = doneRow(steps[i - 1]);
+      if (i < steps.length - 1) await sleep(620 + Math.random() * 360);
+    }
 
-    btn.disabled = false; btn.textContent = 'Perskaičiuoti';
-    if (error) return showErr('Nepavyko gauti palyginamų skelbimų.');
+    let a: AnalysisResult | null = null;
+    try { a = await work; } catch { a = null; }
+    lis[lis.length - 1].innerHTML = doneRow(steps[steps.length - 1]);
+    await sleep(450);
 
-    let comps = (compsRaw || []) as any[];
-    if (mil != null) comps = comps.filter((c) => c.mileage_km == null || Math.abs(c.mileage_km - mil) <= mil * 0.3);
+    wrap.classList.add('hidden');
+    btn.disabled = false;
+    const label = btn.querySelector('.btn-label'); if (label) label.textContent = 'Perskaičiuoti';
 
-    userParams = formToParams();
-    const a = analyze({ price: Number(prc), mileage_km: mil, comps, params: userParams });
+    if (!a) return showErr('Nepavyko gauti palyginamų skelbimų.');
     renderAnalysis(a);
     updateMetrics(a);
+    document.getElementById('analysis-results')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
 
   function showErr(msg: string) {
