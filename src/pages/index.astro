@@ -39,14 +39,18 @@ const { data: dealRows } = supabase
 const firstImage = (v: unknown): string | null =>
   Array.isArray(v) && v.length > 0 && typeof v[0] === 'string' ? v[0] : null;
 
-// Original auction URL — column name is backend-owned, so probe common names.
-const URL_KEYS = ['url', 'listing_url', 'source_url', 'auction_url', 'link', 'external_url', 'detail_url', 'href'];
+// Original auction URL — column name is backend-owned, so scan every field:
+// a link-hinting key wins, else the first non-image http(s) value.
+const isImgUrl = (s: string) => /\.(jpe?g|png|webp|gif|avif|svg)(\?|$)/i.test(s);
 const pickUrl = (r: Record<string, unknown>): string | null => {
-  for (const k of URL_KEYS) {
-    const v = r[k];
-    if (typeof v === 'string' && /^https?:\/\//i.test(v)) return v;
+  let fallback: string | null = null;
+  for (const [k, v] of Object.entries(r)) {
+    if (typeof v !== 'string' || !/^https?:\/\//i.test(v)) continue;
+    if (/image|img|photo|thumb|avatar|logo/i.test(k) || isImgUrl(v)) continue;
+    if (/url|link|href|listing|auction|source|skelb/i.test(k)) return v;
+    fallback ??= v;
   }
-  return null;
+  return fallback;
 };
 
 const deals = (dealRows ?? []).map((r) => ({

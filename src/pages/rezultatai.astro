@@ -58,15 +58,19 @@ const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).to
 const firstImage = (v: unknown): string | null =>
   Array.isArray(v) && v.length > 0 && typeof v[0] === 'string' ? v[0] : null;
 
-// The scraped listing's original auction URL — column name unknown, so try the
-// common ones and accept the first that looks like an http(s) link.
-const URL_KEYS = ['url', 'listing_url', 'source_url', 'auction_url', 'link', 'external_url', 'detail_url', 'href'];
+// The scraped listing's original auction URL — column name is backend-owned and
+// unknown here, so we scan every field: a string field whose name hints a link
+// wins; otherwise the first non-image http(s) value is used as a fallback.
+const isImgUrl = (s: string) => /\.(jpe?g|png|webp|gif|avif|svg)(\?|$)/i.test(s);
 const pickUrl = (r: Record<string, unknown>): string | null => {
-  for (const k of URL_KEYS) {
-    const v = r[k];
-    if (typeof v === 'string' && /^https?:\/\//i.test(v)) return v;
+  let fallback: string | null = null;
+  for (const [k, v] of Object.entries(r)) {
+    if (typeof v !== 'string' || !/^https?:\/\//i.test(v)) continue;
+    if (/image|img|photo|thumb|avatar|logo/i.test(k) || isImgUrl(v)) continue;
+    if (/url|link|href|listing|auction|source|skelb/i.test(k)) return v;
+    fallback ??= v;
   }
-  return null;
+  return fallback;
 };
 
 const results = (data ?? []).map((r) => ({
@@ -258,10 +262,16 @@ const totalCount = count ?? results.length;
   const fmtKm    = (n: number | null) => (n == null ? '—' : n.toLocaleString('lt-LT') + ' km');
   const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—');
   const firstImage = (v: unknown) => (Array.isArray(v) && v.length > 0 && typeof v[0] === 'string' ? v[0] : null);
-  const URL_KEYS = ['url','listing_url','source_url','auction_url','link','external_url','detail_url','href'];
+  const isImgUrl = (s: string) => /\.(jpe?g|png|webp|gif|avif|svg)(\?|$)/i.test(s);
   const pickUrl = (r: any): string | null => {
-    for (const k of URL_KEYS) { const v = r[k]; if (typeof v === 'string' && /^https?:\/\//i.test(v)) return v; }
-    return null;
+    let fallback: string | null = null;
+    for (const [k, v] of Object.entries(r)) {
+      if (typeof v !== 'string' || !/^https?:\/\//i.test(v)) continue;
+      if (/image|img|photo|thumb|avatar|logo/i.test(k) || isImgUrl(v)) continue;
+      if (/url|link|href|listing|auction|source|skelb/i.test(k)) return v;
+      fallback ??= v;
+    }
+    return fallback;
   };
   const esc = (s: string) => s.replace(/[&<>"']/g, (c) => (({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'} as Record<string,string>)[c]));
 
