@@ -8,17 +8,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   solidHeader={true}
 >
 
-  <section class="bg-white border-b border-zinc-100 px-6 py-16">
+  <!-- Pilno puslapio fonas — fixed, lieka vietoje scroll'inant -->
+  <div class="fixed inset-0 -z-10 bg-cover bg-center" style="background-image:url('/images/lights2.webp');" aria-hidden="true"></div>
+  <div class="fixed inset-0 -z-10 bg-zinc-950/70" aria-hidden="true"></div>
+
+  <section class="px-6 pt-28 pb-16">
     <div class="max-w-3xl mx-auto">
-      <h1 class="text-5xl sm:text-6xl font-bold text-zinc-900 tracking-tight leading-[1.1] mb-4">Kaip veikia<br />AutoBid</h1>
-      <p class="text-lg text-zinc-500 leading-relaxed">
+      <h1 class="text-5xl sm:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-4">Kaip veikia<br />AutoBid</h1>
+      <p class="text-lg text-white/70 leading-relaxed">
         Automatiškai renkame duomenis iš Lietuvos ir Europos automobilių aukcionų,
         apdorojame juos ir pateikiame vienoje vietoje — kad tu galėtum greičiau rasti geriausią sandorį.
       </p>
     </div>
   </section>
 
-  <section class="bg-white px-6 py-16">
+  <section class="px-6 pb-16">
     <div class="max-w-3xl mx-auto space-y-4">
 
       {[
@@ -69,17 +73,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </div>
   </section>
 
-  <section class="bg-zinc-50 border-t border-zinc-200 px-6 py-12">
-    <div class="max-w-3xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+  <section class="px-6 py-12">
+    <div class="max-w-3xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
       <div>
-        <p class="text-base font-semibold text-zinc-900">Paruošta. Pradėk šiandien.</p>
-        <p class="text-sm text-zinc-500 mt-0.5">Nemokamas planas prieinamas be kredito kortelės.</p>
+        <p class="text-base font-semibold text-white">Paruošta. Pradėk šiandien.</p>
+        <p class="text-sm text-white/60 mt-0.5">Nemokamas planas prieinamas be kredito kortelės.</p>
       </div>
       <div class="flex gap-3 shrink-0">
-        <a href="/registracija" class="px-5 py-2.5 bg-[#0344D3] hover:bg-[#0240C8] text-white text-sm font-medium rounded-lg transition-colors">
+        <a href="/registracija" class="px-5 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-medium rounded-lg transition-colors">
           Registruotis nemokamai
         </a>
-        <a href="/kainodara" class="px-5 py-2.5 border border-zinc-300 text-zinc-700 hover:border-zinc-400 hover:text-zinc-900 text-sm rounded-lg transition-colors">
+        <a href="/kainodara" class="px-5 py-2.5 border border-white/30 text-white hover:border-white/60 text-sm rounded-lg transition-colors">
           Kainodara
         </a>
       </div>

@@ -103,7 +103,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
       </p>
 
       <div class="flex flex-wrap items-center gap-3 mb-8">
-        <a href="/registracija" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0344D3] hover:bg-[#0240C8] text-white text-sm font-semibold rounded-lg transition-colors">
+        <a href="/registracija" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-semibold rounded-lg transition-colors">
           Išbandyti demo
         </a>
         <a href="/analizuoti" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium rounded-lg transition-colors backdrop-blur-sm">
@@ -264,7 +264,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
           </label>
         </div>
 
-        <button id="search-btn" class="w-full py-3 bg-[#0344D3] hover:bg-[#0240C8] text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2.5 transition-colors">
+        <button id="search-btn" class="w-full py-3 bg-brand-gradient hover:opacity-90 text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2.5 transition-colors">
           <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
           </svg>
@@ -282,7 +282,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
             </div>
             <p class="text-sm font-semibold text-zinc-200 mb-1">Išsaugotos paieškos</p>
             <p class="text-xs text-zinc-500 leading-relaxed mb-5">Prisijunk norėdamas matyti<br>ir valdyti savo išsaugotas paieškas</p>
-            <a href="/prisijungti" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0344D3] hover:bg-[#0240C8] text-white text-xs font-semibold rounded-lg transition-colors">
+            <a href="/prisijungti" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-xs font-semibold rounded-lg transition-colors">
               Prisijungti
             </a>
           </div>
@@ -308,7 +308,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {deals.map(({ make, model, year, km, price, source, image }) => (
-          <a href="/auto/demo" class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+          <a href={`/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}`} class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
             <div class="relative w-full h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center overflow-hidden">
               {image ? (
                 <img src={image} alt={`${make} ${model}`} loading="lazy" decoding="async"
@@ -335,7 +335,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
       </div>
 
       <div class="mt-6 flex items-center gap-4">
-        <a href="/registracija" class="px-5 py-2.5 bg-[#0344D3] hover:bg-[#0240C8] text-white text-sm font-medium rounded-lg transition-colors">
+        <a href="/registracija" class="px-5 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-medium rounded-lg transition-colors">
           Matyti visus 47 000+ skelbimų
         </a>
         <span class="text-xs text-zinc-400">Nemokama registracija</span>

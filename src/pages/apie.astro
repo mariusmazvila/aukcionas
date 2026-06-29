@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const stats = [
+  { value: '7+',     label: 'Prijungtų aukcionų' },
+  { value: '47 000+', label: 'Stebimų skelbimų' },
+  { value: '5 min.', label: 'Duomenų atnaujinimas' },
+  { value: '2026',   label: 'Veiklos pradžia' },
+];
+
+const values = [
+  {
+    title: 'Skaidrumas',
+    description: 'Rodome realią rinkos vertę, remonto riziką ir visus kaštus — be paslėptų tarpininkų mokesčių.',
+  },
+  {
+    title: 'Greitis',
+    description: 'Nauji skelbimai aptinkami per kelias minutes, o analizė pateikiama per sekundes. Nereikia rankiniu būdu tikrinti aukcionų.',
+  },
+  {
+    title: 'Sprendimai duomenimis',
+    description: 'Kiekvienas pasiūlymas įvertinamas pagal tikrus rinkos duomenis, kad pirktum protingai, o ne iš nuojautos.',
+  },
+];
+---
+
+<BaseLayout
+  title="Apie mus"
+  description="AutoBid — automobilių aukcionų stebėjimo platforma perpardavinėtojams. Mūsų tikslas, vertybės ir komanda."
+  solidHeader={true}
+>
+
+  <!-- Pilno puslapio fonas — fixed, lieka vietoje scroll'inant -->
+  <div class="fixed inset-0 -z-10 bg-cover bg-center" style="background-image:url('/images/old-car-3.webp');" aria-hidden="true"></div>
+  <div class="fixed inset-0 -z-10 bg-zinc-950/70" aria-hidden="true"></div>
+
+  <!-- Hero -->
+  <section class="px-6 pt-36 sm:pt-44 pb-16">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-5xl sm:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-6">Apie mus</h1>
+      <p class="text-lg text-white/70 leading-relaxed max-w-2xl">
+        AutoBid — tai automobilių aukcionų stebėjimo platforma, sukurta pardavėjams ir
+        perpardavinėtojams. Visus aukcionus surenkame į vieną ekraną ir parodome, kur slypi pelnas.
+      </p>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="px-6 pb-20">
+    <div class="max-w-3xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-5">
+      {stats.map(({ value, label }) => (
+        <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-sm text-center">
+          <p class="text-3xl font-bold text-white">{value}</p>
+          <p class="text-xs text-white/60 mt-1">{label}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section class="px-6 pb-20">
+    <div class="max-w-3xl mx-auto bg-white border border-zinc-200 rounded-2xl p-8 sm:p-10">
+      <h2 class="text-xl font-semibold text-zinc-900 mb-5">Kodėl AutoBid?</h2>
+      <div class="space-y-5 text-sm text-zinc-600 leading-relaxed">
+        <p>
+          Automobilių perpardavinėjimas — tai lenktynės su laiku. Geriausi pasiūlymai aukcionuose
+          dingsta per minutes, o jų ieškoti vienu metu keliose platformose yra varginanti ir
+          klaidoms atvira veikla.
+        </p>
+        <p>
+          Sukūrėme AutoBid, kad šį procesą paverstume vienu langu: realaus laiko duomenys iš
+          Autoplius.lt, Mobile.de, AutoScout24 ir kitų aukcionų, automatinė rinkos vertės ir
+          remonto rizikos analizė bei aiškus pelno įvertinimas kiekvienam skelbimui.
+        </p>
+        <p>
+          Mūsų tikslas paprastas — kad priimtum geresnius sprendimus greičiau ir nebepraleistum
+          pelningų sandorių.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="px-6 pb-20">
+    <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-5">
+      {values.map(({ title, description }) => (
+        <div class="bg-white border border-zinc-200 rounded-xl p-6 sm:p-7">
+          <h3 class="text-base font-semibold text-zinc-900 mb-2">{title}</h3>
+          <p class="text-sm text-zinc-500 leading-relaxed">{description}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="px-6 pb-24">
+    <div class="max-w-3xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 bg-white/5 border border-white/10 rounded-2xl p-7 sm:p-8 backdrop-blur-sm">
+      <div>
+        <p class="text-base font-semibold text-white">Nori išbandyti?</p>
+        <p class="text-sm text-white/60 mt-0.5">Nemokamas planas prieinamas be kredito kortelės.</p>
+      </div>
+      <div class="flex gap-3 shrink-0">
+        <a href="/registracija" class="px-5 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-medium rounded-lg transition-colors">
+          Registruotis nemokamai
+        </a>
+        <a href="/kaip-veikia" class="px-5 py-2.5 border border-white/30 text-white hover:border-white/60 text-sm rounded-lg transition-colors">
+          Kaip veikia
+        </a>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

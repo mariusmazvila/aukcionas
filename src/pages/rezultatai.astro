@@ -286,35 +286,86 @@ const totalCount = count ?? results.length;
   // Use the build-time date for the query so range() pagination stays aligned
   // with what the server already rendered; clientToday only prunes visually.
   const buildDate = btn?.dataset.buildDate || clientToday;
-  const total = btn ? Number(btn.dataset.total ?? 0) : 0;
+  let total = btn ? Number(btn.dataset.total ?? 0) : 0;
 
   const refreshShown = () => {
     if (shownEl && grid) shownEl.textContent = grid.querySelectorAll('.card').length.toLocaleString('lt-LT');
   };
 
+  // ── URL filters ──────────────────────────────────────────────────────────
+  // The site is static, so the server-rendered grid is unfiltered. When the
+  // search sends params we re-query Supabase on the client with those filters
+  // and rebuild the grid. The same filters are reused by "Rodyti daugiau".
+  const fp = new URLSearchParams(location.search);
+  const F = {
+    make:  fp.get('make')     || '',
+    model: fp.get('model')    || '',
+    yFrom: fp.get('metaiNuo') || '',
+    yTo:   fp.get('metaiIki') || '',
+    pFrom: fp.get('kainaNuo') || '',
+    pTo:   fp.get('kainaIki') || '',
+    fuel:  fp.get('kuras')    || '',
+    kmTo:  fp.get('ridaIki')  || '',
+    srcs:  (fp.get('saltiniai') || '').split(',').filter(Boolean),
+  };
+  const hasFilters = !!(F.make || F.model || F.yFrom || F.yTo || F.pFrom || F.pTo || F.fuel || F.kmTo || F.srcs.length);
+  // Search sends Lithuanian fuel labels; the DB stores English.
+  const fuelToDb: Record<string,string> = { 'Dyzelis':'diesel', 'Benzinas':'petrol', 'Elektra':'electric', 'Hibridas':'hybrid' };
+
+  const COLS = 'make, model, year, mileage_km, price, source, auction_end_date, fuel_type, transmission, image_urls';
+  function buildQuery(withCount: boolean) {
+    let q = sb!
+      .from('listings')
+      .select(COLS, withCount ? { count: 'exact' } : undefined)
+      .not('make', 'is', null)
+      .gte('auction_end_date', buildDate);
+    if (F.make)  q = q.ilike('make', F.make);                 // case-insensitive exact
+    if (F.model) q = q.ilike('model', `%${F.model}%`);        // model often has trim suffixes
+    if (F.yFrom) q = q.gte('year', Number(F.yFrom));
+    if (F.yTo)   q = q.lte('year', Number(F.yTo));
+    if (F.pFrom) q = q.gte('price', Number(F.pFrom));
+    if (F.pTo)   q = q.lte('price', Number(F.pTo));
+    if (F.kmTo)  q = q.lte('mileage_km', Number(F.kmTo));
+    if (F.fuel && fuelToDb[F.fuel]) q = q.eq('fuel_type', fuelToDb[F.fuel]);
+    if (F.srcs.length) q = q.in('source', F.srcs.map((s) => s.toLowerCase())); // DB source is lowercase
+    return q.order('auction_end_date', { ascending: true, nullsFirst: false });
+  }
+
   // DB cursor = how many rows the server already consumed (PAGE_SIZE), counted
   // before any visual pruning so the next range() doesn't skip/duplicate rows.
   let offset = grid ? grid.querySelectorAll('.card').length : 0;
 
-  // Prune cards that ended after the build date but before today.
-  grid?.querySelectorAll<HTMLElement>('.card').forEach((el) => {
-    const end = el.dataset.end;
-    if (end && end < clientToday) el.remove();
-  });
-  refreshShown();
-  if (btn && offset >= total) btn.style.display = 'none';
+  function setCounts() {
+    document.getElementById('result-count')?.replaceChildren(total.toLocaleString('lt-LT'));
+    document.getElementById('total-count')?.replaceChildren(total.toLocaleString('lt-LT'));
+    refreshShown();
+  }
+
+  async function loadFiltered() {
+    if (!sb || !grid) return;
+    grid.innerHTML = '<p class="col-span-full text-sm text-zinc-400 py-10 text-center">Kraunama…</p>';
+    const { data, count, error } = await buildQuery(true).range(0, PAGE_SIZE - 1);
+    if (error) {
+      console.error('filtered query failed:', error.message);
+      grid.innerHTML = '<p class="col-span-full text-sm text-red-500 py-10 text-center">Nepavyko įkelti rezultatų.</p>';
+      return;
+    }
+    const all = data ?? [];
+    offset = all.length;
+    total = count ?? all.length;
+    const fresh = all.filter((r: any) => !(r.auction_end_date && r.auction_end_date < clientToday));
+    grid.innerHTML = fresh.length
+      ? fresh.map(cardHtml).join('')
+      : '<p class="col-span-full text-sm text-zinc-400 py-10 text-center">Pagal pasirinktus filtrus rezultatų nerasta.</p>';
+    setCounts();
+    if (btn) btn.style.display = offset >= total ? 'none' : '';
+  }
 
   async function loadMore() {
     if (!sb || !btn || !grid) return;
     btn.disabled = true;
     btn.textContent = 'Kraunama…';
-    const { data, error } = await sb
-      .from('listings')
-      .select('make, model, year, mileage_km, price, source, auction_end_date, fuel_type, transmission, image_urls')
-      .not('make', 'is', null)
-      .gte('auction_end_date', buildDate)
-      .order('auction_end_date', { ascending: true, nullsFirst: false })
-      .range(offset, offset + PAGE_SIZE - 1);
+    const { data, error } = await buildQuery(false).range(offset, offset + PAGE_SIZE - 1);
     if (error) {
       console.error('load more failed:', error.message);
       btn.textContent = 'Bandyti dar kartą';
@@ -332,6 +383,20 @@ const totalCount = count ?? results.length;
       btn.disabled = false;
       btn.textContent = 'Rodyti daugiau';
     }
+  }
+
+  if (hasFilters) {
+    // Replace the unfiltered server-rendered grid with filtered results.
+    loadFiltered();
+  } else {
+    // No filters: keep server-rendered cards, just prune ones that ended
+    // between the build date and today.
+    grid?.querySelectorAll<HTMLElement>('.card').forEach((el) => {
+      const end = el.dataset.end;
+      if (end && end < clientToday) el.remove();
+    });
+    refreshShown();
+    if (btn && offset >= total) btn.style.display = 'none';
   }
 
   btn?.addEventListener('click', loadMore);
