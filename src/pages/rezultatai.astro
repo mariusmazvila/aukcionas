@@ -73,6 +73,19 @@ const pickUrl = (r: Record<string, unknown>): string | null => {
   return fallback;
 };
 
+// Don't link to auctions that already ended / sold — those redirect to generic
+// pages. Real-time liveness can't be checked from the browser (CORS), so we use
+// the data we have: end date in the past, or a sold/inactive flag.
+const isLive = (r: Record<string, unknown>, today: string): boolean => {
+  const end = r.auction_end_date;
+  if (typeof end === 'string' && end.slice(0, 10) < today) return false;
+  if (r.sold === true || r.is_sold === true) return false;
+  if (r.is_active === false || r.active === false || r.available === false) return false;
+  const st = String(r.status ?? '').toLowerCase();
+  if (/sold|ended|inactive|expired|closed|parduot|pasibaig/.test(st)) return false;
+  return true;
+};
+
 const results = (data ?? []).map((r) => ({
   make:   r.make ?? '',
   model:  r.model ?? '',
@@ -84,7 +97,7 @@ const results = (data ?? []).map((r) => ({
   gear:   gearLabel[r.transmission as string] ?? null,
   image:  firstImage(r.image_urls),
   end:    (r.auction_end_date as string | null) ?? null,
-  url:    pickUrl(r),
+  url:    isLive(r, today) ? pickUrl(r) : null,
   score:  null as number | null,
   status: 'none' as const,
 }));
@@ -273,6 +286,15 @@ const totalCount = count ?? results.length;
     }
     return fallback;
   };
+  const isLive = (r: any, today: string): boolean => {
+    const end = r.auction_end_date;
+    if (typeof end === 'string' && end.slice(0, 10) < today) return false;
+    if (r.sold === true || r.is_sold === true) return false;
+    if (r.is_active === false || r.active === false || r.available === false) return false;
+    const st = String(r.status ?? '').toLowerCase();
+    if (/sold|ended|inactive|expired|closed|parduot|pasibaig/.test(st)) return false;
+    return true;
+  };
   const esc = (s: string) => s.replace(/[&<>"']/g, (c) => (({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'} as Record<string,string>)[c]));
 
   const PLACEHOLDER = `<svg class="w-12 h-12 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.75"><circle cx="6" cy="17.5" r="1.75" stroke-width="1"></circle><circle cx="18" cy="17.5" r="1.75" stroke-width="1"></circle><path stroke-linecap="round" stroke-linejoin="round" d="M4.25 17.5H3V13l2-5h14l2 5v4.5h-1.25M7.75 17.5h8.5M8 8l2-2.5h4l2 2.5"></path></svg>`;
@@ -286,7 +308,7 @@ const totalCount = count ?? results.length;
     const meta = [year ?? '—', fmtKm(km), fuel, gear].filter(Boolean).join(' · ');
     const badge = sourceBadge[source] ?? 'bg-zinc-100 text-zinc-600';
     const title = esc(`${make} ${model}`.trim());
-    const auctionUrl = pickUrl(r);
+    const auctionUrl = isLive(r, clientToday) ? pickUrl(r) : null;
     const href = `/auto/demo?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (auctionUrl ? `&url=${encodeURIComponent(auctionUrl)}` : '');
     const photo = image
       ? `<img src="${esc(image)}" alt="${title}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-200">`

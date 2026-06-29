@@ -53,6 +53,18 @@ const pickUrl = (r: Record<string, unknown>): string | null => {
   return fallback;
 };
 
+// Skip the link for ended/sold auctions (they redirect to generic pages).
+const todayStr = new Date().toISOString().slice(0, 10);
+const isLive = (r: Record<string, unknown>): boolean => {
+  const end = r.auction_end_date;
+  if (typeof end === 'string' && end.slice(0, 10) < todayStr) return false;
+  if (r.sold === true || r.is_sold === true) return false;
+  if (r.is_active === false || r.active === false || r.available === false) return false;
+  const st = String(r.status ?? '').toLowerCase();
+  if (/sold|ended|inactive|expired|closed|parduot|pasibaig/.test(st)) return false;
+  return true;
+};
+
 const deals = (dealRows ?? []).map((r) => ({
   make:   r.make ?? '',
   model:  r.model ?? '',
@@ -61,7 +73,7 @@ const deals = (dealRows ?? []).map((r) => ({
   price:  r.price as number | null,
   source: cap(r.source),
   image:  firstImage(r.image_urls),
-  url:    pickUrl(r),
+  url:    isLive(r) ? pickUrl(r) : null,
 }));
 
 const articles = [
