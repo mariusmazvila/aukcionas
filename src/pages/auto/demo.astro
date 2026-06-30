@@ -12,9 +12,9 @@ const car = {
 };
 
 const statusMap = {
-  buy:   { label: 'PIRKTI',  bg: 'bg-emerald-100', text: 'text-emerald-700', accent: '#10b981', msg: 'Stiprus pirkimo signalas' },
-  maybe: { label: 'GALBŪT', bg: 'bg-amber-100',   text: 'text-amber-700',   accent: '#f59e0b', msg: 'Vidutinis potencialas'   },
-  avoid: { label: 'VENGTI',  bg: 'bg-red-100',     text: 'text-red-700',     accent: '#ef4444', msg: 'Didelė rizika'           },
+  buy:   { label: 'PIRKTI',  bg: 'bg-emerald-100', text: 'text-emerald-700', accent: '#10b981', msg: 'Geras potencialas'   },
+  maybe: { label: 'GALBŪT', bg: 'bg-amber-100',   text: 'text-amber-700',   accent: '#f59e0b', msg: 'Vidutinis potencialas' },
+  avoid: { label: 'VENGTI',  bg: 'bg-red-100',     text: 'text-red-700',     accent: '#ef4444', msg: 'Didelė rizika'        },
 };
 
 const s = statusMap[car.status];
@@ -23,15 +23,15 @@ const circ = +(2 * Math.PI * r).toFixed(1);
 const dash = +((1 - car.profitScore / 100) * circ).toFixed(1);
 
 const costs = [
-  { label: 'Dabartinis statymas',           value: '€8,200',         type: 'item'  },
-  { label: 'Aukciono mokesčiai',             value: '€420',           type: 'item'  },
-  { label: 'Transportas į Lietuvą',          value: '€650',           type: 'item'  },
-  { label: 'Remonto sąnaudos (est.)',         value: '€1,200–€2,400',  type: 'item'  },
-  { label: 'Paruošimas / detailing',         value: '€250',           type: 'item'  },
-  { label: 'Saugos rezervas',                value: '€500',           type: 'item'  },
-  { label: 'Iš viso (landed cost)',           value: '€10,970–€12,170',type: 'total' },
-  { label: 'Tikėtina pardavimo kaina LT',    value: '€12,500–€13,700',type: 'total' },
-  { label: 'Apskaičiuotas pelnas',            value: '€700–€1,800',    type: 'profit'},
+  { label: 'Dabartinis statymas',        value: '€8 200',          type: 'item'  },
+  { label: 'Aukciono mokesčiai',         value: '€420',            type: 'item'  },
+  { label: 'Transportas į Lietuvą',      value: '€650',            type: 'item'  },
+  { label: 'Remonto sąnaudos (est.)',     value: '€1 200–€2 400',   type: 'item'  },
+  { label: 'Paruošimas / detailing',     value: '€250',            type: 'item'  },
+  { label: 'Saugos rezervas',            value: '€500',            type: 'item'  },
+  { label: 'Iš viso (landed cost)',      value: '€10 970–€12 170', type: 'total' },
+  { label: 'Tikėtina pardavimo kaina LT',value: '€12 500–€13 700', type: 'total' },
+  { label: 'Apskaičiuotas pelnas',       value: '€700–€1 800',     type: 'profit'},
 ];
 
 const scenarios = [
@@ -49,373 +49,454 @@ const damage = [
 ];
 
 const market = [
-  { label: 'Min. rinkos kaina',   value: '€9,500',  pct: 54 },
-  { label: 'Greitas pardavimas',  value: '€10,500', pct: 62 },
-  { label: 'Rinkos mediana',      value: '€11,800', pct: 71 },
-  { label: 'Optimistinė kaina',   value: '€13,700', pct: 83 },
+  { label: 'Min. rinkos kaina',   value: '€9 500',  pct: 54 },
+  { label: 'Greitas pardavimas',  value: '€10 500', pct: 62 },
+  { label: 'Rinkos mediana',      value: '€11 800', pct: 71 },
+  { label: 'Optimistinė kaina',   value: '€13 700', pct: 83 },
 ];
 ---
 
-<BaseLayout title={`${car.make} ${car.model} ${car.year} — AutoBid analizė`} noindex={true} solidHeader={true}>
-<div class="min-h-screen bg-zinc-50">
+<BaseLayout title={`${car.make} ${car.model} ${car.year} — Carbid analizė`} noindex={true}>
 
-  <!-- Top bar -->
-  <div class="bg-white border-b border-zinc-200 px-6 py-3 sticky top-0 z-10">
-    <div class="max-w-5xl mx-auto flex items-center gap-2 text-sm">
-      <a id="back-btn" href="/rezultatai" class="text-zinc-500 hover:text-zinc-800 transition-colors flex items-center gap-1.5">
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-        </svg>
-        Rezultatai
-      </a>
-      <span class="text-zinc-300">/</span>
-      <span id="car-breadcrumb" class="text-zinc-700 font-medium">{car.make} {car.model} {car.year}</span>
-      <span class="ml-auto text-xs text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-md">Demo</span>
-    </div>
+<!-- ── Sticky breadcrumb ── -->
+<div class="bg-white border-b border-zinc-200 px-6 py-3 sticky top-14 z-40">
+  <div class="max-w-7xl mx-auto flex items-center gap-2 text-sm">
+    <a id="back-btn" href="/rezultatai"
+       class="text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+      </svg>
+      Rezultatai
+    </a>
+    <span class="text-zinc-300">/</span>
+    <span id="car-breadcrumb" class="text-zinc-700">{car.make} {car.model} {car.year}</span>
+    <span class="ml-auto text-[10px] uppercase tracking-[0.15em] text-zinc-400 bg-zinc-100 px-2 py-0.5">Demo</span>
   </div>
+</div>
 
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+<!-- ── HERO: 2 stulpeliai ── -->
+<div class="bg-white border-b border-zinc-200">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid lg:grid-cols-2" style="min-height:420px;">
 
-    <!-- Vehicle photo — only the first image is shown (privacy); the "+N" badge
-         links to the original auction listing for the rest. Filled by fillReal. -->
-    <div id="car-photo-wrap" class="hidden relative mb-6 w-full sm:max-w-md rounded-2xl overflow-hidden border border-zinc-200 bg-zinc-100">
-      <img id="car-photo" src="" alt="" class="w-full aspect-[4/3] object-cover" />
-      <a id="car-photo-more" href="#" target="_blank" rel="noopener noreferrer"
-         title="Visos nuotraukos originaliame skelbime"
-         class="hidden absolute bottom-3 right-3 items-center gap-1.5 pl-2.5 pr-3 py-1.5 rounded-lg bg-black/60 hover:bg-black/75 text-white text-sm font-semibold backdrop-blur-sm transition-colors">
-        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      <!-- Kairė: nuotrauka -->
+      <div id="car-photo-wrap"
+           class="relative bg-zinc-100 border-r border-zinc-200 flex items-center justify-center overflow-hidden"
+           style="min-height:300px;">
+        <!-- Placeholder (rodomas kol nėra nuotraukos) -->
+        <svg id="car-photo-placeholder" class="w-16 h-16 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.75">
+          <circle cx="6" cy="17.5" r="1.75" stroke-width="1"/><circle cx="18" cy="17.5" r="1.75" stroke-width="1"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.25 17.5H3V13l2-5h14l2 5v4.5h-1.25M7.75 17.5h8.5M8 8l2-2.5h4l2 2.5"/>
         </svg>
-        <span id="car-photo-more-label">nuotraukos</span>
-      </a>
-    </div>
+        <img id="car-photo" src="" alt="" class="hidden absolute inset-0 w-full h-full object-cover"/>
+        <a id="car-photo-more" href="#" target="_blank" rel="noopener noreferrer"
+           title="Visos nuotraukos originaliame skelbime"
+           class="hidden absolute bottom-4 right-4 items-center gap-1.5 px-3 py-2 bg-black/70 hover:bg-black/85 text-white text-xs font-medium backdrop-blur-sm transition-colors">
+          <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+          </svg>
+          <span id="car-photo-more-label">nuotraukos</span>
+        </a>
+      </div>
 
-    <!-- ── HERO ROW ── -->
-    <div class="flex flex-col lg:flex-row lg:items-start gap-6 mb-8">
+      <!-- Dešinė: info -->
+      <div class="p-8 xl:p-12 flex flex-col">
 
-      <!-- Left -->
-      <div class="flex-1 min-w-0">
-        <div class="flex flex-wrap items-center gap-2 mb-3">
-          <span id="car-source" class="bg-sky-100 text-sky-700 text-xs font-medium px-2 py-0.5 rounded-md">{car.source}</span>
-          <span class="bg-zinc-100 text-zinc-600 text-xs font-medium px-2 py-0.5 rounded-md">Aukcionas</span>
-          <span class:list={['text-xs font-bold px-2.5 py-0.5 rounded-md tracking-wide', s.bg, s.text]}>
+        <!-- Ženkleliai -->
+        <div class="flex flex-wrap items-center gap-2 mb-5">
+          <span id="car-source"
+                class="text-[10px] font-medium uppercase tracking-[0.12em] bg-zinc-950 text-white px-2 py-0.5">
+            {car.source}
+          </span>
+          <span class="text-[10px] font-medium uppercase tracking-[0.12em] text-zinc-500 border border-zinc-200 px-2 py-0.5">
+            Aukcionas
+          </span>
+          <span class:list={['text-[10px] font-bold uppercase tracking-[0.12em] px-2 py-0.5', s.bg, s.text]}>
             {s.label}
           </span>
         </div>
 
-        <h1 id="car-title" class="text-3xl sm:text-4xl font-bold text-zinc-900 leading-tight mb-1">
+        <!-- Pavadinimas -->
+        <h1 id="car-title" class="text-3xl xl:text-4xl text-zinc-900 mb-1.5">
           {car.make} {car.model}
         </h1>
-        <p id="car-subtitle" class="text-zinc-400 text-sm mb-6">
-          {car.year} · {car.km.toLocaleString('lt-LT')} km · {car.fuel} · {car.transmission} · DE → LT
+        <p id="car-subtitle" class="text-sm text-zinc-400 mb-8">
+          {car.year} · {car.km.toLocaleString('lt-LT')} km · {car.fuel} · {car.transmission}
         </p>
 
-        <!-- Metrics -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-          <div class="bg-white border border-zinc-200 rounded-xl p-4">
-            <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider mb-1">Dabar. kaina</p>
-            <p id="car-price" class="text-xl font-bold text-zinc-900">€{car.currentBid.toLocaleString('lt-LT')}</p>
-          </div>
-          <div class="bg-brand-gradient rounded-xl p-4">
-            <p class="text-[10px] text-blue-200 font-semibold uppercase tracking-wider mb-1">
-              Maks. statymas <span id="demo-maxbid" class="ml-0.5 text-[8px] bg-white/20 text-white px-1 py-0.5 rounded align-middle">DEMO</span>
+        <!-- Metrikos: gap-px tinklelis -->
+        <div class="grid grid-cols-2 gap-px bg-zinc-200 mb-6">
+          <div class="bg-white p-4">
+            <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-1.5">Dabar. kaina</p>
+            <p id="car-price" class="text-2xl font-semibold text-zinc-900">
+              €{car.currentBid.toLocaleString('lt-LT')}
             </p>
-            <p id="m-maxbid" class="text-xl font-bold text-white">€{car.maxBid.toLocaleString('lt-LT')}</p>
           </div>
-          <div class="bg-white border border-zinc-200 rounded-xl p-4">
-            <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider mb-1">
-              Baigiasi per <span id="ends-demo" class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded align-middle">DEMO</span>
+          <div class="bg-zinc-950 p-4">
+            <p class="text-[10px] text-zinc-500 uppercase tracking-[0.15em] mb-1.5">
+              Maks. statymas
+              <span id="demo-maxbid"
+                    class="ml-0.5 text-[8px] bg-zinc-800 text-zinc-400 px-1 py-0.5 align-middle">DEMO</span>
             </p>
-            <p id="car-ends" class="text-xl font-bold text-zinc-900">{car.endsIn}</p>
+            <p id="m-maxbid" class="text-2xl font-semibold text-white">
+              €{car.maxBid.toLocaleString('lt-LT')}
+            </p>
           </div>
-          <div class="bg-white border border-zinc-200 rounded-xl p-4">
-            <p class="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider mb-1">
-              Est. pelnas <span id="demo-profit" class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded align-middle">DEMO</span>
+          <div class="bg-white p-4">
+            <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-1.5">
+              Baigiasi per
+              <span id="ends-demo"
+                    class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 align-middle">DEMO</span>
             </p>
-            <p id="m-profit" class="text-sm font-bold text-emerald-600">€{car.profit.min}–€{car.profit.max}</p>
+            <p id="car-ends" class="text-2xl font-semibold text-zinc-900">{car.endsIn}</p>
+          </div>
+          <div class="bg-white p-4">
+            <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-1.5">
+              Est. pelnas
+              <span id="demo-profit"
+                    class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 align-middle">DEMO</span>
+            </p>
+            <p id="m-profit" class="text-xl font-semibold text-emerald-600">
+              €{car.profit.min}–€{car.profit.max}
+            </p>
           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="flex flex-wrap gap-3">
-          <a id="auction-link" href="#" target="_blank" rel="noopener noreferrer"
-             class="hidden items-center gap-2 px-4 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-medium rounded-lg transition-colors">
-            Peržiūrėti aukcione
-            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
-            </svg>
-          </a>
-          <button class="flex items-center gap-2 px-4 py-2.5 bg-zinc-900 hover:bg-zinc-800 text-white text-sm font-medium rounded-lg transition-colors">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-            </svg>
-            Pridėti į stebėjimą
-          </button>
-          <button class="flex items-center gap-2 px-4 py-2.5 bg-white border border-zinc-300 hover:border-zinc-400 text-zinc-700 text-sm font-medium rounded-lg transition-colors">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-            </svg>
-            Eksportuoti ataskaitą
-          </button>
+        <!-- Pelno balas + veiksmai -->
+        <div class="flex items-start gap-6 mt-auto">
+
+          <!-- SVG žiedas -->
+          <div class="flex flex-col items-center shrink-0">
+            <div class="relative w-20 h-20">
+              <svg viewBox="0 0 100 100" class="w-full h-full" style="transform:rotate(-90deg)">
+                <circle cx="50" cy="50" r={r} fill="none" stroke="#e4e4e7" stroke-width="9"/>
+                <circle id="score-ring" cx="50" cy="50" r={r} fill="none" stroke={s.accent}
+                        stroke-width="9" stroke-dasharray={circ} stroke-dashoffset={dash}
+                        stroke-linecap="round"/>
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span id="m-score" class="text-2xl font-bold text-zinc-900">{car.profitScore}</span>
+                <span class="text-[10px] text-zinc-400">/ 100</span>
+              </div>
+            </div>
+            <p class="text-[10px] text-zinc-500 mt-1.5 text-center leading-snug">
+              Pelno balas
+              <span id="demo-score"
+                    class="text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 align-middle ml-0.5">DEMO</span>
+            </p>
+            <p id="score-msg" class:list={['text-xs mt-0.5 font-medium', s.text]}>{s.msg}</p>
+          </div>
+
+          <!-- Mygtukai -->
+          <div class="flex flex-col gap-2.5 flex-1 min-w-0">
+            <a id="auction-link" href="#" target="_blank" rel="noopener noreferrer"
+               class="hidden items-center justify-center gap-2 px-4 py-2.5 bg-zinc-shine hover:opacity-90 text-white text-sm font-medium transition-opacity">
+              Peržiūrėti aukcione
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+              </svg>
+            </a>
+            <div class="flex gap-2.5">
+              <button class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-zinc-950 hover:bg-zinc-800 text-white text-sm transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                </svg>
+                Stebėjimas
+              </button>
+              <button class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 border border-zinc-200 hover:border-zinc-900 text-zinc-700 text-sm transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+                </svg>
+                Eksportuoti
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
-
-      <!-- Right: Profit score -->
-      <div class="flex flex-col items-center shrink-0 lg:pt-6">
-        <div class="relative w-36 h-36">
-          <svg viewBox="0 0 100 100" class="w-full h-full" style="transform:rotate(-90deg)">
-            <circle cx="50" cy="50" r={r} fill="none" stroke="#e4e4e7" stroke-width="9"/>
-            <circle id="score-ring" cx="50" cy="50" r={r} fill="none" stroke={s.accent} stroke-width="9"
-              stroke-dasharray={circ} stroke-dashoffset={dash} stroke-linecap="round"/>
-          </svg>
-          <div class="absolute inset-0 flex flex-col items-center justify-center">
-            <span id="m-score" class="text-4xl font-bold text-zinc-900">{car.profitScore}</span>
-            <span class="text-xs text-zinc-400">/ 100</span>
-          </div>
-        </div>
-        <p class="text-xs text-zinc-500 mt-2 font-medium">
-          Pelno balas <span id="demo-score" class="ml-0.5 text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 rounded align-middle">DEMO</span>
-        </p>
-        <p id="score-msg" class:list={['text-xs mt-0.5 font-medium', s.text]}>{s.msg}</p>
-      </div>
-
-    </div>
-
-    <!-- ── SECTIONS ── -->
-    <div class="space-y-5">
-
-      <!-- 0. Real scraped vehicle data — filled client-side from Supabase by id.
-           Hidden until a listing is loaded; everything here is real (no DEMO). -->
-      <section id="real-specs" class="hidden bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Automobilio duomenys</h2>
-        <dl id="real-specs-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4 text-sm"></dl>
-      </section>
-
-      <!-- Real on-demand profit analysis (A+B): market value from our own
-           comparables + the reseller's own cost params (localStorage). -->
-      <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <div class="flex items-center justify-between gap-4 mb-1">
-          <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Pelno analizė</h2>
-          <button id="toggle-costs" type="button" class="text-xs text-[#0344D3] hover:underline">Mano kaštai</button>
-        </div>
-        <p class="text-xs text-zinc-400 mb-4">Skaičiuojama iš panašių skelbimų mūsų bazėje ir tavo nurodytos savikainos.</p>
-
-        <!-- Reseller cost params — saved to localStorage, used by the formula. -->
-        <div id="cost-panel" class="hidden grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4 p-4 bg-zinc-50 border border-zinc-100 rounded-xl">
-          <label class="text-[11px] text-zinc-500 font-medium">Aukciono mokestis, %
-            <input id="p-fee" type="number" min="0" step="0.5" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
-          </label>
-          <label class="text-[11px] text-zinc-500 font-medium">Transportas, €
-            <input id="p-transport" type="number" min="0" step="50" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
-          </label>
-          <label class="text-[11px] text-zinc-500 font-medium">Remontas, €
-            <input id="p-repair" type="number" min="0" step="50" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
-          </label>
-          <label class="text-[11px] text-zinc-500 font-medium">Paruošimas, €
-            <input id="p-prep" type="number" min="0" step="50" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
-          </label>
-          <label class="text-[11px] text-zinc-500 font-medium">Saugos rezervas, €
-            <input id="p-reserve" type="number" min="0" step="50" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
-          </label>
-          <label class="text-[11px] text-zinc-500 font-medium">Norimas pelnas, €
-            <input id="p-target" type="number" min="0" step="100" class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-[#0344D3]" />
-          </label>
-          <div class="col-span-2 sm:col-span-3 flex justify-end">
-            <button id="save-costs" type="button" class="px-3 py-1.5 text-xs font-semibold bg-zinc-900 hover:bg-zinc-800 text-white rounded-lg transition-colors">Išsaugoti kaštus</button>
-          </div>
-        </div>
-
-        <button id="run-analysis" type="button"
-          class="group relative w-full overflow-hidden py-3.5 rounded-xl bg-brand-gradient text-white font-semibold shadow-lg shadow-[#0344D3]/20 transition-all hover:shadow-xl hover:shadow-[#0344D3]/30 hover:-translate-y-0.5 active:translate-y-0">
-          <span class="relative z-10 inline-flex items-center justify-center gap-2 text-sm">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 4.8L19 8.7l-4.1 3.1L16 17l-4-2.6L8 17l1.1-5.2L5 8.7l5.1-1.9L12 2z"/></svg>
-            <span class="btn-label">Išsami AI analizė</span>
-          </span>
-          <span aria-hidden="true" class="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent"></span>
-        </button>
-
-        <!-- AI "thinking" sequence — premium high-end feel -->
-        <div id="analysis-thinking" class="hidden mt-5 rounded-2xl border border-zinc-200 bg-gradient-to-br from-zinc-50 to-white p-6">
-          <div class="flex items-center gap-3 mb-5">
-            <div class="w-9 h-9 rounded-xl bg-brand-gradient flex items-center justify-center shrink-0 shadow-md shadow-[#0344D3]/30">
-              <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.9 4.8L19 8.7l-4.1 3.1L16 17l-4-2.6L8 17l1.1-5.2L5 8.7l5.1-1.9L12 2z"/></svg>
-            </div>
-            <div>
-              <p class="text-sm font-semibold text-zinc-900">AutoBid AI</p>
-              <p class="text-xs text-zinc-400">Išsami analizė vykdoma…</p>
-            </div>
-          </div>
-          <ul id="thinking-steps" class="space-y-2.5"></ul>
-        </div>
-
-        <div id="analysis-results" class="hidden mt-5"></div>
-        <p id="analysis-error" class="hidden mt-3 text-sm text-amber-700"></p>
-      </section>
-
-      <!-- 1. Summary recommendation -->
-      <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Rekomendacija <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
-        <div class="border-l-4 border-amber-300 pl-4 py-1">
-          <p class="text-base text-zinc-800 leading-relaxed">
-            Potencialiai pelningas sandoris, tačiau verta statyti ne daugiau nei
-            <strong class="text-zinc-900">€8,900</strong>. Priekinė kairė pusė su pažeidimais kelia vidutinę
-            remonto riziką. Rekomenduojama tiksliai suplanuoti remonto biudžetą prieš dalyvaujant aukcione.
-          </p>
-        </div>
-      </section>
-
-      <!-- 2. Financial breakdown -->
-      <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Finansinė analizė <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
-        <div>
-          {costs.map(row => (
-            <div class:list={[
-              'flex items-center justify-between py-3',
-              row.type !== 'profit' ? 'border-b' : '',
-              row.type === 'item'   ? 'border-zinc-100' : 'border-zinc-200',
-            ]}>
-              <span class:list={[
-                'text-sm',
-                row.type === 'item'   ? 'text-zinc-600'         : '',
-                row.type === 'total'  ? 'text-zinc-800 font-semibold' : '',
-                row.type === 'profit' ? 'text-zinc-900 font-bold text-base mt-1 block' : '',
-              ]}>{row.label}</span>
-              <span class:list={[
-                'text-sm font-medium tabular-nums',
-                row.type === 'item'   ? 'text-zinc-700'         : '',
-                row.type === 'total'  ? 'text-zinc-900 font-semibold' : '',
-                row.type === 'profit' ? 'text-emerald-600 font-bold text-base' : '',
-              ]}>{row.value}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <!-- 3. Max bid calculator -->
-      <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Maksimalaus statymo skaičiuoklė <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {scenarios.map(sc => (
-            <div class:list={[
-              'rounded-xl border-2 p-5 text-center transition-shadow',
-              sc.featured ? 'border-[#0344D3] bg-blue-50' : 'border-zinc-200',
-            ]}>
-              <p class:list={[
-                'text-[10px] font-bold uppercase tracking-widest mb-3',
-                sc.featured ? 'text-[#0344D3]' : 'text-zinc-400',
-              ]}>
-                {sc.featured ? '★ Rekomenduojamas' : 'Scenarijus'}
-              </p>
-              <p class="text-[11px] text-zinc-500 mb-0.5">Norimas pelnas</p>
-              <p class="text-3xl font-bold text-zinc-900 mb-4">€{sc.profit}</p>
-              <div class:list={['rounded-xl p-3', sc.featured ? 'bg-brand-gradient' : 'bg-zinc-100']}>
-                <p class:list={['text-[10px] mb-1', sc.featured ? 'text-blue-200' : 'text-zinc-500']}>Maks. statymas</p>
-                <p class:list={['text-2xl font-bold', sc.featured ? 'text-white' : 'text-zinc-900']}>
-                  €{sc.maxBid.toLocaleString('lt-LT')}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <!-- 4. Damage analysis -->
-      <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
-          Žalos analizė <span id="demo-damage" class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span>
-        </h2>
-
-        <!-- Real AI results (filled by "Išsami analizė"); hidden until then -->
-        <div id="damage-results" class="hidden"></div>
-        <p id="damage-error" class="hidden text-sm text-amber-700 mb-3"></p>
-
-        <!-- Demo placeholder — hidden once real analysis runs -->
-        <div id="damage-demo" class="space-y-3">
-          {damage.map(d => (
-            <div class="flex items-start gap-4 p-4 border border-zinc-100 rounded-xl hover:border-zinc-200 transition-colors">
-              <div class:list={[
-                'mt-1 w-2.5 h-2.5 rounded-full shrink-0',
-                d.sev === 'high' ? 'bg-red-500' : d.sev === 'medium' ? 'bg-amber-400' : 'bg-emerald-400',
-              ]}/>
-              <div class="flex-1 min-w-0">
-                <div class="flex flex-wrap items-center gap-2 mb-1">
-                  <p class="text-sm font-semibold text-zinc-800">{d.title}</p>
-                  <span class:list={[
-                    'text-xs font-semibold px-2 py-0.5 rounded-md',
-                    d.sev === 'high'   ? 'bg-red-100 text-red-700'     :
-                    d.sev === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700',
-                  ]}>
-                    {d.sev === 'high' ? 'Didelė' : d.sev === 'medium' ? 'Vidutinė' : 'Maža'} rizika
-                  </span>
-                </div>
-                <p class="text-xs text-zinc-500 leading-relaxed">{d.detail}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <!-- 5. Market comparison -->
-      <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Rinkos palyginimas (LT) <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
-        <div class="space-y-3 mb-4">
-          {market.map(m => (
-            <div class="flex items-center gap-3">
-              <span class="text-xs text-zinc-500 w-36 shrink-0">{m.label}</span>
-              <div class="flex-1 h-4 bg-zinc-100 rounded-full overflow-hidden">
-                <div class="h-full rounded-full bg-brand-gradient opacity-75 transition-all" style={`width:${m.pct}%`}/>
-              </div>
-              <span class="text-xs font-semibold text-zinc-800 w-16 text-right tabular-nums">{m.value}</span>
-            </div>
-          ))}
-        </div>
-        <p class="text-xs text-zinc-400">Šaltinis: Autoplius.lt, Auto.lt · Panašūs modeliai ±20 000 km, ±2 metai</p>
-      </section>
-
-      <!-- 6. Liquidity / demand -->
-      <section class="bg-white border border-zinc-200 rounded-2xl p-6">
-        <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Paklausa ir likvidumas <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></h2>
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
-          <div>
-            <p class="text-xs text-zinc-400 mb-1">Paklausa LT</p>
-            <p class="text-sm font-bold text-emerald-600">Didelė ↑</p>
-          </div>
-          <div>
-            <p class="text-xs text-zinc-400 mb-1">Vid. dienos rinkoje</p>
-            <p class="text-sm font-bold text-zinc-800">21–35 d.</p>
-          </div>
-          <div>
-            <p class="text-xs text-zinc-400 mb-1">Populiari konfigūracija</p>
-            <p class="text-sm font-bold text-zinc-800">Dyzelis, 1.6</p>
-          </div>
-          <div>
-            <p class="text-xs text-zinc-400 mb-1">Aktyvūs skelbimai LT</p>
-            <p class="text-sm font-bold text-zinc-800">34</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 7. AI notes -->
-      <section class="bg-zinc-900 rounded-2xl p-6">
-        <div class="flex items-start gap-4">
-          <div class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0 mt-0.5">
-            <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8.25 7.5c0-2.485 1.686-4.5 3.75-4.5s3.75 2.015 3.75 4.5c0 1.74-.913 3.25-2.25 4.103V13.5a1.5 1.5 0 01-3 0v-1.897C8.913 10.75 8.25 9.24 8.25 7.5z"/>
-            </svg>
-          </div>
-          <div>
-            <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">DI pastabos <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded align-middle">DEMO</span></p>
-            <p class="text-sm text-zinc-400 leading-relaxed">
-              Ši analizė parengta remiantis aukciono duomenimis, matomais pažeidimais ir rinkos palyginimu.
-              Prieš dalyvaudami aukcione visada apžiūrėkite transporto priemonę arba paprašykite profesionalios
-              patikros. AutoBid neatsako už galutinius pirkimo sprendimus.
-            </p>
-          </div>
-        </div>
-      </section>
-
     </div>
   </div>
+</div>
+
+<!-- ── SEKCIJOS ── -->
+<div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-4">
+
+  <!-- 0. Realūs duomenys iš Supabase -->
+  <section id="real-specs" class="hidden bg-white border border-zinc-200 p-6">
+    <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">Automobilio duomenys</h2>
+    <dl id="real-specs-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4 text-sm"></dl>
+  </section>
+
+  <!-- 1. Pelno analizė + AI mygtukas -->
+  <section class="bg-white border border-zinc-200 p-6">
+    <div class="flex items-center justify-between gap-4 mb-1">
+      <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Pelno analizė</h2>
+      <button id="toggle-costs" type="button"
+              class="text-xs text-zinc-500 hover:text-zinc-900 transition-colors">Mano kaštai</button>
+    </div>
+    <p class="text-xs text-zinc-400 mb-4">
+      Skaičiuojama iš panašių skelbimų mūsų bazėje ir tavo nurodytos savikainos.
+    </p>
+
+    <!-- Kaštų parametrai -->
+    <div id="cost-panel"
+         class="hidden grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4 p-4 bg-zinc-50 border border-zinc-200">
+      <label class="text-[11px] text-zinc-500 font-medium">Aukciono mokestis, %
+        <input id="p-fee" type="number" min="0" step="0.5"
+               class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 text-sm text-zinc-900 focus:outline-none focus:border-zinc-900 transition-colors"/>
+      </label>
+      <label class="text-[11px] text-zinc-500 font-medium">Transportas, €
+        <input id="p-transport" type="number" min="0" step="50"
+               class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 text-sm text-zinc-900 focus:outline-none focus:border-zinc-900 transition-colors"/>
+      </label>
+      <label class="text-[11px] text-zinc-500 font-medium">Remontas, €
+        <input id="p-repair" type="number" min="0" step="50"
+               class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 text-sm text-zinc-900 focus:outline-none focus:border-zinc-900 transition-colors"/>
+      </label>
+      <label class="text-[11px] text-zinc-500 font-medium">Paruošimas, €
+        <input id="p-prep" type="number" min="0" step="50"
+               class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 text-sm text-zinc-900 focus:outline-none focus:border-zinc-900 transition-colors"/>
+      </label>
+      <label class="text-[11px] text-zinc-500 font-medium">Saugos rezervas, €
+        <input id="p-reserve" type="number" min="0" step="50"
+               class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 text-sm text-zinc-900 focus:outline-none focus:border-zinc-900 transition-colors"/>
+      </label>
+      <label class="text-[11px] text-zinc-500 font-medium">Norimas pelnas, €
+        <input id="p-target" type="number" min="0" step="100"
+               class="mt-1 w-full px-2.5 py-1.5 border border-zinc-300 text-sm text-zinc-900 focus:outline-none focus:border-zinc-900 transition-colors"/>
+      </label>
+      <div class="col-span-2 sm:col-span-3 flex justify-end">
+        <button id="save-costs" type="button"
+                class="px-3 py-1.5 text-xs font-semibold bg-zinc-950 hover:opacity-90 text-white transition-opacity">
+          Išsaugoti kaštus
+        </button>
+      </div>
+    </div>
+
+    <!-- AI mygtukas -->
+    <button id="run-analysis" type="button"
+            class="group relative w-full overflow-hidden py-3.5 bg-zinc-shine hover:opacity-90 text-white font-semibold transition-opacity">
+      <span class="relative z-10 inline-flex items-center justify-center gap-2 text-sm">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l1.9 4.8L19 8.7l-4.1 3.1L16 17l-4-2.6L8 17l1.1-5.2L5 8.7l5.1-1.9L12 2z"/>
+        </svg>
+        <span class="btn-label">Išsami AI analizė</span>
+      </span>
+      <span aria-hidden="true"
+            class="pointer-events-none absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/15 to-transparent">
+      </span>
+    </button>
+
+    <!-- "Mąstymo" animacija -->
+    <div id="analysis-thinking" class="hidden mt-5 border border-zinc-200 bg-zinc-50 p-5">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-8 h-8 bg-zinc-950 flex items-center justify-center shrink-0">
+          <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l1.9 4.8L19 8.7l-4.1 3.1L16 17l-4-2.6L8 17l1.1-5.2L5 8.7l5.1-1.9L12 2z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-zinc-900">Carbid AI</p>
+          <p class="text-xs text-zinc-400">Išsami analizė vykdoma…</p>
+        </div>
+      </div>
+      <ul id="thinking-steps" class="space-y-2.5"></ul>
+    </div>
+
+    <div id="analysis-results" class="hidden mt-5"></div>
+    <p id="analysis-error" class="hidden mt-3 text-sm text-amber-700"></p>
+  </section>
+
+  <!-- 2. Rekomendacija -->
+  <section class="bg-white border border-zinc-200 p-6">
+    <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">
+      Rekomendacija
+      <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
+    </h2>
+    <div class="border-l-4 border-zinc-900 pl-4 py-1">
+      <p class="text-base text-zinc-800 leading-relaxed">
+        Potencialiai pelningas sandoris, tačiau verta statyti ne daugiau nei
+        <strong class="text-zinc-900">€8 900</strong>. Priekinė kairė pusė su pažeidimais kelia vidutinę
+        remonto riziką. Rekomenduojama tiksliai suplanuoti remonto biudžetą prieš dalyvaujant aukcione.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. Finansinė analizė -->
+  <section class="bg-white border border-zinc-200 p-6">
+    <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
+      Finansinė analizė
+      <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
+    </h2>
+    <div>
+      {costs.map(row => (
+        <div class:list={[
+          'flex items-center justify-between py-3',
+          row.type !== 'profit' ? 'border-b' : '',
+          row.type === 'item'   ? 'border-zinc-100' : 'border-zinc-200',
+        ]}>
+          <span class:list={[
+            'text-sm',
+            row.type === 'item'   ? 'text-zinc-600' : '',
+            row.type === 'total'  ? 'text-zinc-800 font-semibold' : '',
+            row.type === 'profit' ? 'text-zinc-900 font-bold text-base mt-1 block' : '',
+          ]}>{row.label}</span>
+          <span class:list={[
+            'text-sm font-medium tabular-nums',
+            row.type === 'item'   ? 'text-zinc-700' : '',
+            row.type === 'total'  ? 'text-zinc-900 font-semibold' : '',
+            row.type === 'profit' ? 'text-emerald-600 font-bold text-base' : '',
+          ]}>{row.value}</span>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- 4. Maks. statymo skaičiuoklė -->
+  <section class="bg-white border border-zinc-200 p-6">
+    <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
+      Maksimalaus statymo skaičiuoklė
+      <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-px bg-zinc-200">
+      {scenarios.map(sc => (
+        <div class:list={['flex flex-col p-6 text-center', sc.featured ? 'bg-zinc-950' : 'bg-white']}>
+          <p class:list={[
+            'text-[10px] font-bold uppercase tracking-widest mb-3',
+            sc.featured ? 'text-zinc-400' : 'text-zinc-300',
+          ]}>
+            {sc.featured ? '★ Rekomenduojamas' : 'Scenarijus'}
+          </p>
+          <p class:list={['text-[11px] mb-0.5', sc.featured ? 'text-zinc-500' : 'text-zinc-400']}>
+            Norimas pelnas
+          </p>
+          <p class:list={['text-3xl font-semibold mb-5', sc.featured ? 'text-white' : 'text-zinc-900']}>
+            €{sc.profit}
+          </p>
+          <div class:list={[
+            'p-4 mt-auto border',
+            sc.featured ? 'border-zinc-800 bg-zinc-900' : 'border-zinc-100 bg-zinc-50',
+          ]}>
+            <p class:list={['text-[10px] mb-1', sc.featured ? 'text-zinc-500' : 'text-zinc-400']}>
+              Maks. statymas
+            </p>
+            <p class:list={['text-2xl font-semibold', sc.featured ? 'text-white' : 'text-zinc-900']}>
+              €{sc.maxBid.toLocaleString('lt-LT')}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- 5. Žalos analizė -->
+  <section class="bg-white border border-zinc-200 p-6">
+    <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
+      Žalos analizė
+      <span id="demo-damage"
+            class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
+    </h2>
+
+    <div id="damage-results" class="hidden"></div>
+    <p id="damage-error" class="hidden text-sm text-amber-700 mb-3"></p>
+
+    <div id="damage-demo" class="space-y-2">
+      {damage.map(d => (
+        <div class="flex items-start gap-4 p-4 border border-zinc-100 hover:border-zinc-200 transition-colors">
+          <div class:list={[
+            'mt-1 w-2.5 h-2.5 shrink-0',
+            d.sev === 'high' ? 'bg-red-500' : d.sev === 'medium' ? 'bg-amber-400' : 'bg-emerald-400',
+          ]}/>
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <p class="text-sm font-semibold text-zinc-800">{d.title}</p>
+              <span class:list={[
+                'text-xs font-semibold px-2 py-0.5',
+                d.sev === 'high'   ? 'bg-red-100 text-red-700'     :
+                d.sev === 'medium' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700',
+              ]}>
+                {d.sev === 'high' ? 'Didelė' : d.sev === 'medium' ? 'Vidutinė' : 'Maža'} rizika
+              </span>
+            </div>
+            <p class="text-xs text-zinc-500 leading-relaxed">{d.detail}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- 6. Rinkos palyginimas -->
+  <section class="bg-white border border-zinc-200 p-6">
+    <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
+      Rinkos palyginimas (LT)
+      <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
+    </h2>
+    <div class="space-y-3 mb-4">
+      {market.map(m => (
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-zinc-500 w-36 shrink-0">{m.label}</span>
+          <div class="flex-1 h-1.5 bg-zinc-100 overflow-hidden">
+            <div class="h-full bg-zinc-900 opacity-70 transition-all" style={`width:${m.pct}%`}/>
+          </div>
+          <span class="text-xs font-semibold text-zinc-800 w-20 text-right tabular-nums">{m.value}</span>
+        </div>
+      ))}
+    </div>
+    <p class="text-xs text-zinc-400">Šaltinis: Autoplius.lt, Auto.lt · Panašūs modeliai ±20 000 km, ±2 metai</p>
+  </section>
+
+  <!-- 7. Paklausa ir likvidumas -->
+  <section class="bg-white border border-zinc-200 p-6">
+    <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
+      Paklausa ir likvidumas
+      <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
+    </h2>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-px bg-zinc-100">
+      <div class="bg-white p-4">
+        <p class="text-xs text-zinc-400 mb-1.5">Paklausa LT</p>
+        <p class="text-sm font-bold text-emerald-600">Didelė ↑</p>
+      </div>
+      <div class="bg-white p-4">
+        <p class="text-xs text-zinc-400 mb-1.5">Vid. dienos rinkoje</p>
+        <p class="text-sm font-bold text-zinc-800">21–35 d.</p>
+      </div>
+      <div class="bg-white p-4">
+        <p class="text-xs text-zinc-400 mb-1.5">Populiari konfigūracija</p>
+        <p class="text-sm font-bold text-zinc-800">Dyzelis, 1.6</p>
+      </div>
+      <div class="bg-white p-4">
+        <p class="text-xs text-zinc-400 mb-1.5">Aktyvūs skelbimai LT</p>
+        <p class="text-sm font-bold text-zinc-800">34</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. AI pastabos -->
+  <section class="bg-zinc-950 p-6 mb-4">
+    <div class="flex items-start gap-4">
+      <div class="w-8 h-8 bg-zinc-800 flex items-center justify-center shrink-0 mt-0.5">
+        <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 18h.01M8.25 7.5c0-2.485 1.686-4.5 3.75-4.5s3.75 2.015 3.75 4.5c0 1.74-.913 3.25-2.25 4.103V13.5a1.5 1.5 0 01-3 0v-1.897C8.913 10.75 8.25 9.24 8.25 7.5z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2">
+          DI pastabos
+          <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
+        </p>
+        <p class="text-sm text-zinc-400 leading-relaxed">
+          Ši analizė parengta remiantis aukciono duomenimis, matomais pažeidimais ir rinkos palyginimu.
+          Prieš dalyvaudami aukcione visada apžiūrėkite transporto priemonę arba paprašykite profesionalios
+          patikros. Carbid neatsako už galutinius pirkimo sprendimus.
+        </p>
+      </div>
+    </div>
+  </section>
+
 </div>
 
 <script>
@@ -440,7 +521,7 @@ const market = [
     backBtn.href = document.referrer;
   }
 
-  // Real auction end date (scraped) → live countdown, replacing the demo value.
+  // Atgalinis laikas iš URL parametrų
   const end = p.get('end') || '';
   const endDate = end ? new Date(end) : null;
   if (endDate && !isNaN(endDate.getTime())) {
@@ -455,19 +536,14 @@ const market = [
         endsEl.textContent = 'Pasibaigęs';
       }
     }
-    // Real data now — drop the DEMO marker on this metric.
     document.getElementById('ends-demo')?.remove();
   }
 
-  // Original auction link — only shown when the card passed a valid http(s) url.
+  // Nuoroda į aukcioną iš URL
   const auctionUrl = p.get('url') || '';
   if (/^https?:\/\//i.test(auctionUrl)) {
     const link = document.getElementById('auction-link') as HTMLAnchorElement | null;
-    if (link) {
-      link.href = auctionUrl;
-      link.classList.remove('hidden');
-      link.classList.add('inline-flex');
-    }
+    if (link) { link.href = auctionUrl; link.classList.remove('hidden'); link.classList.add('inline-flex'); }
   }
 
   if (make || model) {
@@ -487,16 +563,14 @@ const market = [
       const priceEl = document.getElementById('car-price');
       if (priceEl) priceEl.textContent = '€' + Number(price).toLocaleString('lt-LT');
     }
-
     if (source) {
       const sourceEl = document.getElementById('car-source');
       if (sourceEl) sourceEl.textContent = source;
     }
-
-    document.title = [title, year, '— AutoBid analizė'].filter(Boolean).join(' ');
+    document.title = [title, year, '— Carbid analizė'].filter(Boolean).join(' ');
   }
 
-  // ── Authoritative real data from Supabase (by listing id) ──────────────────
+  // ── Realūs duomenys iš Supabase ─────────────────────────────────────────────
   const id = p.get('id');
   if (id && sb) {
     sb.from('listings').select('*').eq('id', id).single().then(({ data, error }) => {
@@ -513,7 +587,6 @@ const market = [
     const fuel = fuelLabel[String(r.fuel_type).toLowerCase()] ?? r.fuel_type ?? null;
     const gear = gearLabel[String(r.transmission).toLowerCase()] ?? r.transmission ?? null;
 
-    // Price with the real scraped currency.
     if (r.price != null) {
       const priceEl = document.getElementById('car-price');
       if (priceEl) {
@@ -528,14 +601,14 @@ const market = [
     if (title) {
       document.getElementById('car-title')!.textContent = title;
       document.getElementById('car-breadcrumb')!.textContent = [title, r.year].filter(Boolean).join(' ');
-      document.title = [title, r.year, '— AutoBid analizė'].filter(Boolean).join(' ');
+      document.title = [title, r.year, '— Carbid analizė'].filter(Boolean).join(' ');
     }
     const loc = [r.location_city, r.location_country].filter(Boolean).join(', ');
     const sub = [r.year, r.mileage_km != null ? num(r.mileage_km) + ' km' : null, fuel, gear, loc || null].filter(Boolean).join(' · ');
     if (sub) document.getElementById('car-subtitle')!.textContent = sub;
     if (r.source) document.getElementById('car-source')!.textContent = cap(r.source);
 
-    // Authoritative end-date countdown.
+    // Realus atgalinis laikas
     if (r.auction_end_date) {
       const dt = new Date(r.auction_end_date);
       const endsEl = document.getElementById('car-ends');
@@ -551,13 +624,13 @@ const market = [
       }
     }
 
-    // Auction link.
+    // Aukcionų nuoroda
     if (typeof r.url === 'string' && /^https?:\/\//i.test(r.url)) {
       const link = document.getElementById('auction-link') as HTMLAnchorElement | null;
       if (link) { link.href = r.url; link.classList.remove('hidden'); link.classList.add('inline-flex'); }
     }
 
-    // Full real spec list — only fields that are actually present.
+    // Specifikacija
     const fmtDate = (d: string) => { const x = new Date(d); return isNaN(x.getTime()) ? d : x.toLocaleDateString('lt-LT'); };
     const specs: [string, string | null][] = [
       ['Komplektacija', r.trim ?? null],
@@ -583,16 +656,17 @@ const market = [
       document.getElementById('real-specs')?.classList.remove('hidden');
     }
 
-    // Single photo + "+N" badge linking to the auction (we don't show the rest).
+    // Nuotrauka
     const imgs = Array.isArray(r.image_urls) ? r.image_urls.filter((x: unknown) => typeof x === 'string') : [];
     if (imgs.length) {
-      const wrap = document.getElementById('car-photo-wrap');
       const img = document.getElementById('car-photo') as HTMLImageElement | null;
-      if (wrap && img) {
+      const placeholder = document.getElementById('car-photo-placeholder');
+      if (img) {
         img.alt = title || 'Automobilis';
-        img.onerror = () => wrap.classList.add('hidden');
+        img.onerror = () => { img.classList.add('hidden'); placeholder?.classList.remove('hidden'); };
         img.src = imgs[0];
-        wrap.classList.remove('hidden');
+        img.classList.remove('hidden');
+        placeholder?.classList.add('hidden');
 
         const more = imgs.length - 1;
         const moreEl = document.getElementById('car-photo-more') as HTMLAnchorElement | null;
@@ -607,7 +681,7 @@ const market = [
     }
   }
 
-  // ── Reseller cost params (localStorage) ────────────────────────────────────
+  // ── Kaštų parametrai (localStorage) ─────────────────────────────────────────
   const PARAMS_KEY = 'autobid_costs';
   const $ = (id2: string) => document.getElementById(id2) as HTMLInputElement | null;
 
@@ -637,7 +711,6 @@ const market = [
   let userParams = loadParams();
   paramsToForm(userParams);
 
-  // Prefill repair estimate from the car's condition the first time only.
   function initRepairDefault(rec: any) {
     if (!localStorage.getItem(PARAMS_KEY) && rec?.condition && $('p-repair')) {
       const rep = defaultRepairForCondition(rec.condition);
@@ -655,9 +728,9 @@ const market = [
     document.getElementById('cost-panel')?.classList.add('hidden');
   });
 
-  // ── Run analysis (A+B + AI damage) with a premium "thinking" sequence ───────
+  // ── "Išsami AI analizė" ──────────────────────────────────────────────────────
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-  const spinSvg = '<svg class="w-4 h-4 text-[#0344D3] animate-spin shrink-0" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" stroke-opacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>';
+  const spinSvg = '<svg class="w-4 h-4 text-zinc-700 animate-spin shrink-0" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" stroke-opacity="0.2"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>';
   const checkSvg = '<svg class="w-4 h-4 text-emerald-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
   const spinRow = (t: string) => `${spinSvg}<span>${t}</span>`;
   const doneRow = (t: string) => `${checkSvg}<span class="text-zinc-400">${t}</span>`;
@@ -689,7 +762,6 @@ const market = [
     btn.disabled = true;
     document.getElementById('analysis-results')!.classList.add('hidden');
 
-    // Real work runs in parallel with the animation.
     const work = (async (): Promise<AnalysisResult | null> => {
       await runDamageAnalysis(rec);
       let q = sb!.from('listings').select('price, mileage_km, year, source')
@@ -699,11 +771,10 @@ const market = [
       if (error) return null;
       let comps = (compsRaw || []) as any[];
       if (mil != null) comps = comps.filter((c) => c.mileage_km == null || Math.abs(c.mileage_km - mil) <= mil * 0.3);
-      userParams = formToParams(); // includes the AI repair estimate
+      userParams = formToParams();
       return analyze({ price: Number(prc), mileage_km: mil, comps, params: userParams });
     })();
 
-    // Animated thinking — the last step keeps spinning until the real work ends.
     const wrap = document.getElementById('analysis-thinking')!;
     const list = document.getElementById('thinking-steps')!;
     wrap.classList.remove('hidden');
@@ -747,7 +818,7 @@ const market = [
   function renderAnalysis(a: AnalysisResult) {
     const resEl = document.getElementById('analysis-results')!;
     if (a.resale == null) {
-      resEl.innerHTML = `<div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">Per mažai palyginamų skelbimų rinkos vertei nustatyti. Reikia daugiau šio modelio duomenų bazėje.</div>`;
+      resEl.innerHTML = `<div class="p-4 bg-amber-50 border border-amber-200 text-sm text-amber-800">Per mažai palyginamų skelbimų rinkos vertei nustatyti. Reikia daugiau šio modelio duomenų bazėje.</div>`;
       resEl.classList.remove('hidden');
       return;
     }
@@ -757,11 +828,11 @@ const market = [
       `<div class="flex justify-between py-1.5 border-b border-zinc-100 text-sm"><span class="text-zinc-500">${b.label}</span><span class="text-zinc-800 font-medium">${eur(b.value)}</span></div>`
     ).join('');
     resEl.innerHTML = `
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        <div class="bg-zinc-50 rounded-xl p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Rinkos vertė (LT)</p><p class="text-lg font-bold text-zinc-900">${eur(a.resale)}</p></div>
-        <div class="bg-zinc-50 rounded-xl p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Savikaina</p><p class="text-lg font-bold text-zinc-900">${eur(a.landed)}</p></div>
-        <div class="bg-zinc-50 rounded-xl p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Pelnas</p><p class="text-lg font-bold ${profitColor}">${eur(a.profit)}</p></div>
-        <div class="bg-zinc-50 rounded-xl p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Maks. statymas</p><p class="text-lg font-bold text-zinc-900">${eur(a.maxBid)}</p></div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-px bg-zinc-200 mb-5">
+        <div class="bg-zinc-50 p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Rinkos vertė (LT)</p><p class="text-lg font-bold text-zinc-900">${eur(a.resale)}</p></div>
+        <div class="bg-zinc-50 p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Savikaina</p><p class="text-lg font-bold text-zinc-900">${eur(a.landed)}</p></div>
+        <div class="bg-zinc-50 p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Pelnas</p><p class="text-lg font-bold ${profitColor}">${eur(a.profit)}</p></div>
+        <div class="bg-zinc-50 p-3"><p class="text-[10px] text-zinc-400 uppercase tracking-wider mb-1">Maks. statymas</p><p class="text-lg font-bold text-zinc-900">${eur(a.maxBid)}</p></div>
       </div>
       <div class="mb-4">
         <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-2">Savikainos išklotinė</p>
@@ -785,17 +856,14 @@ const market = [
     }
   }
 
-  // ── AI damage analysis (Stage C) — part of "Išsami analizė" ─────────────────
-  // Calls the Supabase Edge Function, renders the damage section, and writes the
-  // repair midpoint into the cost params so the profit math includes it.
-  // Failures are non-fatal: profit analysis still runs without it.
+  // ── AI žalos analizė ─────────────────────────────────────────────────────────
   async function runDamageAnalysis(rec: any): Promise<void> {
     const errEl = document.getElementById('damage-error')!;
     errEl.classList.add('hidden');
     const imgs = Array.isArray(rec?.image_urls)
       ? rec.image_urls.filter((x: any) => typeof x === 'string' && /^https?:\/\//i.test(x))
       : [];
-    if (!sb || !sbUrl || !sbKey || !imgs.length) return; // can't / nothing to analyse — skip silently
+    if (!sb || !sbUrl || !sbKey || !imgs.length) return;
     try {
       const resp = await fetch(`${sbUrl}/functions/v1/analyze-damage`, {
         method: 'POST',
@@ -806,7 +874,6 @@ const market = [
       if (!resp.ok || !data.report) throw new Error(data.error || 'klaida');
       const rep = data.report;
       renderDamage(rep);
-      // Feed the repair midpoint into the cost params (used by the profit math).
       const r0 = rep.estimated_repair_eur || {};
       const mid = Math.round(((Number(r0.min) || 0) + (Number(r0.max) || 0)) / 2);
       if (mid > 0 && $('p-repair')) {
@@ -829,12 +896,12 @@ const market = [
     const repMin = Number(r0.min) || 0, repMax = Number(r0.max) || 0;
     const rows = items.length
       ? items.map((d: any) => `
-        <div class="flex items-start gap-4 p-4 border border-zinc-100 rounded-xl">
-          <div class="mt-1 w-2.5 h-2.5 rounded-full shrink-0 ${sevDot[d.severity] || 'bg-zinc-300'}"></div>
+        <div class="flex items-start gap-4 p-4 border border-zinc-100 hover:border-zinc-200 transition-colors">
+          <div class="mt-1 w-2.5 h-2.5 shrink-0 ${sevDot[d.severity] || 'bg-zinc-300'}"></div>
           <div class="flex-1 min-w-0">
             <div class="flex flex-wrap items-center gap-2 mb-1">
               <p class="text-sm font-semibold text-zinc-800">${esc(d.area)}</p>
-              <span class="text-xs font-semibold px-2 py-0.5 rounded-md ${sevChip[d.severity] || 'bg-zinc-100 text-zinc-600'}">${sevLabel[d.severity] || '—'} rizika</span>
+              <span class="text-xs font-semibold px-2 py-0.5 ${sevChip[d.severity] || 'bg-zinc-100 text-zinc-600'}">${sevLabel[d.severity] || '—'} rizika</span>
               ${d.estimated_cost_eur != null ? `<span class="text-xs text-zinc-500">~€${Number(d.estimated_cost_eur).toLocaleString('lt-LT')}</span>` : ''}
             </div>
             <p class="text-xs text-zinc-500 leading-relaxed">${esc(d.description)}</p>
@@ -843,8 +910,8 @@ const market = [
       : `<p class="text-sm text-zinc-500">Matomų pažeidimų nuotraukose nenustatyta.</p>`;
     const resEl = document.getElementById('damage-results')!;
     resEl.innerHTML = `
-      ${rep.summary ? `<p class="text-sm text-zinc-700 mb-4 border-l-4 border-amber-300 pl-4 py-1">${esc(rep.summary)}</p>` : ''}
-      <div class="space-y-3">${rows}</div>
+      ${rep.summary ? `<p class="text-sm text-zinc-700 mb-4 border-l-4 border-zinc-900 pl-4 py-1">${esc(rep.summary)}</p>` : ''}
+      <div class="space-y-2">${rows}</div>
       <div class="mt-4 pt-4 border-t border-zinc-100">
         <p class="text-sm"><span class="text-zinc-500">Numatoma remonto sąmata:</span> <span class="font-bold text-zinc-900">€${repMin.toLocaleString('lt-LT')}–€${repMax.toLocaleString('lt-LT')}</span> <span class="text-xs text-zinc-400">— įskaičiuota į pelno analizę</span></p>
       </div>`;
@@ -853,4 +920,5 @@ const market = [
     document.getElementById('demo-damage')?.remove();
   }
 </script>
+
 </BaseLayout>

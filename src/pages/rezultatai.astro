@@ -152,23 +152,23 @@ const totalCount = count ?? results.length;
         const meta = [year ?? '—', fmtKm(km), fuel, gear].filter(Boolean).join(' · ');
         const href = `/auto/demo?id=${id ?? ''}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (end ? `&end=${encodeURIComponent(end)}` : '') + (url ? `&url=${encodeURIComponent(url)}` : '');
         return (
-          <a data-end={end ?? ''} href={href} class="card group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+          <a data-end={end ?? ''} href={href} class="card group bg-white border border-zinc-200 overflow-hidden hover:border-zinc-900 transition-colors duration-200 flex flex-col">
 
-            <!-- Photo (falls back to a placeholder car icon when none was scraped) -->
-            <div class="relative h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center shrink-0 overflow-hidden">
+            <!-- Photo -->
+            <div class="relative h-44 bg-zinc-100 flex items-center justify-center shrink-0 overflow-hidden border-b border-zinc-200 group-hover:border-zinc-900 transition-colors duration-200">
               {image ? (
                 <img src={image} alt={`${make} ${model}`} loading="lazy" decoding="async"
-                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-200"/>
+                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"/>
               ) : (
                 <svg class="w-12 h-12 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.75">
                   <circle cx="6" cy="17.5" r="1.75" stroke-width="1"/><circle cx="18" cy="17.5" r="1.75" stroke-width="1"/>
                   <path stroke-linecap="round" stroke-linejoin="round" d="M4.25 17.5H3V13l2-5h14l2 5v4.5h-1.25M7.75 17.5h8.5M8 8l2-2.5h4l2 2.5"/>
                 </svg>
               )}
-              <span class:list={['absolute top-2.5 left-2.5 px-1.5 py-0.5 rounded-md text-xs font-medium', sourceBadge[source] ?? 'bg-zinc-100 text-zinc-600']}>
+              <span class="absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide bg-zinc-950 text-white">
                 {source}
               </span>
-              <span class:list={['absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold tracking-wide', st.chip]}>
+              <span class:list={['absolute top-2.5 right-2.5 px-2 py-0.5 text-[10px] font-bold tracking-wide', st.chip]}>
                 {st.label}
               </span>
             </div>
@@ -176,16 +176,16 @@ const totalCount = count ?? results.length;
             <!-- Card body -->
             <div class="p-4 flex flex-col flex-1">
               <div class="flex items-start justify-between gap-2 mb-1">
-                <h3 class="text-sm font-semibold text-zinc-800 group-hover:text-zinc-900 leading-snug min-w-0 truncate">{make} {model}</h3>
+                <h3 class="text-sm font-semibold text-zinc-900 leading-snug min-w-0 truncate">{make} {model}</h3>
                 <div class="flex items-center gap-1 shrink-0">
-                  <div class:list={['w-2 h-2 rounded-full shrink-0', st.dot]}/>
+                  <div class:list={['w-2 h-2 shrink-0', st.dot]}/>
                   <span class="text-xs font-bold text-zinc-700">{score ?? '—'}</span>
                 </div>
               </div>
               <p class="text-xs text-zinc-400 mb-3">{meta}</p>
-              <div class="mt-auto flex items-center justify-between">
+              <div class="mt-auto pt-3 flex items-center justify-between border-t border-zinc-100 group-hover:border-zinc-200 transition-colors">
                 <span class="text-base font-bold text-zinc-900">{fmtPrice(price)}</span>
-                <span class="text-xs text-[#0344D3] font-medium group-hover:underline">Analizė →</span>
+                <span class="text-xs text-zinc-500 font-medium group-hover:text-zinc-900 transition-colors">Analizė →</span>
               </div>
             </div>
 
@@ -198,7 +198,7 @@ const totalCount = count ?? results.length;
     <div class="flex flex-col items-center gap-3 pb-8">
       <button id="load-more" data-total={totalCount} data-page-size={PAGE_SIZE} data-build-date={nowIso}
               style={results.length >= totalCount ? 'display:none' : ''}
-              class="px-8 py-3 border border-zinc-300 hover:border-zinc-400 text-zinc-700 text-sm font-medium rounded-xl bg-white hover:bg-zinc-50 transition-colors disabled:opacity-50">
+              class="px-8 py-3 border border-zinc-300 hover:border-zinc-900 text-zinc-700 text-sm font-medium bg-white transition-colors disabled:opacity-50">
         Rodyti daugiau
       </button>
       <p class="text-xs text-zinc-400">Rodoma <span id="shown-count">{results.length}</span> iš <span id="total-count">{totalCount.toLocaleString('lt-LT')}</span> skelbimų</p>
@@ -306,21 +306,21 @@ const totalCount = count ?? results.length;
     const photo = image
       ? `<img src="${esc(image)}" alt="${title}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-200">`
       : PLACEHOLDER;
-    return `<a data-end="${esc(r.auction_end_date ?? '')}" href="${href}" class="card group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
-      <div class="relative h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center shrink-0 overflow-hidden">
+    return `<a data-end="${esc(r.auction_end_date ?? '')}" href="${href}" class="card group bg-white border border-zinc-200 overflow-hidden hover:border-zinc-900 transition-colors duration-200 flex flex-col">
+      <div class="relative h-44 bg-zinc-100 flex items-center justify-center shrink-0 overflow-hidden border-b border-zinc-200 group-hover:border-zinc-900 transition-colors duration-200">
         ${photo}
-        <span class="absolute top-2.5 left-2.5 px-1.5 py-0.5 rounded-md text-xs font-medium ${badge}">${esc(source)}</span>
-        <span class="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold tracking-wide bg-zinc-100 text-zinc-500">NAUJAS</span>
+        <span class="absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide bg-zinc-950 text-white">${esc(source)}</span>
+        <span class="absolute top-2.5 right-2.5 px-2 py-0.5 text-[10px] font-bold tracking-wide bg-zinc-100 text-zinc-500">NAUJAS</span>
       </div>
       <div class="p-4 flex flex-col flex-1">
         <div class="flex items-start justify-between gap-2 mb-1">
-          <h3 class="text-sm font-semibold text-zinc-800 group-hover:text-zinc-900 leading-snug min-w-0 truncate">${title}</h3>
-          <div class="flex items-center gap-1 shrink-0"><div class="w-2 h-2 rounded-full shrink-0 bg-zinc-300"></div><span class="text-xs font-bold text-zinc-700">—</span></div>
+          <h3 class="text-sm font-semibold text-zinc-900 leading-snug min-w-0 truncate">${title}</h3>
+          <div class="flex items-center gap-1 shrink-0"><div class="w-2 h-2 shrink-0 bg-zinc-300"></div><span class="text-xs font-bold text-zinc-700">—</span></div>
         </div>
         <p class="text-xs text-zinc-400 mb-3">${esc(meta)}</p>
-        <div class="mt-auto flex items-center justify-between">
+        <div class="mt-auto pt-3 flex items-center justify-between border-t border-zinc-100 group-hover:border-zinc-200 transition-colors">
           <span class="text-base font-bold text-zinc-900">${fmtPrice(price)}</span>
-          <span class="text-xs text-[#0344D3] font-medium group-hover:underline">Analizė →</span>
+          <span class="text-xs text-zinc-500 font-medium group-hover:text-zinc-900 transition-colors">Analizė →</span>
         </div>
       </div>
     </a>`;

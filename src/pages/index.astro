@@ -319,28 +319,29 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
         <a href="/registracija" class="text-xs text-zinc-500 hover:text-zinc-800 transition-colors" data-anim="up" data-anim-delay="120">Visi skelbimai →</a>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-100" data-anim-stagger>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" data-anim-stagger>
         {deals.map(({ id, make, model, year, km, price, source, image, end, url }) => (
-          <a href={`/auto/demo?id=${id ?? ''}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (end ? `&end=${encodeURIComponent(end)}` : '') + (url ? `&url=${encodeURIComponent(url)}` : '')} class="group bg-white hover:bg-zinc-50 transition-colors flex flex-col">
-            <div class="relative w-full h-40 bg-zinc-100 flex items-center justify-center overflow-hidden">
+          <a href={`/auto/demo?id=${id ?? ''}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (end ? `&end=${encodeURIComponent(end)}` : '') + (url ? `&url=${encodeURIComponent(url)}` : '')}
+             class="group flex flex-col border border-zinc-200 hover:border-zinc-900 transition-colors duration-200">
+            <div class="relative w-full h-44 bg-zinc-100 flex items-center justify-center overflow-hidden border-b border-zinc-200 group-hover:border-zinc-900 transition-colors duration-200">
               {image ? (
                 <img src={image} alt={`${make} ${model}`} loading="lazy" decoding="async"
-                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"/>
+                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"/>
               ) : (
                 <svg class="w-10 h-10 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
                 </svg>
               )}
-              <span class:list={['absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide', sourceBadge[source] ?? 'bg-zinc-100 text-zinc-600']}>
+              <span class="absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide bg-zinc-950 text-white">
                 {source}
               </span>
             </div>
-            <div class="p-4 flex flex-col flex-1">
-              <h3 class="text-sm font-medium text-zinc-800 group-hover:text-zinc-900 transition-colors">{make} {model}</h3>
+            <div class="p-4 flex flex-col flex-1 bg-white">
+              <h3 class="text-sm font-medium text-zinc-900">{make} {model}</h3>
               <p class="text-xs text-zinc-400 mt-0.5">{year} · {fmtKm(km)}</p>
-              <div class="mt-auto pt-4 flex items-center justify-between">
+              <div class="mt-auto pt-3 flex items-center justify-between border-t border-zinc-100 group-hover:border-zinc-200 transition-colors">
                 <span class="text-base font-semibold text-zinc-900">{fmtPrice(price)}</span>
-                <span class="text-xs text-zinc-400 group-hover:text-zinc-700 transition-colors">Žiūrėti →</span>
+                <span class="text-xs text-zinc-400 group-hover:text-zinc-900 transition-colors">Žiūrėti →</span>
               </div>
             </div>
           </a>
