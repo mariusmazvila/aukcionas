@@ -21,9 +21,6 @@ const years     = Array.from({length:36},(_,i)=>2025-i);
 
 const sources = ['Autoplius.lt','Auto.lt','Autogidas.lt','Mobile.de','AutoScout24','BCA','Copart'];
 
-
-// Featured cars: live from Supabase, pick ones with a real price so the
-// homepage cards look complete. Runs server-side on each request in dev.
 const cap = (s: string | null) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : '—');
 const { data: dealRows } = supabase
   ? await supabase
@@ -39,8 +36,6 @@ const { data: dealRows } = supabase
 const firstImage = (v: unknown): string | null =>
   Array.isArray(v) && v.length > 0 && typeof v[0] === 'string' ? v[0] : null;
 
-// Original auction URL — column name is backend-owned, so scan every field:
-// a link-hinting key wins, else the first non-image http(s) value.
 const isImgUrl = (s: string) => /\.(jpe?g|png|webp|gif|avif|svg)(\?|$)/i.test(s);
 const pickUrl = (r: Record<string, unknown>): string | null => {
   let fallback: string | null = null;
@@ -53,8 +48,6 @@ const pickUrl = (r: Record<string, unknown>): string | null => {
   return fallback;
 };
 
-// Skip the link for ended auctions (they redirect to generic pages). The only
-// liveness signal in the schema is auction_end_date.
 const isLive = (r: Record<string, unknown>): boolean => {
   const end = r.auction_end_date;
   return typeof end === 'string' && new Date(end).getTime() >= Date.now();
@@ -87,19 +80,19 @@ const articles = [
     date:'2026-06-01', readMin:7,
   },
   {
-    slug:'kaip-veikia-autobid',
-    title:'Kaip AutoBid sutaupo 5+ valandas per savaitę automobilių pardavėjui',
+    slug:'kaip-veikia-carbid',
+    title:'Kaip Carbid sutaupo 5+ valandas per savaitę automobilių pardavėjui',
     excerpt:'Realus use case: kaip suderinti 4 aukcionų monitoringą vienu dashboardu ir nebepraleidinėti gerų pasiūlymų.',
     date:'2026-05-28', readMin:4,
   },
 ];
 
 const sourceBadge: Record<string,string> = {
-  'Autoplius.lt':'bg-orange-100 text-orange-700',
-  'Mobile.de':   'bg-sky-100 text-sky-700',
-  'AutoScout24': 'bg-emerald-100 text-emerald-700',
-  'Auto.lt':     'bg-violet-100 text-violet-700',
-  'Alcopa':      'bg-indigo-100 text-indigo-700',
+  'Autoplius.lt':'bg-zinc-100 text-zinc-600',
+  'Mobile.de':   'bg-zinc-100 text-zinc-600',
+  'AutoScout24': 'bg-zinc-100 text-zinc-600',
+  'Auto.lt':     'bg-zinc-100 text-zinc-600',
+  'Alcopa':      'bg-zinc-100 text-zinc-600',
 };
 
 function fmtPrice(p:number|null){ return p==null ? 'Kaina sutartinė' : p.toLocaleString('lt-LT')+' €'; }
@@ -108,258 +101,254 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
 ---
 
 <BaseLayout
-  title="Automobilių aukcionų stebėjimas"
-  description="AutoBid — rask geriausias mašinas iš Autoplius, Mobile.de, AutoScout24 ir kitų aukcionų. Vienas ekranas, realus laikas."
+  title="Carbid — automobilių aukcionų stebėjimas"
+  description="Carbid — rask geriausias mašinas iš Autoplius, Mobile.de, AutoScout24 ir kitų aukcionų. Vienas ekranas, realus laikas."
 >
 
   <!-- ══════════ HERO + SEARCH ══════════ -->
-  <section class="relative px-6 pt-20 pb-16 overflow-hidden" style="background-image:url('/images/sports-car-1.webp');background-size:cover;background-position:center;">
+  <section id="hero" class="relative flex flex-col lg:flex-row min-h-screen overflow-hidden" style="background-image:url('/images/sports-car-1.webp');background-size:cover;background-position:center;">
+    <div class="absolute inset-0 bg-zinc-950/75" aria-hidden="true"></div>
 
-    <!-- Dark overlay -->
-    <div class="absolute inset-0 bg-zinc-950/65" aria-hidden="true"></div>
-    <div class="relative z-10 max-w-3xl mx-auto">
+    <!-- LEFT: Search panel -->
+    <div class="relative z-10 w-full lg:w-[500px] xl:w-[560px] bg-black/70 backdrop-blur-sm lg:border-r border-white/10 flex flex-col pt-20 px-8 pb-8">
 
-      <h1 class="text-5xl sm:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-4">
-        Svajok šiandien.<br class="hidden sm:block"/> Važiuok rytoj.
+      <!-- Vehicle type tabs -->
+      <div id="vehicle-tabs" class="flex gap-0.5 mt-4 mb-6 pb-5 border-b border-zinc-800">
+        <button data-tab="auto" class="tab-btn active flex items-center gap-2 px-3 py-2 text-sm font-medium bg-white text-black transition-colors">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+            <circle cx="6" cy="17.5" r="1.75"/>
+            <circle cx="18" cy="17.5" r="1.75"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.25 17.5H3V13l2-5h14l2 5v4.5h-1.25M7.75 17.5h8.5M8 8l2-2.5h4l2 2.5"/>
+          </svg>
+          Automobiliai
+        </button>
+        <button data-tab="moto" class="tab-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+            <circle cx="5.5" cy="17" r="2.25"/><circle cx="18.5" cy="17" r="2.25"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.75 17h9M13 8h3l2.5 4h-4m-1 0l1 5M10 8l-1 4h2.5"/>
+          </svg>
+          Motociklai
+        </button>
+        <button data-tab="truck" class="tab-btn flex items-center gap-2 px-3 py-2 text-sm font-medium text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
+          </svg>
+          Sunkvežimiai
+        </button>
+        <button data-tab="saved" class="tab-btn ml-auto flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-zinc-500 hover:text-white hover:bg-zinc-800 transition-colors">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"/>
+          </svg>
+          Išsaugoti
+        </button>
+      </div>
+
+      <div id="search-fields-wrap">
+      <!-- Row 1: Make + Model -->
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="block text-[10px] text-zinc-500 uppercase tracking-[0.12em] mb-1.5">Markė</label>
+          <div class="relative">
+            <select id="make-select" class="w-full px-3 py-2.5 bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-zinc-500 appearance-none transition-colors">
+              <option value="">Visos markės</option>
+              {carMakes.map(m => <option>{m}</option>)}
+            </select>
+            <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] text-zinc-500 uppercase tracking-[0.12em] mb-1.5">Modelis</label>
+          <div class="relative">
+            <select id="model-select" disabled class="w-full px-3 py-2.5 bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-zinc-500 appearance-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+              <option value="">Pasirink markę</option>
+            </select>
+            <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Year + Price -->
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <label class="block text-[10px] text-zinc-500 uppercase tracking-[0.12em] mb-1.5">Metai</label>
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <select id="year-from" class="w-full px-3 py-2.5 bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-zinc-500 appearance-none">
+                <option value="">Nuo</option>
+                {years.map(y=><option>{y}</option>)}
+              </select>
+              <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="relative flex-1">
+              <select id="year-to" class="w-full px-3 py-2.5 bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-zinc-500 appearance-none">
+                <option value="">Iki</option>
+                {years.map(y=><option>{y}</option>)}
+              </select>
+              <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] text-zinc-500 uppercase tracking-[0.12em] mb-1.5">Kaina, €</label>
+          <div class="flex gap-2">
+            <div class="relative flex-1">
+              <select id="price-from" class="w-full px-3 py-2.5 bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-zinc-500 appearance-none">
+                <option value="">Nuo</option>
+                {priceOpts.map(p=><option value={p}>{fmtOpt(p)}</option>)}
+              </select>
+              <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+            <div class="relative flex-1">
+              <select id="price-to" class="w-full px-3 py-2.5 bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-zinc-500 appearance-none">
+                <option value="">Iki</option>
+                {priceOpts.map(p=><option value={p}>{fmtOpt(p)}</option>)}
+              </select>
+              <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Fuel + KM -->
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="block text-[10px] text-zinc-500 uppercase tracking-[0.12em] mb-1.5">Kuras</label>
+          <div class="relative">
+            <select id="fuel-select" class="w-full px-3 py-2.5 bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-zinc-500 appearance-none">
+              <option value="">Visi</option>
+              <option>Dyzelis</option><option>Benzinas</option>
+              <option>Hibridas</option><option>Elektra</option><option>Dujos (LPG)</option>
+            </select>
+            <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+        <div>
+          <label class="block text-[10px] text-zinc-500 uppercase tracking-[0.12em] mb-1.5">Rida iki, km</label>
+          <div class="relative">
+            <select id="km-to" class="w-full px-3 py-2.5 bg-zinc-900 border border-zinc-800 text-sm text-white focus:outline-none focus:border-zinc-500 appearance-none">
+              <option value="">Neribota</option>
+              {kmOpts.map(k=><option value={k}>{fmtOpt(k)}</option>)}
+            </select>
+            <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 4: Sources -->
+      <div class="mb-5">
+        <label class="block text-[10px] text-zinc-500 uppercase tracking-[0.12em] mb-2">Šaltiniai</label>
+        <div id="source-filters" class="flex flex-wrap gap-1.5">
+          <button data-source="all" class="source-btn active px-3 py-1.5 text-xs font-medium bg-white text-black transition-colors">
+            Visi
+          </button>
+          {sources.map(s => (
+            <button data-source={s} class="source-btn px-3 py-1.5 text-xs font-medium bg-transparent text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 transition-colors">
+              {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Save search toggle -->
+      <div class="flex items-center justify-between mb-4">
+        <label id="save-search-label" class="flex items-center gap-2.5 cursor-pointer select-none">
+          <div id="toggle-track" class="relative w-10 h-[22px] bg-zinc-800 border border-zinc-700 transition-all duration-200 shrink-0">
+            <div id="toggle-thumb" class="absolute top-[3px] left-[3px] w-4 h-4 bg-zinc-500 shadow-sm transition-transform duration-200"></div>
+          </div>
+          <span id="toggle-text" class="text-xs text-zinc-500 select-none">Išsaugoti paiešką</span>
+        </label>
+      </div>
+
+      <button id="search-btn" class="w-full py-3 bg-white hover:bg-zinc-100 text-black text-sm font-semibold flex items-center justify-center gap-2.5 transition-colors">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        Ieškoti · 47 000+ skelbimų
+      </button>
+      </div>
+
+      <!-- Saved searches panel -->
+      <div id="saved-panel" class="hidden py-2">
+        <div class="flex flex-col items-center justify-center py-10 text-center">
+          <div class="w-12 h-12 bg-zinc-800 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"/>
+            </svg>
+          </div>
+          <p class="text-sm font-medium text-zinc-200 mb-1">Išsaugotos paieškos</p>
+          <p class="text-xs text-zinc-500 leading-relaxed mb-5">Prisijunk norėdamas matyti<br>ir valdyti savo išsaugotas paieškas</p>
+          <a href="/prisijungti" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-zinc-100 text-black text-xs font-semibold transition-colors">
+            Prisijungti
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Hero text -->
+    <div class="relative z-10 flex-1 flex flex-col justify-center px-10 lg:px-16 xl:px-20 py-16 lg:py-0">
+      <p class="text-[10px] text-zinc-400 uppercase tracking-[0.2em] mb-6">Automobilių aukcionų platforma</p>
+      <h1 class="text-5xl sm:text-6xl xl:text-7xl text-white leading-[1.05] mb-6">
+        Rask.<br/>Įvertink.<br/>Laimėk.
       </h1>
-      <p class="text-lg text-white/70 mb-7 leading-relaxed">
-        3 aukcionai, rinkos vertė, remonto rizika, maksimalus statymas, istorijos patikra ir pelno įvertinimas — kiekvienam skelbimui iš 3 aukcionų, per sekundes.
+      <p class="text-base text-zinc-300 leading-relaxed mb-10 max-w-md">
+        3 aukcionai, rinkos vertė, remonto rizika, maksimalus statymas ir pelno įvertinimas — kiekvienam skelbimui per sekundes.
       </p>
-
-      <div class="flex flex-wrap items-center gap-3 mb-8">
-        <a href="/registracija" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-semibold rounded-lg transition-colors">
-          Išbandyti demo
+      <div class="flex flex-wrap items-center gap-3">
+        <a href="/registracija" class="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-zinc-100 text-black text-sm font-semibold transition-colors">
+          Išbandyti nemokamai
         </a>
-        <a href="/analizuoti" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium rounded-lg transition-colors backdrop-blur-sm">
+        <a href="/analizuoti" class="inline-flex items-center gap-2 px-6 py-3 border border-zinc-600 hover:border-zinc-400 text-white text-sm font-medium transition-colors">
           Analizuoti automobilį
-          <svg class="w-3.5 h-3.5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
           </svg>
         </a>
       </div>
-
-      <!-- Search panel -->
-      <div class="bg-zinc-900 rounded-2xl p-6">
-
-        <!-- Vehicle type tabs -->
-        <div id="vehicle-tabs" class="flex gap-1.5 mb-5 pb-5 border-b border-zinc-800">
-          <button data-tab="auto" class="tab-btn active flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-zinc-700 text-white transition-colors">
-            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-              <circle cx="6" cy="17.5" r="1.75"/>
-              <circle cx="18" cy="17.5" r="1.75"/>
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.25 17.5H3V13l2-5h14l2 5v4.5h-1.25M7.75 17.5h8.5M8 8l2-2.5h4l2 2.5"/>
-            </svg>
-            Automobiliai
-          </button>
-          <button data-tab="moto" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors">
-            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-              <circle cx="5.5" cy="17" r="2.25"/><circle cx="18.5" cy="17" r="2.25"/>
-              <path stroke-linecap="round" stroke-linejoin="round" d="M7.75 17h9M13 8h3l2.5 4h-4m-1 0l1 5M10 8l-1 4h2.5"/>
-            </svg>
-            Motociklai
-          </button>
-          <button data-tab="truck" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors">
-            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
-            </svg>
-            Sunkvežimiai
-          </button>
-          <button data-tab="saved" class="tab-btn ml-auto flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors">
-            <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"/>
-            </svg>
-            Mano paieškos
-          </button>
-        </div>
-
-        <div id="search-fields-wrap">
-        <!-- Row 1: Make + Model -->
-        <div class="grid grid-cols-2 gap-3 mb-3">
-          <div>
-            <label class="block text-xs text-zinc-400 mb-1.5">Markė</label>
-            <div class="relative">
-              <select id="make-select" class="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 text-sm text-white rounded-lg focus:outline-none focus:border-[#0344D3] appearance-none transition-colors">
-                <option value="">Visos markės</option>
-                {carMakes.map(m => <option>{m}</option>)}
-              </select>
-              <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </div>
-          </div>
-          <div>
-            <label class="block text-xs text-zinc-400 mb-1.5">Modelis</label>
-            <div class="relative">
-              <select id="model-select" disabled class="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 text-sm text-white rounded-lg focus:outline-none focus:border-[#0344D3] appearance-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
-                <option value="">Pasirink markę</option>
-              </select>
-              <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </div>
-          </div>
-        </div>
-
-        <!-- Row 2: Year + Price -->
-        <div class="grid grid-cols-2 gap-3 mb-3">
-          <div>
-            <label class="block text-xs text-zinc-400 mb-1.5">Metai</label>
-            <div class="flex gap-2">
-              <div class="relative flex-1">
-                <select id="year-from" class="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 text-sm text-white rounded-lg focus:outline-none focus:border-[#0344D3] appearance-none">
-                  <option value="">Nuo</option>
-                  {years.map(y=><option>{y}</option>)}
-                </select>
-                <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-              </div>
-              <div class="relative flex-1">
-                <select id="year-to" class="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 text-sm text-white rounded-lg focus:outline-none focus:border-[#0344D3] appearance-none">
-                  <option value="">Iki</option>
-                  {years.map(y=><option>{y}</option>)}
-                </select>
-                <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-              </div>
-            </div>
-          </div>
-          <div>
-            <label class="block text-xs text-zinc-400 mb-1.5">Kaina, €</label>
-            <div class="flex gap-2">
-              <div class="relative flex-1">
-                <select id="price-from" class="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 text-sm text-white rounded-lg focus:outline-none focus:border-[#0344D3] appearance-none">
-                  <option value="">Nuo</option>
-                  {priceOpts.map(p=><option value={p}>{fmtOpt(p)}</option>)}
-                </select>
-                <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-              </div>
-              <div class="relative flex-1">
-                <select id="price-to" class="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 text-sm text-white rounded-lg focus:outline-none focus:border-[#0344D3] appearance-none">
-                  <option value="">Iki</option>
-                  {priceOpts.map(p=><option value={p}>{fmtOpt(p)}</option>)}
-                </select>
-                <svg class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Row 3: Fuel + KM -->
-        <div class="grid grid-cols-2 gap-3 mb-4">
-          <div>
-            <label class="block text-xs text-zinc-400 mb-1.5">Kuras</label>
-            <div class="relative">
-              <select id="fuel-select" class="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 text-sm text-white rounded-lg focus:outline-none focus:border-[#0344D3] appearance-none">
-                <option value="">Visi</option>
-                <option>Dyzelis</option><option>Benzinas</option>
-                <option>Hibridas</option><option>Elektra</option><option>Dujos (LPG)</option>
-              </select>
-              <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </div>
-          </div>
-          <div>
-            <label class="block text-xs text-zinc-400 mb-1.5">Rida iki, km</label>
-            <div class="relative">
-              <select id="km-to" class="w-full px-3 py-2.5 bg-zinc-800 border border-zinc-700 text-sm text-white rounded-lg focus:outline-none focus:border-[#0344D3] appearance-none">
-                <option value="">Neribota</option>
-                {kmOpts.map(k=><option value={k}>{fmtOpt(k)}</option>)}
-              </select>
-              <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </div>
-          </div>
-        </div>
-
-        <!-- Row 4: Sources (AutoBid unique) -->
-        <div class="mb-5">
-          <label class="block text-xs text-zinc-400 mb-2">Šaltiniai</label>
-          <div id="source-filters" class="flex flex-wrap gap-2">
-            <button data-source="all" class="source-btn active px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0344D3] text-white transition-colors">
-              Visi šaltiniai
-            </button>
-            {sources.map(s => (
-              <button data-source={s} class="source-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white border border-zinc-700 transition-colors">
-                {s}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <!-- Save search toggle -->
-        <div class="flex items-center justify-between mb-3">
-          <label id="save-search-label" class="flex items-center gap-2.5 cursor-pointer select-none">
-            <div id="toggle-track" class="relative w-10 h-[22px] bg-zinc-700 border border-zinc-600 rounded-full transition-all duration-200 shrink-0">
-              <div id="toggle-thumb" class="absolute top-[3px] left-[3px] w-4 h-4 bg-zinc-400 rounded-full shadow-sm transition-transform duration-200"></div>
-            </div>
-            <span id="toggle-text" class="text-xs text-zinc-500 select-none">Išsaugoti paiešką</span>
-          </label>
-        </div>
-
-        <button id="search-btn" class="w-full py-3 bg-brand-gradient hover:opacity-90 text-white text-sm font-semibold rounded-xl flex items-center justify-center gap-2.5 transition-colors">
-          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          Ieškoti · 47 000+ skelbimų
-        </button>
-        </div>
-
-        <!-- Saved searches panel (shown when "Mano paieškos" tab active) -->
-        <div id="saved-panel" class="hidden py-2">
-          <div class="flex flex-col items-center justify-center py-10 text-center">
-            <div class="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center mb-4">
-              <svg class="w-5 h-5 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z"/>
-              </svg>
-            </div>
-            <p class="text-sm font-semibold text-zinc-200 mb-1">Išsaugotos paieškos</p>
-            <p class="text-xs text-zinc-500 leading-relaxed mb-5">Prisijunk norėdamas matyti<br>ir valdyti savo išsaugotas paieškas</p>
-            <a href="/prisijungti" class="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-xs font-semibold rounded-lg transition-colors">
-              Prisijungti
-            </a>
-          </div>
-        </div>
-
-      </div>
     </div>
   </section>
 
-  <!-- ══════════ DIENOS PASIŪLYMAI ══════════ -->
-  <section class="bg-white px-6 py-12">
-    <div class="max-w-6xl mx-auto">
+  <!-- ══════════ KARŠČIAUSI ══════════ -->
+  <section id="karsciausi" class="bg-white px-6 py-14">
+    <div class="max-w-7xl mx-auto">
 
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="flex items-center gap-2 text-base font-semibold text-zinc-900">
-          <svg class="w-4 h-4 text-orange-500" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2c0 0-4 4-4 8a4 4 0 008 0c0-1.5-.5-2.5-.5-2.5s-.5 1.5-2 2c0 0 1-2 1-4S12 2 12 2zm-2 10c0 1.1.9 2 2 2s2-.9 2-2c0-.8-.4-1.5-.4-1.5S13 11.5 12 12c0 0 .5-1 .5-2S12 8 12 8s-2 2-2 4z"/>
-          </svg>
-          Karščiausia
-        </h2>
-        <a href="/registracija" class="text-xs text-[#0344D3] hover:text-[#0240C8] transition-colors">Visi skelbimai →</a>
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-1">Aktyvūs aukcionai</p>
+          <h2 class="text-xl font-medium text-zinc-900">Karščiausia</h2>
+        </div>
+        <a href="/registracija" class="text-xs text-zinc-500 hover:text-zinc-800 transition-colors">Visi skelbimai →</a>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-100">
         {deals.map(({ id, make, model, year, km, price, source, image, end, url }) => (
-          <a href={`/auto/demo?id=${id ?? ''}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (end ? `&end=${encodeURIComponent(end)}` : '') + (url ? `&url=${encodeURIComponent(url)}` : '')} class="group bg-white border border-zinc-100 rounded-xl overflow-hidden hover:border-zinc-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
-            <div class="relative w-full h-36 bg-gradient-to-br from-zinc-100 to-zinc-200 flex items-center justify-center overflow-hidden">
+          <a href={`/auto/demo?id=${id ?? ''}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (end ? `&end=${encodeURIComponent(end)}` : '') + (url ? `&url=${encodeURIComponent(url)}` : '')} class="group bg-white hover:bg-zinc-50 transition-colors flex flex-col">
+            <div class="relative w-full h-40 bg-zinc-100 flex items-center justify-center overflow-hidden">
               {image ? (
                 <img src={image} alt={`${make} ${model}`} loading="lazy" decoding="async"
-                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-200"/>
+                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"/>
               ) : (
                 <svg class="w-10 h-10 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
                 </svg>
               )}
-              <span class:list={['absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md text-xs font-medium', sourceBadge[source] ?? 'bg-zinc-100 text-zinc-600']}>
+              <span class:list={['absolute top-2.5 left-2.5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide', sourceBadge[source] ?? 'bg-zinc-100 text-zinc-600']}>
                 {source}
               </span>
             </div>
             <div class="p-4 flex flex-col flex-1">
-              <h3 class="text-sm font-semibold text-zinc-800 group-hover:text-zinc-900 transition-colors">{make} {model}</h3>
+              <h3 class="text-sm font-medium text-zinc-800 group-hover:text-zinc-900 transition-colors">{make} {model}</h3>
               <p class="text-xs text-zinc-400 mt-0.5">{year} · {fmtKm(km)}</p>
               <div class="mt-auto pt-4 flex items-center justify-between">
-                <span class="text-base font-bold text-zinc-900">{fmtPrice(price)}</span>
-                <span class="text-xs text-[#0344D3] font-medium">Žiūrėti →</span>
+                <span class="text-base font-semibold text-zinc-900">{fmtPrice(price)}</span>
+                <span class="text-xs text-zinc-400 group-hover:text-zinc-700 transition-colors">Žiūrėti →</span>
               </div>
             </div>
           </a>
         ))}
       </div>
 
-      <div class="mt-6 flex items-center gap-4">
-        <a href="/registracija" class="px-5 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-medium rounded-lg transition-colors">
+      <div class="mt-8 flex items-center gap-4">
+        <a href="/registracija" class="px-5 py-2.5 bg-black hover:bg-zinc-800 text-white text-sm font-medium transition-colors">
           Matyti visus 47 000+ skelbimų
         </a>
         <span class="text-xs text-zinc-400">Nemokama registracija</span>
@@ -368,19 +357,492 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
     </div>
   </section>
 
-  <!-- ══════════ STRAIPSNIAI ══════════ -->
-  <section class="bg-zinc-50 border-t border-zinc-200 px-6 py-12">
-    <div class="max-w-6xl mx-auto">
+  <!-- ══════════ SCROLL ANIMATION ══════════ -->
+  <div id="fl-wrapper" style="height:320vh;position:relative;">
+    <div
+      class="overflow-hidden bg-white flex items-center justify-center"
+      style="position:sticky;top:56px;height:calc(100vh - 56px);"
+    >
 
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-base font-semibold text-zinc-900">Straipsniai</h2>
-        <a href="/straipsniai" class="text-xs text-[#0344D3] hover:text-[#0240C8] transition-colors">Visi →</a>
+      <!-- Text phases — centruotas, keičiasi scroll metu -->
+      <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none px-6">
+        <h2
+          id="fl-text"
+          class="text-5xl sm:text-6xl xl:text-7xl text-zinc-900 leading-[1.04] text-center max-w-3xl"
+          style="transition:opacity 0.25s ease;"
+        >
+          Šimtai aukcionų.<br/>Vienas ekranas.
+        </h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- BMW — juda iš kairės į dešinę, apverstas horizontaliai -->
+      <img
+        id="fl-car"
+        src="/images/bmw%20from%20the%20side.png"
+        alt=""
+        aria-hidden="true"
+        class="absolute z-20 select-none pointer-events-none"
+        style="width:580px;max-width:80vw;height:auto;top:50%;left:-55%;transform:scaleX(-1) translateY(-50%);filter:blur(8px);"
+        loading="eager"
+      />
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- KAINODARA -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div id="kainodara">
+
+    <!-- Section intro -->
+    <div class="bg-white border-t border-b border-zinc-100 px-6 py-20">
+      <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-end gap-12 lg:gap-24">
+        <div class="flex-1">
+          <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-8">Kainodara</p>
+          <h2 class="text-5xl xl:text-6xl text-zinc-900 leading-[1.02]">
+            Pradėk.<br/>Plėsk kai<br/>reikia.
+          </h2>
+        </div>
+        <div class="lg:w-[400px]">
+          <p class="text-base text-zinc-500 leading-relaxed mb-8">
+            Nemokamas planas visada prieinamas be kreditinės kortelės.
+            Kai prireiks daugiau aukcionų, greitesnių atnaujinimų ar
+            komandos prieigos — pereik prie Pro arba Verslo plano.
+          </p>
+          <div class="flex flex-wrap items-center gap-3">
+            <a href="/registracija" class="px-5 py-2.5 bg-black hover:bg-zinc-800 text-white text-sm font-medium transition-colors">
+              Pradėti nemokamai
+            </a>
+            <a href="mailto:info@carbid.lt" class="px-5 py-2.5 border border-zinc-200 text-zinc-700 hover:border-zinc-400 text-sm transition-colors">
+              Susisiekti →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plans grid -->
+    <div class="bg-zinc-100 px-6 py-16">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-300">
+
+          <!-- NEMOKAMAS -->
+          <div class="bg-white flex flex-col p-10">
+            <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-10">Nemokamas</p>
+            <div class="mb-10">
+              <p class="text-6xl font-light text-zinc-900 leading-none mb-2">0 €</p>
+              <p class="text-xs text-zinc-400">per mėnesį, visada</p>
+            </div>
+            <a href="/registracija" class="block w-full text-center px-4 py-3 border border-zinc-300 text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 text-sm transition-colors mb-10">
+              Pradėti nemokamai
+            </a>
+            <div class="border-t border-zinc-100 pt-8 space-y-4 mt-auto">
+              {['3 aktyvios paieškos', '2 aukcionų šaltiniai', 'Atnaujinimas kas valandą', 'El. pašto įspėjimai', '30 dienų istorija'].map(f => (
+                <div class="flex gap-4 items-start text-sm text-zinc-500">
+                  <span class="mt-[8px] w-4 border-t border-zinc-300 shrink-0"></span>
+                  {f}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- PRO -->
+          <div class="bg-zinc-950 flex flex-col p-10">
+            <div class="flex items-center gap-3 mb-10">
+              <p class="text-[10px] uppercase tracking-[0.22em] text-white">Pro</p>
+              <span class="text-[9px] uppercase tracking-[0.15em] text-zinc-500 border border-zinc-700 px-2 py-0.5">Populiariausias</span>
+            </div>
+            <div class="mb-10">
+              <p class="text-6xl font-light text-white leading-none mb-2">19 €</p>
+              <p class="text-xs text-zinc-600">per mėnesį</p>
+            </div>
+            <a href="/registracija" class="block w-full text-center px-4 py-3 bg-white hover:bg-zinc-100 text-black text-sm font-medium transition-colors mb-10">
+              Pradėti Pro
+            </a>
+            <div class="border-t border-zinc-800 pt-8 space-y-4 mt-auto">
+              {['Neribotai paieškų', 'Visi 7+ šaltiniai', 'Atnaujinimas kas 5 min.', 'SMS + el. pašto įspėjimai', '12 mėn. istorija', 'Kainų grafikai', 'CSV / Excel eksportas'].map(f => (
+                <div class="flex gap-4 items-start text-sm text-zinc-400">
+                  <span class="mt-[8px] w-4 border-t border-zinc-700 shrink-0"></span>
+                  {f}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- VERSLO -->
+          <div class="bg-white flex flex-col p-10">
+            <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-10">Verslo</p>
+            <div class="mb-10">
+              <p class="text-6xl font-light text-zinc-900 leading-none mb-2">49 €</p>
+              <p class="text-xs text-zinc-400">per mėnesį</p>
+            </div>
+            <a href="mailto:info@carbid.lt" class="block w-full text-center px-4 py-3 border border-zinc-300 text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 text-sm transition-colors mb-10">
+              Susisiekti
+            </a>
+            <div class="border-t border-zinc-100 pt-8 space-y-4 mt-auto">
+              {['Viskas iš Pro', 'Iki 10 vartotojų', 'Bendros paieškos', 'API prieiga', 'Prioritetinis palaikymas'].map(f => (
+                <div class="flex gap-4 items-start text-sm text-zinc-500">
+                  <span class="mt-[8px] w-4 border-t border-zinc-300 shrink-0"></span>
+                  {f}
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+        <p class="text-xs text-zinc-400 text-center mt-6">Visi kainų planai be įsipareigojimų. Atšaukti galima bet kada.</p>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="bg-white px-6 py-16 border-b border-zinc-100">
+      <div class="max-w-3xl mx-auto">
+        <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-12">Dažni klausimai</p>
+        <div id="faq" class="border-t border-zinc-200">
+          {[
+            { q: 'Ar tikrai nereikia kredito kortelės?', a: 'Taip. Nemokamas planas prieinamas be jokios mokėjimo informacijos.' },
+            { q: 'Kaip veikia mokėjimas?', a: 'Mėnesinis arba metinis planas. Kortelė arba banko pervedimas. Atšaukti galima bet kada.' },
+            { q: 'Kokius aukcionus stebite?', a: 'Autoplius.lt, Auto.lt, Autogidas.lt, Mobile.de, AutoScout24, BCA, Copart. Nuolat diegiame naujus šaltinius.' },
+            { q: 'Ar galima pakeisti planą?', a: 'Taip, bet kada. Aukštesnio plano keitimas įsigalioja iš karto, žemesnio — nuo kito atsiskaitymo periodo.' },
+            { q: 'Ar AI analizė veikia automatiškai?', a: 'Išsami AI analizė (žalos vertinimas iš nuotraukų) suaktyvinama rankiniu būdu ant kiekvieno skelbimo. Pelno skaičiavimas veikia automatiškai visiems skelbimai.' },
+          ].map(({ q, a }) => (
+            <div class="faq-item border-b border-zinc-200">
+              <button class="faq-btn w-full flex items-center justify-between gap-6 py-5 text-left text-sm font-medium text-zinc-800 hover:text-zinc-900 transition-colors">
+                <span>{q}</span>
+                <svg class="faq-icon w-4 h-4 text-zinc-400 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              <div class="faq-body hidden pb-5">
+                <p class="text-sm text-zinc-500 leading-relaxed">{a}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- /KAINODARA -->
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- KAIP VEIKIA -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div id="kaip-veikia">
+
+    <!-- Section intro -->
+    <div class="bg-white border-b border-zinc-100 px-6 py-20">
+      <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-end gap-12 lg:gap-24">
+        <div class="flex-1">
+          <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-8">Kaip veikia</p>
+          <h2 class="text-5xl xl:text-6xl text-zinc-900 leading-[1.02]">
+            Aukcionų<br/>stebėjimas.<br/>Automatiškai.
+          </h2>
+        </div>
+        <div class="lg:w-[400px]">
+          <p class="text-base text-zinc-500 leading-relaxed mb-8">
+            Automatiškai renkame duomenis iš Lietuvos ir Europos automobilių
+            aukcionų, apdorojame juos ir pateikiame vienoje vietoje — kad tu
+            galėtum greičiau rasti geriausią sandorį.
+          </p>
+          <div class="flex flex-wrap items-center gap-3">
+            <a href="/registracija" class="px-5 py-2.5 bg-black hover:bg-zinc-800 text-white text-sm font-medium transition-colors">
+              Pradėti nemokamai
+            </a>
+            <a href="/#kainodara" class="px-5 py-2.5 border border-zinc-200 text-zinc-700 hover:border-zinc-400 text-sm transition-colors">
+              Kainodara →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 01 — tekstas kairė, foto dešinė -->
+    <div class="flex flex-col lg:flex-row min-h-[600px] border-b border-zinc-100">
+      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-white order-2 lg:order-1">
+        <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-300 mb-8">01 / 04</p>
+        <h3 class="text-4xl xl:text-5xl text-zinc-900 leading-[1.05] mb-6">
+          Automatinis<br/>duomenų<br/>rinkimas
+        </h3>
+        <p class="text-base text-zinc-500 leading-relaxed mb-8 max-w-[420px]">
+          Mūsų sistema nuolat tikrina visus prijungtus aukcionus — Autoplius.lt,
+          Auto.lt, Mobile.de, AutoScout24 ir kitus. Nauji skelbimai aptinkami per
+          kelias minutes nuo publikavimo.
+        </p>
+        <ul class="space-y-4">
+          <li class="flex gap-4 items-start text-base text-zinc-500">
+            <span class="mt-[11px] w-5 border-t border-zinc-300 shrink-0"></span>
+            Automatinis tikrinimas kas 5 minutės
+          </li>
+          <li class="flex gap-4 items-start text-base text-zinc-500">
+            <span class="mt-[11px] w-5 border-t border-zinc-300 shrink-0"></span>
+            Kainų pokyčių sekimas realiuoju laiku
+          </li>
+          <li class="flex gap-4 items-start text-base text-zinc-500">
+            <span class="mt-[11px] w-5 border-t border-zinc-300 shrink-0"></span>
+            Archyvuoti skelbimai išsaugomi duomenų bazėje
+          </li>
+        </ul>
+      </div>
+      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden order-1 lg:order-2">
+        <img src="/images/automatine%20deze.jpg" alt="Automatinė pavarų dėžė" class="w-full h-full object-cover" loading="lazy"/>
+      </div>
+    </div>
+
+    <!-- 02 — foto kairė, tekstas dešinė -->
+    <div class="flex flex-col lg:flex-row min-h-[600px] border-b border-zinc-100">
+      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden">
+        <img src="/images/bmw%20masinos.jpg" alt="BMW automobiliai" class="w-full h-full object-cover" loading="lazy"/>
+      </div>
+      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-white">
+        <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-300 mb-8">02 / 04</p>
+        <h3 class="text-4xl xl:text-5xl text-zinc-900 leading-[1.05] mb-6">
+          Tikslus<br/>filtravimas
+        </h3>
+        <p class="text-base text-zinc-500 leading-relaxed mb-8 max-w-[420px]">
+          Nustatai norimas charakteristikas vieną kartą — sistema filtruoja visus
+          naujus skelbimus automatiškai. Galima sukurti neribotą kiekį skirtingų
+          paieškų.
+        </p>
+        <ul class="space-y-4">
+          <li class="flex gap-4 items-start text-base text-zinc-500">
+            <span class="mt-[11px] w-5 border-t border-zinc-300 shrink-0"></span>
+            Markė, modelis, metai, rida, kaina
+          </li>
+          <li class="flex gap-4 items-start text-base text-zinc-500">
+            <span class="mt-[11px] w-5 border-t border-zinc-300 shrink-0"></span>
+            Kėbulo tipas, degalai, pavarų dėžė
+          </li>
+          <li class="flex gap-4 items-start text-base text-zinc-500">
+            <span class="mt-[11px] w-5 border-t border-zinc-300 shrink-0"></span>
+            Specifiniai šaltiniai arba visi iš karto
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 03 — juodas tekstas kairė, foto dešinė -->
+    <div class="flex flex-col lg:flex-row min-h-[600px] border-b border-zinc-100">
+      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-zinc-950 order-2 lg:order-1">
+        <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-700 mb-8">03 / 04</p>
+        <h3 class="text-4xl xl:text-5xl text-white leading-[1.05] mb-6">
+          AI rinkos<br/>analizė
+        </h3>
+        <p class="text-base text-zinc-400 leading-relaxed mb-8 max-w-[420px]">
+          Kiekvienam skelbimui skaičiuojame rinkos vertę, remonto riziką ir
+          maksimalų pelningą statymą — remiantis panašių automobilių duomenimis
+          iš kelių aukcionų.
+        </p>
+        <ul class="space-y-4">
+          <li class="flex gap-4 items-start text-base text-zinc-400">
+            <span class="mt-[11px] w-5 border-t border-zinc-700 shrink-0"></span>
+            Rinkos vertė pagal panašius skelbimus
+          </li>
+          <li class="flex gap-4 items-start text-base text-zinc-400">
+            <span class="mt-[11px] w-5 border-t border-zinc-700 shrink-0"></span>
+            AI žalos analizė iš nuotraukų
+          </li>
+          <li class="flex gap-4 items-start text-base text-zinc-400">
+            <span class="mt-[11px] w-5 border-t border-zinc-700 shrink-0"></span>
+            Pelno balas 0–100 kiekvienam automobiliui
+          </li>
+        </ul>
+      </div>
+      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden order-1 lg:order-2">
+        <img src="/images/masinos%20grazios.jpg" alt="Automobiliai" class="w-full h-full object-cover" loading="lazy"/>
+      </div>
+    </div>
+
+    <!-- 04 — foto kairė, tekstas dešinė -->
+    <div class="flex flex-col lg:flex-row min-h-[600px] border-b border-zinc-100">
+      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden">
+        <img src="/images/mercedes%20%20masina.jpg" alt="Mercedes automobilis" class="w-full h-full object-cover" loading="lazy"/>
+      </div>
+      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-white">
+        <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-300 mb-8">04 / 04</p>
+        <h3 class="text-4xl xl:text-5xl text-zinc-900 leading-[1.05] mb-6">
+          Pelno<br/>skaičiavimas
+        </h3>
+        <p class="text-base text-zinc-500 leading-relaxed mb-8 max-w-[420px]">
+          Lygink skelbimus vienas su kitu, matyk kainų istoriją, sužinok ar
+          siūloma kaina yra virš ar žemiau rinkos vidurkio. Apskaičiuojame
+          maksimalų statymą, kuriame dar lieka pelnas.
+        </p>
+        <ul class="space-y-4">
+          <li class="flex gap-4 items-start text-base text-zinc-500">
+            <span class="mt-[11px] w-5 border-t border-zinc-300 shrink-0"></span>
+            Kainų grafikas ir istorija
+          </li>
+          <li class="flex gap-4 items-start text-base text-zinc-500">
+            <span class="mt-[11px] w-5 border-t border-zinc-300 shrink-0"></span>
+            Rinkos vidurkis pagal modelį ir metus
+          </li>
+          <li class="flex gap-4 items-start text-base text-zinc-500">
+            <span class="mt-[11px] w-5 border-t border-zinc-300 shrink-0"></span>
+            Eksportas į CSV / Excel
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+  <!-- /KAIP VEIKIA -->
+
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <!-- APIE MUS -->
+  <!-- ══════════════════════════════════════════════════════════════ -->
+  <div id="apie">
+
+    <!-- Section intro with image -->
+    <div class="flex flex-col lg:flex-row min-h-[70vh] border-b border-zinc-100">
+      <div class="flex-1 flex flex-col justify-end pb-16 lg:pb-24 pt-20 px-8 lg:px-16 xl:px-24 bg-white order-2 lg:order-1">
+        <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-10">Apie mus</p>
+        <h2 class="text-5xl xl:text-6xl text-zinc-900 leading-[1.02] mb-8">
+          Platforma<br/>perpardavinė-<br/>tojams.<br/>
+          <span class="text-zinc-300">Nuo 2026.</span>
+        </h2>
+        <p class="text-base text-zinc-500 leading-relaxed max-w-[400px]">
+          Carbid — tai automobilių aukcionų stebėjimo platforma, sukurta
+          pardavėjams ir perpardavinėtojams. Visus aukcionus surenkame į
+          vieną ekraną ir parodome, kur slypi pelnas.
+        </p>
+      </div>
+      <div class="lg:w-[58%] h-72 lg:h-auto bg-zinc-100 overflow-hidden order-1 lg:order-2">
+        <img src="/images/car-girl-1.jpg" alt="Carbid platforma" class="w-full h-full object-cover" loading="lazy"/>
+      </div>
+    </div>
+
+    <!-- Stats with count-up -->
+    <div class="bg-zinc-950 border-b border-zinc-900">
+      <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-800">
+
+        <div class="bg-zinc-950 flex flex-col px-8 xl:px-14 py-14">
+          <span class="stat-number text-6xl xl:text-7xl text-white font-light leading-none mb-5 tabular-nums"
+                data-from="0" data-to="7" data-suffix="+">7+</span>
+          <span class="text-[10px] text-zinc-500 uppercase tracking-[0.18em]">Prijungtų aukcionų</span>
+        </div>
+
+        <div class="bg-zinc-950 flex flex-col px-8 xl:px-14 py-14">
+          <span class="stat-number text-6xl xl:text-7xl text-white font-light leading-none mb-5 tabular-nums"
+                data-from="0" data-to="47000" data-suffix="+" data-format="locale">47 000+</span>
+          <span class="text-[10px] text-zinc-500 uppercase tracking-[0.18em]">Stebimų skelbimų</span>
+        </div>
+
+        <div class="bg-zinc-950 flex flex-col px-8 xl:px-14 py-14">
+          <span class="stat-number text-6xl xl:text-7xl text-white font-light leading-none mb-5 tabular-nums"
+                data-from="1" data-to="5" data-suffix=" min.">5 min.</span>
+          <span class="text-[10px] text-zinc-500 uppercase tracking-[0.18em]">Duomenų atnaujinimas</span>
+        </div>
+
+        <div class="bg-zinc-950 flex flex-col px-8 xl:px-14 py-14">
+          <span class="stat-number text-6xl xl:text-7xl text-white font-light leading-none mb-5 tabular-nums"
+                data-from="2020" data-to="2026" data-suffix="">2026</span>
+          <span class="text-[10px] text-zinc-500 uppercase tracking-[0.18em]">Veiklos pradžia</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Pull quote + story -->
+    <div class="bg-white py-24 px-6 border-b border-zinc-100">
+      <div class="max-w-7xl mx-auto">
+
+        <div class="border-t border-b border-zinc-100 py-14 mb-20">
+          <p class="text-2xl xl:text-3xl text-zinc-400 font-light leading-[1.5] max-w-4xl">
+            „Geriausi pasiūlymai aukcionuose dingsta per minutes,
+            o jų ieškoti vienu metu keliose platformose yra varginanti
+            ir klaidoms atvira veikla."
+          </p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-0">
+          <div class="flex-1 lg:pr-24 pb-12 lg:pb-0">
+            <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-8">Kodėl Carbid?</p>
+            <div class="space-y-6 text-base text-zinc-600 leading-relaxed">
+              <p>
+                Automobilių perpardavinėjimas — tai lenktynės su laiku.
+                Sukūrėme Carbid, kad šį procesą paverstume vienu langu:
+                realaus laiko duomenys iš Autoplius.lt, Mobile.de,
+                AutoScout24 ir kitų aukcionų.
+              </p>
+              <p>
+                Automatinė rinkos vertės ir remonto rizikos analizė bei
+                aiškus pelno įvertinimas kiekvienam skelbimui — kad
+                priimtum geresnius sprendimus greičiau ir
+                nebepraleistum pelningų sandorių.
+              </p>
+            </div>
+          </div>
+          <div class="lg:w-[42%] bg-zinc-100 overflow-hidden" style="min-height:360px;">
+            <img src="/images/old-car-2.webp" alt="Klasikinis automobilis" class="w-full h-full object-cover" loading="lazy"/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Values -->
+    <div class="bg-zinc-50 border-b border-zinc-200 py-20 px-6">
+      <div class="max-w-7xl mx-auto">
+        <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-16">Vertybės</p>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-zinc-200">
+          <div class="bg-zinc-50 pr-0 lg:pr-12 py-10 lg:py-0">
+            <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-300 mb-6">01</p>
+            <h3 class="text-2xl xl:text-3xl text-zinc-900 leading-[1.1] mb-5">Skaidrumas</h3>
+            <p class="text-sm text-zinc-500 leading-relaxed">
+              Rodome realią rinkos vertę, remonto riziką ir visus kaštus — be paslėptų tarpininkų mokesčių.
+            </p>
+          </div>
+          <div class="bg-zinc-50 px-0 lg:px-12 py-10 lg:py-0">
+            <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-300 mb-6">02</p>
+            <h3 class="text-2xl xl:text-3xl text-zinc-900 leading-[1.1] mb-5">Greitis</h3>
+            <p class="text-sm text-zinc-500 leading-relaxed">
+              Nauji skelbimai aptinkami per kelias minutes, o analizė pateikiama per sekundes.
+            </p>
+          </div>
+          <div class="bg-zinc-50 pl-0 lg:pl-12 py-10 lg:py-0">
+            <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-300 mb-6">03</p>
+            <h3 class="text-2xl xl:text-3xl text-zinc-900 leading-[1.1] mb-5">Duomenimis</h3>
+            <p class="text-sm text-zinc-500 leading-relaxed">
+              Kiekvienas pasiūlymas įvertinamas pagal tikrus rinkos duomenis, kad pirktum protingai.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo collage -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-zinc-100">
+      <div class="h-72 lg:h-[480px] bg-zinc-200 overflow-hidden">
+        <img src="/images/old-car-1.webp" alt="" class="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-700" loading="lazy"/>
+      </div>
+      <div class="h-72 lg:h-[480px] bg-zinc-200 overflow-hidden">
+        <img src="/images/car-girl-2.jpg" alt="" class="w-full h-full object-cover object-top hover:scale-[1.03] transition-transform duration-700" loading="lazy"/>
+      </div>
+      <div class="h-72 lg:h-[480px] bg-zinc-200 overflow-hidden">
+        <img src="/images/old-car-4.jpg" alt="" class="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-700" loading="lazy"/>
+      </div>
+    </div>
+
+  </div>
+  <!-- /APIE -->
+
+  <!-- ══════════ STRAIPSNIAI ══════════ -->
+  <section id="straipsniai" class="bg-zinc-50 border-t border-zinc-200 px-6 py-14">
+    <div class="max-w-7xl mx-auto">
+
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-1">Resursai</p>
+          <h2 class="text-xl font-medium text-zinc-900">Straipsniai</h2>
+        </div>
+        <a href="/straipsniai" class="text-xs text-zinc-500 hover:text-zinc-800 transition-colors">Visi →</a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-200">
         {articles.map(({ slug, title, excerpt, date, readMin }) => (
-          <article class="bg-white border border-zinc-100 rounded-xl p-6 hover:border-zinc-200 hover:shadow-sm transition-all">
-            <h3 class="text-sm font-semibold text-zinc-800 leading-snug mb-3">
+          <article class="bg-white p-6 hover:bg-zinc-50 transition-colors">
+            <h3 class="text-sm font-medium text-zinc-800 leading-snug mb-3">
               <a href={`/straipsniai/${slug}`} class="hover:text-zinc-900 transition-colors">{title}</a>
             </h3>
             <p class="text-xs text-zinc-500 leading-relaxed mb-4">{excerpt}</p>
@@ -396,16 +858,6 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
   </section>
 
 </BaseLayout>
-
-<style>
-  @keyframes rush {
-    0%   { transform: translate3d(-150px, 0, 0); opacity: 0; }
-    3%   { opacity: 1; }
-    20%  { opacity: 1; }
-    24%  { transform: translate3d(calc(100vw + 150px), 0, 0); opacity: 0; }
-    100% { transform: translate3d(calc(100vw + 150px), 0, 0); opacity: 0; }
-  }
-</style>
 
 <script>
   // ── Models per make ──────────────────────────────────────────────────────
@@ -509,10 +961,10 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
     currentTab = tab;
     tabs.forEach(btn => {
       const active = btn.dataset.tab === tab;
-      btn.classList.toggle('bg-zinc-700', active);
-      btn.classList.toggle('text-white', active);
-      btn.classList.toggle('text-zinc-400', !active);
-      btn.classList.toggle('hover:text-zinc-200', !active);
+      btn.classList.toggle('bg-white', active);
+      btn.classList.toggle('text-black', active);
+      btn.classList.toggle('text-zinc-500', !active);
+      btn.classList.toggle('hover:text-white', !active);
       btn.classList.toggle('hover:bg-zinc-800', !active);
     });
 
@@ -552,7 +1004,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
     if (fuel)      p.set('kuras',     fuel);
     if (kmTo)      p.set('ridaIki',   kmTo);
     const activeSources = [...document.querySelectorAll<HTMLButtonElement>('.source-btn')]
-      .filter(b => b.dataset.source !== 'all' && b.classList.contains('bg-[#0344D3]'))
+      .filter(b => b.dataset.source !== 'all' && b.classList.contains('bg-white'))
       .map(b => b.dataset.source!);
     if (activeSources.length) p.set('saltiniai', activeSources.join(','));
     window.location.href = `/rezultatai?${p.toString()}`;
@@ -565,21 +1017,21 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
       if (btn.dataset.source === 'all') {
         sourceBtns.forEach(b => {
           const isAll = b.dataset.source === 'all';
-          b.classList.toggle('bg-[#0344D3]', isAll);
-          b.classList.toggle('text-white', isAll);
-          b.classList.toggle('bg-zinc-800', !isAll);
-          b.classList.toggle('text-zinc-300', !isAll);
+          b.classList.toggle('bg-white', isAll);
+          b.classList.toggle('text-black', isAll);
+          b.classList.toggle('bg-transparent', !isAll);
+          b.classList.toggle('text-zinc-400', !isAll);
           b.classList.toggle('border', !isAll);
           b.classList.toggle('border-zinc-700', !isAll);
         });
       } else {
         const allBtn = document.querySelector<HTMLButtonElement>('[data-source="all"]')!;
-        allBtn.classList.remove('bg-[#0344D3]','text-white');
-        allBtn.classList.add('bg-zinc-800','text-zinc-300','border','border-zinc-700');
-        btn.classList.toggle('bg-[#0344D3]');
-        btn.classList.toggle('text-white');
-        btn.classList.toggle('bg-zinc-800');
-        btn.classList.toggle('text-zinc-300');
+        allBtn.classList.remove('bg-white','text-black');
+        allBtn.classList.add('bg-transparent','text-zinc-400','border','border-zinc-700');
+        btn.classList.toggle('bg-white');
+        btn.classList.toggle('text-black');
+        btn.classList.toggle('bg-transparent');
+        btn.classList.toggle('text-zinc-400');
         btn.classList.toggle('border');
         btn.classList.toggle('border-zinc-700');
       }
@@ -595,12 +1047,112 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
 
   saveLabel.addEventListener('click', () => {
     saveEnabled = !saveEnabled;
-    toggleTrack.style.backgroundColor = saveEnabled ? '#0344D3' : '';
-    toggleTrack.style.borderColor     = saveEnabled ? '#0344D3' : '';
-    toggleTrack.classList.toggle('bg-zinc-700',   !saveEnabled);
-    toggleTrack.classList.toggle('border-zinc-600', !saveEnabled);
+    toggleTrack.style.backgroundColor = saveEnabled ? '#ffffff' : '';
+    toggleTrack.style.borderColor     = saveEnabled ? '#6b7280' : '';
+    toggleTrack.classList.toggle('bg-zinc-800',    !saveEnabled);
+    toggleTrack.classList.toggle('border-zinc-700', !saveEnabled);
     toggleThumb.style.transform       = saveEnabled ? 'translateX(18px)' : '';
-    toggleThumb.style.backgroundColor = saveEnabled ? '#ffffff' : '';
-    toggleText.style.color            = saveEnabled ? '#d4d4d8' : '';
+    toggleThumb.style.backgroundColor = saveEnabled ? '#000000' : '';
+    toggleText.style.color            = saveEnabled ? '#a1a1aa' : '';
   });
+
+  // ── FAQ accordion ────────────────────────────────────────────────────────
+  document.querySelectorAll('.faq-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item')!;
+      const body = item.querySelector('.faq-body')!;
+      const icon = btn.querySelector('.faq-icon')!;
+      const open = !body.classList.contains('hidden');
+      body.classList.toggle('hidden', open);
+      icon.classList.toggle('rotate-180', !open);
+    });
+  });
+
+  // ── Count-up animation ───────────────────────────────────────────────────
+  function countUp(
+    el: HTMLElement,
+    from: number,
+    to: number,
+    suffix: string,
+    useLocale: boolean,
+    duration: number = 1800
+  ) {
+    const diff = to - from;
+    const startTime = performance.now();
+
+    function update(now: number) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(from + diff * ease);
+      el.textContent = useLocale
+        ? current.toLocaleString('lt-LT') + suffix
+        : current + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  const statObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target as HTMLElement;
+        const from      = parseInt(el.dataset.from   ?? '0', 10);
+        const to        = parseInt(el.dataset.to     ?? '0', 10);
+        const suffix    = el.dataset.suffix ?? '';
+        const useLocale = el.dataset.format === 'locale';
+        countUp(el, from, to, suffix, useLocale);
+        statObserver.unobserve(el);
+      });
+    },
+    { threshold: 0.4 }
+  );
+
+  document.querySelectorAll<HTMLElement>('.stat-number[data-to]').forEach((el) =>
+    statObserver.observe(el)
+  );
+
+  // ── Scroll-driven BMW animacija ──────────────────────────────────────────
+  const flWrapper = document.getElementById('fl-wrapper');
+  const flCar     = document.getElementById('fl-car')  as HTMLElement | null;
+  const flText    = document.getElementById('fl-text') as HTMLElement | null;
+
+  const flPhrases: string[] = [
+    'Šimtai aukcionų.<br/>Vienas ekranas.',
+    'AI analizė.<br/>Per sekundes.',
+    'Rask pelną.<br/>Anksčiau nei kiti.',
+  ];
+  let flCurrentPhrase = 0;
+
+  function onFlScroll() {
+    if (!flWrapper || !flCar || !flText) return;
+    const scrolled       = window.scrollY - flWrapper.offsetTop;
+    const totalScrollable = flWrapper.offsetHeight - window.innerHeight;
+    const progress       = Math.max(0, Math.min(1, scrolled / totalScrollable));
+
+    // Mašina: nuo -55% (kairė, nepastebima) iki 120% (dešinė, nepastebima)
+    const carX = -55 + progress * 175;
+    flCar.style.left = `${carX}%`;
+
+    // Blur: stipresnis kraštais, silpnesnis per vidurį
+    const centerDist = Math.abs(progress - 0.5) * 2; // 0 centre, 1 edge
+    const blurPx = 2 + centerDist * 10;
+    flCar.style.filter = `blur(${blurPx.toFixed(1)}px)`;
+
+    // Tekstas: keičiasi pagal progresą
+    const phraseIdx = Math.min(flPhrases.length - 1, Math.floor(progress * flPhrases.length));
+    if (phraseIdx !== flCurrentPhrase) {
+      flCurrentPhrase = phraseIdx;
+      flText.style.opacity = '0';
+      setTimeout(() => {
+        flText.innerHTML = flPhrases[phraseIdx];
+        (flText as HTMLElement).style.opacity = '1';
+      }, 220);
+    }
+  }
+
+  window.addEventListener('scroll', onFlScroll, { passive: true });
+  onFlScroll();
 </script>

@@ -3,78 +3,105 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="Kainodara"
-  description="AutoBid kainodara — pradėk nemokamai, mokėk tik kai reikia daugiau."
-  solidHeader={true}
+  title="Kainodara — Carbid"
+  description="Carbid kainodara — pradėk nemokamai, mokėk tik kai reikia daugiau."
 >
 
-  <!-- Pilno puslapio fonas — fixed, lieka vietoje scroll'inant -->
-  <div class="fixed inset-0 -z-10 bg-cover bg-center" style="background-image:url('/images/lights1.webp');" aria-hidden="true"></div>
-  <div class="fixed inset-0 -z-10 bg-zinc-950/70" aria-hidden="true"></div>
+  <!-- ══════ HERO ══════ -->
+  <section class="bg-white border-b border-zinc-100 px-6 pt-36 pb-20">
+    <div class="max-w-7xl mx-auto">
+      <div class="flex flex-col lg:flex-row lg:items-end gap-12 lg:gap-24">
 
-  <section class="px-6 py-24">
-    <div class="max-w-3xl mx-auto">
-      <h1 class="text-5xl sm:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-4">Kainodara</h1>
-      <p class="text-lg text-white/70">Pradėk nemokamai. Plėsk kai reikia.</p>
+        <div class="flex-1">
+          <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-8">Kainodara</p>
+          <h1 class="text-5xl sm:text-6xl xl:text-7xl text-zinc-900 leading-[1.02]">
+            Pradėk.<br/>Plėsk kai<br/>reikia.
+          </h1>
+        </div>
+
+        <div class="lg:w-[400px]">
+          <p class="text-base text-zinc-500 leading-relaxed mb-8">
+            Nemokamas planas visada prieinamas be kreditinės kortelės.
+            Kai prireiks daugiau aukcionų, greitesnių atnaujinimų ar
+            komandos prieigos — pereik prie Pro arba Verslo plano.
+          </p>
+          <div class="flex flex-wrap items-center gap-3">
+            <a href="/registracija" class="px-5 py-2.5 bg-black hover:bg-zinc-800 text-white text-sm font-medium transition-colors">
+              Pradėti nemokamai
+            </a>
+            <a href="/kontaktai" class="px-5 py-2.5 border border-zinc-200 text-zinc-700 hover:border-zinc-400 text-sm transition-colors">
+              Susisiekti →
+            </a>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 
-  <section class="px-6 py-14">
-    <div class="max-w-5xl mx-auto">
+  <!-- ══════ PLANŲ LENTELĖ ══════ -->
+  <section class="bg-zinc-100 px-6 py-16">
+    <div class="max-w-7xl mx-auto">
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-300">
 
-        <!-- Free -->
-        <div class="bg-white border border-zinc-200 rounded-xl p-8 hover:border-zinc-300 transition-colors">
-          <p class="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Nemokamas</p>
-          <p class="text-4xl font-bold text-zinc-900 mb-1">0 €</p>
-          <p class="text-xs text-zinc-400 mb-7">per mėnesį, visada</p>
-          <a href="/registracija" class="block w-full text-center px-4 py-2.5 border border-zinc-300 text-zinc-700 hover:border-zinc-400 hover:text-zinc-900 text-sm font-medium rounded-lg transition-colors">
+        <!-- ── NEMOKAMAS ── -->
+        <div class="bg-white flex flex-col p-10">
+          <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-10">Nemokamas</p>
+          <div class="mb-10">
+            <p class="text-6xl font-light text-zinc-900 leading-none mb-2">0 €</p>
+            <p class="text-xs text-zinc-400">per mėnesį, visada</p>
+          </div>
+          <a href="/registracija" class="block w-full text-center px-4 py-3 border border-zinc-300 text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 text-sm transition-colors mb-10">
             Pradėti nemokamai
           </a>
-          <div class="mt-7 pt-7 border-t border-zinc-100 space-y-3">
+          <div class="border-t border-zinc-100 pt-8 space-y-4 mt-auto">
             {['3 aktyvios paieškos', '2 aukcionų šaltiniai', 'Atnaujinimas kas valandą', 'El. pašto įspėjimai', '30 dienų istorija'].map(f => (
-              <div class="flex gap-3 items-start text-sm text-zinc-600">
-                <svg class="w-4 h-4 text-[#0344D3] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <div class="flex gap-4 items-start text-sm text-zinc-500">
+                <span class="mt-[8px] w-4 border-t border-zinc-300 shrink-0"></span>
                 {f}
               </div>
             ))}
           </div>
         </div>
 
-        <!-- Pro -->
-        <div class="bg-white border-2 border-[#0344D3] rounded-xl p-8 relative shadow-lg shadow-[#0344D3]/10">
-          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
-            <span class="px-3 py-1 bg-brand-gradient text-white text-xs font-semibold rounded-full">Populiariausias</span>
+        <!-- ── PRO (inversed) ── -->
+        <div class="bg-zinc-950 flex flex-col p-10">
+          <div class="flex items-center gap-3 mb-10">
+            <p class="text-[10px] uppercase tracking-[0.22em] text-white">Pro</p>
+            <span class="text-[9px] uppercase tracking-[0.15em] text-zinc-500 border border-zinc-700 px-2 py-0.5">Populiariausias</span>
           </div>
-          <p class="text-xs font-semibold text-[#0344D3] uppercase tracking-widest mb-4">Pro</p>
-          <p class="text-4xl font-bold text-zinc-900 mb-1">19 €</p>
-          <p class="text-xs text-zinc-400 mb-7">per mėnesį</p>
-          <a href="/registracija" class="block w-full text-center px-4 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-semibold rounded-lg transition-colors">
+          <div class="mb-10">
+            <p class="text-6xl font-light text-white leading-none mb-2">19 €</p>
+            <p class="text-xs text-zinc-600">per mėnesį</p>
+          </div>
+          <a href="/registracija" class="block w-full text-center px-4 py-3 bg-white hover:bg-zinc-100 text-black text-sm font-medium transition-colors mb-10">
             Pradėti Pro
           </a>
-          <div class="mt-7 pt-7 border-t border-zinc-100 space-y-3">
+          <div class="border-t border-zinc-800 pt-8 space-y-4 mt-auto">
             {['Neribotai paieškų', 'Visi 7+ šaltiniai', 'Atnaujinimas kas 5 min.', 'SMS + el. pašto įspėjimai', '12 mėn. istorija', 'Kainų grafikai', 'CSV / Excel eksportas'].map(f => (
-              <div class="flex gap-3 items-start text-sm text-zinc-600">
-                <svg class="w-4 h-4 text-[#0344D3] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <div class="flex gap-4 items-start text-sm text-zinc-400">
+                <span class="mt-[8px] w-4 border-t border-zinc-700 shrink-0"></span>
                 {f}
               </div>
             ))}
           </div>
         </div>
 
-        <!-- Business -->
-        <div class="bg-white border border-zinc-200 rounded-xl p-8 hover:border-zinc-300 transition-colors">
-          <p class="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-4">Verslo</p>
-          <p class="text-4xl font-bold text-zinc-900 mb-1">49 €</p>
-          <p class="text-xs text-zinc-400 mb-7">per mėnesį</p>
-          <a href="mailto:info@autobid.lt" class="block w-full text-center px-4 py-2.5 border border-zinc-300 text-zinc-700 hover:border-zinc-400 hover:text-zinc-900 text-sm font-medium rounded-lg transition-colors">
+        <!-- ── VERSLO ── -->
+        <div class="bg-white flex flex-col p-10">
+          <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-10">Verslo</p>
+          <div class="mb-10">
+            <p class="text-6xl font-light text-zinc-900 leading-none mb-2">49 €</p>
+            <p class="text-xs text-zinc-400">per mėnesį</p>
+          </div>
+          <a href="mailto:info@carbid.lt" class="block w-full text-center px-4 py-3 border border-zinc-300 text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 text-sm transition-colors mb-10">
             Susisiekti
           </a>
-          <div class="mt-7 pt-7 border-t border-zinc-100 space-y-3">
+          <div class="border-t border-zinc-100 pt-8 space-y-4 mt-auto">
             {['Viskas iš Pro', 'Iki 10 vartotojų', 'Bendros paieškos', 'API prieiga', 'Prioritetinis palaikymas'].map(f => (
-              <div class="flex gap-3 items-start text-sm text-zinc-600">
-                <svg class="w-4 h-4 text-[#0344D3] shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <div class="flex gap-4 items-start text-sm text-zinc-500">
+                <span class="mt-[8px] w-4 border-t border-zinc-300 shrink-0"></span>
                 {f}
               </div>
             ))}
@@ -83,32 +110,99 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       </div>
 
+      <p class="text-xs text-zinc-400 text-center mt-6">
+        Visi kainų planai be įsipareigojimų. Atšaukti galima bet kada.
+      </p>
+
     </div>
   </section>
 
-  <!-- FAQ -->
-  <section class="px-6 py-14">
-    <div class="max-w-2xl mx-auto">
-      <h2 class="text-xl font-bold text-white mb-6">Dažni klausimai</h2>
-      <div id="faq" class="space-y-2">
+  <!-- ══════ PALYGINIMAS — juosta ══════ -->
+  <section class="bg-white border-y border-zinc-100 px-6 py-16">
+    <div class="max-w-7xl mx-auto">
+
+      <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-12">Ko tikėtis kiekviename plane</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-zinc-200">
+
+        <div class="bg-white pr-0 lg:pr-12 py-8 lg:py-0">
+          <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-300 mb-5">01</p>
+          <h3 class="text-xl text-zinc-900 leading-[1.1] mb-4">Realaus laiko duomenys</h3>
+          <p class="text-sm text-zinc-500 leading-relaxed">
+            Nauji skelbimai iš visų šaltinių — vienoje vietoje. Nemokamame plane
+            atnaujinimas kas valandą, Pro — kas 5 minutės.
+          </p>
+        </div>
+
+        <div class="bg-white px-0 lg:px-12 py-8 lg:py-0">
+          <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-300 mb-5">02</p>
+          <h3 class="text-xl text-zinc-900 leading-[1.1] mb-4">AI pelno analizė</h3>
+          <p class="text-sm text-zinc-500 leading-relaxed">
+            Kiekvienas skelbimas įvertinamas pagal rinkos duomenis — nuotraukų
+            žalos analizė, remonto sąmata ir maksimalus pelningas statymas.
+          </p>
+        </div>
+
+        <div class="bg-white pl-0 lg:pl-12 py-8 lg:py-0">
+          <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-300 mb-5">03</p>
+          <h3 class="text-xl text-zinc-900 leading-[1.1] mb-4">Komandos prieiga</h3>
+          <p class="text-sm text-zinc-500 leading-relaxed">
+            Verslo plane — iki 10 vartotojų, bendros paieškos ir API prieiga
+            integracijoms su jūsų sistemomis.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════ DUK ══════ -->
+  <section class="bg-white px-6 py-20">
+    <div class="max-w-3xl mx-auto">
+
+      <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-12">Dažni klausimai</p>
+
+      <div id="faq" class="border-t border-zinc-200">
         {[
           { q: 'Ar tikrai nereikia kredito kortelės?', a: 'Taip. Nemokamas planas prieinamas be jokios mokėjimo informacijos.' },
           { q: 'Kaip veikia mokėjimas?', a: 'Mėnesinis arba metinis planas. Kortelė arba banko pervedimas. Atšaukti galima bet kada.' },
           { q: 'Kokius aukcionus stebite?', a: 'Autoplius.lt, Auto.lt, Autogidas.lt, Mobile.de, AutoScout24, BCA, Copart. Nuolat diegiame naujus šaltinius.' },
           { q: 'Ar galima pakeisti planą?', a: 'Taip, bet kada. Aukštesnio plano keitimas įsigalioja iš karto, žemesnio — nuo kito atsiskaitymo periodo.' },
+          { q: 'Ar AI analizė veikia automatiškai?', a: 'Išsami AI analizė (žalos vertinimas iš nuotraukų) suaktyvinama rankiniu būdu ant kiekvieno skelbimo. Pelno skaičiavimas veikia automatiškai visiems skelbimai.' },
         ].map(({ q, a }) => (
-          <div class="faq-item bg-white border border-zinc-200 rounded-xl overflow-hidden">
-            <button class="faq-btn w-full flex items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-zinc-800 hover:text-zinc-900 transition-colors">
-              {q}
-              <svg class="faq-icon w-4 h-4 text-zinc-400 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <div class="faq-item border-b border-zinc-200">
+            <button class="faq-btn w-full flex items-center justify-between gap-6 py-5 text-left text-sm font-medium text-zinc-800 hover:text-zinc-900 transition-colors">
+              <span>{q}</span>
+              <svg class="faq-icon w-4 h-4 text-zinc-400 shrink-0 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
               </svg>
             </button>
-            <div class="faq-body hidden px-6 pb-5">
+            <div class="faq-body hidden pb-5">
               <p class="text-sm text-zinc-500 leading-relaxed">{a}</p>
             </div>
           </div>
         ))}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════ CTA ══════ -->
+  <section class="bg-zinc-950 px-6 py-20">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10">
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-600 mb-5">Pradėk šiandien</p>
+        <h2 class="text-3xl xl:text-4xl text-white leading-[1.08]">
+          Klausimų?<br/>Rašyk mums.
+        </h2>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 shrink-0">
+        <a href="/registracija" class="px-6 py-3 bg-white hover:bg-zinc-100 text-black text-sm font-medium transition-colors">
+          Registruotis nemokamai
+        </a>
+        <a href="mailto:info@carbid.lt" class="px-6 py-3 border border-zinc-700 hover:border-zinc-500 text-zinc-300 text-sm transition-colors">
+          info@carbid.lt
+        </a>
       </div>
     </div>
   </section>

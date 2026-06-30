@@ -5,9 +5,9 @@ export interface NavItem {
 }
 
 export const mainNav: NavItem[] = [
-  { label: 'Kaip veikia', href: '/kaip-veikia' },
-  { label: 'Apie mus', href: '/apie' },
-  { label: 'Kainodara', href: '/kainodara' },
+  { label: 'Kaip veikia', href: '/#kaip-veikia' },
+  { label: 'Kainodara', href: '/#kainodara' },
+  { label: 'Apie mus', href: '/#apie' },
 ];
 
 export const footerNav: { title: string; items: NavItem[] }[] = [

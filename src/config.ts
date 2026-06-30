@@ -37,13 +37,13 @@ const analyticsConfig: AnalyticsConfig = {
 };
 
 const config: SiteConfig = {
-  siteName: "AutoBid",
-  siteUrl: "https://autobid.lt",
+  siteName: "Carbid",
+  siteUrl: "https://carbid.lt",
   siteDescription:
-    "AutoBid — visų Lietuvos ir Europos automobilių aukcionų duomenys viename ekrane. Sutaupyk laiką, rask geriausias kainas.",
+    "Carbid — visų Lietuvos ir Europos automobilių aukcionų duomenys viename ekrane. Sutaupyk laiką, rask geriausias kainas.",
 
-  companyName: "AutoBid UAB",
-  companyEmail: "info@autobid.lt",
+  companyName: "Carbid UAB",
+  companyEmail: "info@carbid.lt",
   companyPhone: "+370 600 00000",
   companyAddress: "Vilnius, Lietuva",
 

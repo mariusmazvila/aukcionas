@@ -8,19 +8,18 @@ function isActive(href: string) {
   return pathname.startsWith(href);
 }
 
-// Navbaras visada baltas, meniu — juodas, plonas svoris (Tesla stilius).
 const linkBase = 'text-black hover:text-zinc-500';
 ---
 
 <header
-  class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-zinc-200 shadow-sm"
+  class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-zinc-200"
   id="site-header"
 >
-  <div class="max-w-6xl mx-auto px-6">
+  <div class="max-w-7xl mx-auto px-6">
     <div class="flex items-center justify-between h-14">
 
-      <a href="/" aria-label="AutoBid">
-        <img src="/images/autobid%20logo.png" alt="AutoBid" class="h-[52px] w-auto" />
+      <a href="/" aria-label="Carbid" class="flex items-center">
+        <span class="text-lg font-semibold tracking-[0.04em] text-black">CARBID<span class="font-normal text-zinc-400">.lt</span></span>
       </a>
 
       <nav aria-label="Pagrindinis meniu" class="hidden md:flex items-center">
@@ -42,7 +41,7 @@ const linkBase = 'text-black hover:text-zinc-500';
         <a href="/prisijungti" class:list={['nav-link text-sm font-normal tracking-wide transition-colors', linkBase]}>
           Prisijungti
         </a>
-        <a href="/registracija" class="px-3 py-1.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-medium rounded-lg transition-colors">
+        <a href="/registracija" class="px-4 py-1.5 bg-black hover:bg-zinc-800 text-white text-sm font-medium transition-colors">
           Registracija
         </a>
       </div>
@@ -67,7 +66,7 @@ const linkBase = 'text-black hover:text-zinc-500';
   </div>
 
   <div id="mobile-menu" class="hidden md:hidden border-t border-zinc-200 bg-white">
-    <nav class="max-w-6xl mx-auto px-6 py-3 flex flex-col">
+    <nav class="max-w-7xl mx-auto px-6 py-3 flex flex-col">
       {mainNav.map(({ label, href }) => (
         <a
           href={href}
@@ -78,7 +77,7 @@ const linkBase = 'text-black hover:text-zinc-500';
       ))}
       <div class="pt-3 flex flex-col gap-2">
         <a href="/prisijungti" class="py-2 text-sm text-black text-center border border-zinc-200 hover:border-zinc-400 hover:text-zinc-500 transition-colors">Prisijungti</a>
-        <a href="/registracija" class="py-2 bg-brand-gradient hover:opacity-90 text-white text-sm font-medium text-center transition-colors">Registracija</a>
+        <a href="/registracija" class="py-2 bg-black hover:bg-zinc-800 text-white text-sm font-medium text-center transition-colors">Registracija</a>
       </div>
     </nav>
   </div>

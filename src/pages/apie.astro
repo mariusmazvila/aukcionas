@@ -1,109 +1,209 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-const stats = [
-  { value: '7+',     label: 'Prijungtų aukcionų' },
-  { value: '47 000+', label: 'Stebimų skelbimų' },
-  { value: '5 min.', label: 'Duomenų atnaujinimas' },
-  { value: '2026',   label: 'Veiklos pradžia' },
-];
-
-const values = [
-  {
-    title: 'Skaidrumas',
-    description: 'Rodome realią rinkos vertę, remonto riziką ir visus kaštus — be paslėptų tarpininkų mokesčių.',
-  },
-  {
-    title: 'Greitis',
-    description: 'Nauji skelbimai aptinkami per kelias minutes, o analizė pateikiama per sekundes. Nereikia rankiniu būdu tikrinti aukcionų.',
-  },
-  {
-    title: 'Sprendimai duomenimis',
-    description: 'Kiekvienas pasiūlymas įvertinamas pagal tikrus rinkos duomenis, kad pirktum protingai, o ne iš nuojautos.',
-  },
-];
 ---
 
 <BaseLayout
-  title="Apie mus"
-  description="AutoBid — automobilių aukcionų stebėjimo platforma perpardavinėtojams. Mūsų tikslas, vertybės ir komanda."
-  solidHeader={true}
+  title="Apie mus — Carbid"
+  description="Carbid — automobilių aukcionų stebėjimo platforma perpardavinėtojams. Mūsų tikslas, vertybės ir misija."
 >
 
-  <!-- Pilno puslapio fonas — fixed, lieka vietoje scroll'inant -->
-  <div class="fixed inset-0 -z-10 bg-cover bg-center" style="background-image:url('/images/old-car-3.webp');" aria-hidden="true"></div>
-  <div class="fixed inset-0 -z-10 bg-zinc-950/70" aria-hidden="true"></div>
+  <!-- ══════ HERO ══════ -->
+  <section class="flex flex-col lg:flex-row min-h-screen border-b border-zinc-100">
 
-  <!-- Hero -->
-  <section class="px-6 pt-36 sm:pt-44 pb-16">
-    <div class="max-w-3xl mx-auto">
-      <h1 class="text-5xl sm:text-6xl font-bold text-white tracking-tight leading-[1.1] mb-6">Apie mus</h1>
-      <p class="text-lg text-white/70 leading-relaxed max-w-2xl">
-        AutoBid — tai automobilių aukcionų stebėjimo platforma, sukurta pardavėjams ir
-        perpardavinėtojams. Visus aukcionus surenkame į vieną ekraną ir parodome, kur slypi pelnas.
+    <div class="flex-1 flex flex-col justify-end pb-16 lg:pb-24 pt-36 px-8 lg:px-16 xl:px-24 bg-white order-2 lg:order-1">
+      <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-10">Apie mus</p>
+      <h1 class="text-5xl sm:text-6xl xl:text-7xl text-zinc-900 leading-[1.02] mb-8">
+        Platforma<br/>perpardavinė-<br/>tojams.<br/>
+        <span class="text-zinc-300">Nuo 2026.</span>
+      </h1>
+      <p class="text-base text-zinc-500 leading-relaxed max-w-[400px]">
+        Carbid — tai automobilių aukcionų stebėjimo platforma, sukurta
+        pardavėjams ir perpardavinėtojams. Visus aukcionus surenkame į
+        vieną ekraną ir parodome, kur slypi pelnas.
       </p>
     </div>
+
+    <div class="lg:w-[58%] h-72 lg:h-auto bg-zinc-100 overflow-hidden order-1 lg:order-2">
+      <img
+        src="/images/car-girl-1.jpg"
+        alt="Carbid platforma"
+        class="w-full h-full object-cover"
+      />
+    </div>
+
   </section>
 
-  <!-- Stats -->
-  <section class="px-6 pb-20">
-    <div class="max-w-3xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-5">
-      {stats.map(({ value, label }) => (
-        <div class="bg-white/5 border border-white/10 rounded-xl p-5 backdrop-blur-sm text-center">
-          <p class="text-3xl font-bold text-white">{value}</p>
-          <p class="text-xs text-white/60 mt-1">{label}</p>
-        </div>
-      ))}
+  <!-- ══════ STATS ══════ -->
+  <section class="bg-zinc-950 border-b border-zinc-900">
+    <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-800">
+
+      <div class="bg-zinc-950 flex flex-col px-8 xl:px-14 py-14">
+        <span
+          class="stat-number text-6xl xl:text-7xl text-white font-light leading-none mb-5 tabular-nums"
+          data-from="0" data-to="7" data-suffix="+"
+        >7+</span>
+        <span class="text-[10px] text-zinc-500 uppercase tracking-[0.18em]">Prijungtų aukcionų</span>
+      </div>
+
+      <div class="bg-zinc-950 flex flex-col px-8 xl:px-14 py-14">
+        <span
+          class="stat-number text-6xl xl:text-7xl text-white font-light leading-none mb-5 tabular-nums"
+          data-from="0" data-to="47000" data-suffix="+" data-format="locale"
+        >47 000+</span>
+        <span class="text-[10px] text-zinc-500 uppercase tracking-[0.18em]">Stebimų skelbimų</span>
+      </div>
+
+      <div class="bg-zinc-950 flex flex-col px-8 xl:px-14 py-14">
+        <span
+          class="stat-number text-6xl xl:text-7xl text-white font-light leading-none mb-5 tabular-nums"
+          data-from="1" data-to="5" data-suffix=" min."
+        >5 min.</span>
+        <span class="text-[10px] text-zinc-500 uppercase tracking-[0.18em]">Duomenų atnaujinimas</span>
+      </div>
+
+      <div class="bg-zinc-950 flex flex-col px-8 xl:px-14 py-14">
+        <span
+          class="stat-number text-6xl xl:text-7xl text-white font-light leading-none mb-5 tabular-nums"
+          data-from="2020" data-to="2026" data-suffix=""
+        >2026</span>
+        <span class="text-[10px] text-zinc-500 uppercase tracking-[0.18em]">Veiklos pradžia</span>
+      </div>
+
     </div>
   </section>
 
-  <!-- Story -->
-  <section class="px-6 pb-20">
-    <div class="max-w-3xl mx-auto bg-white border border-zinc-200 rounded-2xl p-8 sm:p-10">
-      <h2 class="text-xl font-semibold text-zinc-900 mb-5">Kodėl AutoBid?</h2>
-      <div class="space-y-5 text-sm text-zinc-600 leading-relaxed">
-        <p>
-          Automobilių perpardavinėjimas — tai lenktynės su laiku. Geriausi pasiūlymai aukcionuose
-          dingsta per minutes, o jų ieškoti vienu metu keliose platformose yra varginanti ir
-          klaidoms atvira veikla.
+  <!-- ══════ PULL QUOTE + STORY ══════ -->
+  <section class="bg-white py-24 px-6 border-b border-zinc-100">
+    <div class="max-w-7xl mx-auto">
+
+      <!-- Pull quote -->
+      <div class="border-t border-b border-zinc-100 py-14 mb-20">
+        <p class="text-2xl xl:text-3xl text-zinc-400 font-light leading-[1.5] max-w-4xl">
+          „Geriausi pasiūlymai aukcionuose dingsta per minutes,
+          o jų ieškoti vienu metu keliose platformose yra varginanti
+          ir klaidoms atvira veikla."
         </p>
-        <p>
-          Sukūrėme AutoBid, kad šį procesą paverstume vienu langu: realaus laiko duomenys iš
-          Autoplius.lt, Mobile.de, AutoScout24 ir kitų aukcionų, automatinė rinkos vertės ir
-          remonto rizikos analizė bei aiškus pelno įvertinimas kiekvienam skelbimui.
-        </p>
-        <p>
-          Mūsų tikslas paprastas — kad priimtum geresnius sprendimus greičiau ir nebepraleistum
-          pelningų sandorių.
-        </p>
+      </div>
+
+      <!-- Story: kairė 58% tekstas, dešinė 42% foto -->
+      <div class="flex flex-col lg:flex-row gap-0">
+
+        <div class="flex-1 lg:pr-24 pb-12 lg:pb-0">
+          <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-8">Kodėl Carbid?</p>
+          <div class="space-y-6 text-base text-zinc-600 leading-relaxed">
+            <p>
+              Automobilių perpardavinėjimas — tai lenktynės su laiku.
+              Sukūrėme Carbid, kad šį procesą paverstume vienu langu:
+              realaus laiko duomenys iš Autoplius.lt, Mobile.de,
+              AutoScout24 ir kitų aukcionų.
+            </p>
+            <p>
+              Automatinė rinkos vertės ir remonto rizikos analizė bei
+              aiškus pelno įvertinimas kiekvienam skelbimui — kad
+              priimtum geresnius sprendimus greičiau ir
+              nebepraleistum pelningų sandorių.
+            </p>
+          </div>
+        </div>
+
+        <div class="lg:w-[42%] bg-zinc-100 overflow-hidden" style="min-height:360px;">
+          <img
+            src="/images/old-car-2.webp"
+            alt="Klasikinis automobilis"
+            class="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- Values -->
-  <section class="px-6 pb-20">
-    <div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-5">
-      {values.map(({ title, description }) => (
-        <div class="bg-white border border-zinc-200 rounded-xl p-6 sm:p-7">
-          <h3 class="text-base font-semibold text-zinc-900 mb-2">{title}</h3>
-          <p class="text-sm text-zinc-500 leading-relaxed">{description}</p>
+  <!-- ══════ VERTYBĖS — horizontalūs stulpeliai ══════ -->
+  <section class="bg-zinc-50 border-b border-zinc-200 py-20 px-6">
+    <div class="max-w-7xl mx-auto">
+
+      <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-16">Vertybės</p>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-zinc-200">
+
+        <div class="bg-zinc-50 pr-0 lg:pr-12 py-10 lg:py-0">
+          <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-300 mb-6">01</p>
+          <h3 class="text-2xl xl:text-3xl text-zinc-900 leading-[1.1] mb-5">Skaidrumas</h3>
+          <p class="text-sm text-zinc-500 leading-relaxed">
+            Rodome realią rinkos vertę, remonto riziką ir visus kaštus —
+            be paslėptų tarpininkų mokesčių.
+          </p>
         </div>
-      ))}
+
+        <div class="bg-zinc-50 px-0 lg:px-12 py-10 lg:py-0">
+          <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-300 mb-6">02</p>
+          <h3 class="text-2xl xl:text-3xl text-zinc-900 leading-[1.1] mb-5">Greitis</h3>
+          <p class="text-sm text-zinc-500 leading-relaxed">
+            Nauji skelbimai aptinkami per kelias minutes, o analizė
+            pateikiama per sekundes. Nereikia rankiniu būdu tikrinti aukcionų.
+          </p>
+        </div>
+
+        <div class="bg-zinc-50 pl-0 lg:pl-12 py-10 lg:py-0">
+          <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-300 mb-6">03</p>
+          <h3 class="text-2xl xl:text-3xl text-zinc-900 leading-[1.1] mb-5">Duomenimis</h3>
+          <p class="text-sm text-zinc-500 leading-relaxed">
+            Kiekvienas pasiūlymas įvertinamas pagal tikrus rinkos duomenis,
+            kad pirktum protingai, o ne iš nuojautos.
+          </p>
+        </div>
+
+      </div>
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="px-6 pb-24">
-    <div class="max-w-3xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 bg-white/5 border border-white/10 rounded-2xl p-7 sm:p-8 backdrop-blur-sm">
+  <!-- ══════ FOTO KOLIAŽAS ══════ -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-zinc-100">
+
+    <div class="h-72 lg:h-[480px] bg-zinc-200 overflow-hidden">
+      <img
+        src="/images/old-car-1.webp"
+        alt=""
+        class="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-700"
+        loading="lazy"
+      />
+    </div>
+
+    <div class="h-72 lg:h-[480px] bg-zinc-200 overflow-hidden">
+      <img
+        src="/images/car-girl-2.jpg"
+        alt=""
+        class="w-full h-full object-cover object-top hover:scale-[1.03] transition-transform duration-700"
+        loading="lazy"
+      />
+    </div>
+
+    <div class="h-72 lg:h-[480px] bg-zinc-200 overflow-hidden">
+      <img
+        src="/images/old-car-4.jpg"
+        alt=""
+        class="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-700"
+        loading="lazy"
+      />
+    </div>
+
+  </section>
+
+  <!-- ══════ CTA ══════ -->
+  <section class="bg-zinc-950 px-6 py-20">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10">
       <div>
-        <p class="text-base font-semibold text-white">Nori išbandyti?</p>
-        <p class="text-sm text-white/60 mt-0.5">Nemokamas planas prieinamas be kredito kortelės.</p>
+        <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-600 mb-5">Pradėk šiandien</p>
+        <h2 class="text-3xl xl:text-4xl text-white leading-[1.08]">
+          Nori išbandyti?<br/>Nemokamas planas.
+        </h2>
       </div>
-      <div class="flex gap-3 shrink-0">
-        <a href="/registracija" class="px-5 py-2.5 bg-brand-gradient hover:opacity-90 text-white text-sm font-medium rounded-lg transition-colors">
+      <div class="flex flex-col sm:flex-row gap-3 shrink-0">
+        <a href="/registracija" class="px-6 py-3 bg-white hover:bg-zinc-100 text-black text-sm font-medium transition-colors">
           Registruotis nemokamai
         </a>
-        <a href="/kaip-veikia" class="px-5 py-2.5 border border-white/30 text-white hover:border-white/60 text-sm rounded-lg transition-colors">
+        <a href="/kaip-veikia" class="px-6 py-3 border border-zinc-700 hover:border-zinc-500 text-zinc-300 text-sm transition-colors">
           Kaip veikia
         </a>
       </div>
@@ -111,3 +211,50 @@ const values = [
   </section>
 
 </BaseLayout>
+
+<script>
+  function countUp(
+    el: HTMLElement,
+    from: number,
+    to: number,
+    suffix: string,
+    useLocale: boolean,
+    duration: number = 1800
+  ) {
+    const diff = to - from;
+    const startTime = performance.now();
+
+    function update(now: number) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = Math.round(from + diff * ease);
+      el.textContent = useLocale
+        ? current.toLocaleString('lt-LT') + suffix
+        : current + suffix;
+      if (progress < 1) requestAnimationFrame(update);
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target as HTMLElement;
+        const from      = parseInt(el.dataset.from   ?? '0', 10);
+        const to        = parseInt(el.dataset.to     ?? '0', 10);
+        const suffix    = el.dataset.suffix ?? '';
+        const useLocale = el.dataset.format === 'locale';
+        countUp(el, from, to, suffix, useLocale);
+        observer.unobserve(el);
+      });
+    },
+    { threshold: 0.4 }
+  );
+
+  document.querySelectorAll<HTMLElement>('.stat-number[data-to]').forEach((el) =>
+    observer.observe(el)
+  );
+</script>
