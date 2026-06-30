@@ -14,15 +14,15 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
   {
     title: 'Produktas',
     items: [
-      { label: 'Kaip veikia', href: '/kaip-veikia' },
-      { label: 'Kainodara', href: '/kainodara' },
+      { label: 'Kaip veikia', href: '/#kaip-veikia' },
+      { label: 'Kainodara', href: '/#kainodara' },
       { label: 'Registruotis', href: '/registracija' },
     ],
   },
   {
     title: 'Įmonė',
     items: [
-      { label: 'Apie mus', href: '/apie' },
+      { label: 'Apie mus', href: '/#apie' },
       { label: 'Privatumo politika', href: '/privatumas' },
       { label: 'Kontaktai', href: '/kontaktai' },
     ],

@@ -313,13 +313,13 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
 
       <div class="flex items-center justify-between mb-8">
         <div>
-          <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-1">Aktyvūs aukcionai</p>
-          <h2 class="text-xl font-medium text-zinc-900">Karščiausia</h2>
+          <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-1" data-anim="up">Aktyvūs aukcionai</p>
+          <h2 class="text-xl font-medium text-zinc-900" data-anim="up" data-anim-delay="80">Karščiausia</h2>
         </div>
-        <a href="/registracija" class="text-xs text-zinc-500 hover:text-zinc-800 transition-colors">Visi skelbimai →</a>
+        <a href="/registracija" class="text-xs text-zinc-500 hover:text-zinc-800 transition-colors" data-anim="up" data-anim-delay="120">Visi skelbimai →</a>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-100">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-100" data-anim-stagger>
         {deals.map(({ id, make, model, year, km, price, source, image, end, url }) => (
           <a href={`/auto/demo?id=${id ?? ''}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${year ?? ''}&km=${km ?? ''}&price=${price ?? ''}&source=${encodeURIComponent(source)}` + (end ? `&end=${encodeURIComponent(end)}` : '') + (url ? `&url=${encodeURIComponent(url)}` : '')} class="group bg-white hover:bg-zinc-50 transition-colors flex flex-col">
             <div class="relative w-full h-40 bg-zinc-100 flex items-center justify-center overflow-hidden">
@@ -347,8 +347,8 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
         ))}
       </div>
 
-      <div class="mt-8 flex items-center gap-4">
-        <a href="/registracija" class="px-5 py-2.5 bg-black hover:bg-zinc-800 text-white text-sm font-medium transition-colors">
+      <div class="mt-8 flex items-center gap-4" data-anim="up" data-anim-delay="200">
+        <a href="/registracija" class="px-5 py-2.5 bg-zinc-shine hover:opacity-90 text-white text-sm font-medium transition-opacity">
           Matyti visus 47 000+ skelbimų
         </a>
         <span class="text-xs text-zinc-400">Nemokama registracija</span>
@@ -398,19 +398,19 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
     <div class="bg-white border-t border-b border-zinc-100 px-6 py-20">
       <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-end gap-12 lg:gap-24">
         <div class="flex-1">
-          <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-8">Kainodara</p>
-          <h2 class="text-5xl xl:text-6xl text-zinc-900 leading-[1.02]">
+          <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-8" data-anim="up">Kainodara</p>
+          <h2 class="text-5xl xl:text-6xl text-zinc-900 leading-[1.02]" data-anim="up" data-anim-delay="80">
             Pradėk.<br/>Plėsk kai<br/>reikia.
           </h2>
         </div>
         <div class="lg:w-[400px]">
-          <p class="text-base text-zinc-500 leading-relaxed mb-8">
+          <p class="text-base text-zinc-500 leading-relaxed mb-8" data-anim="up" data-anim-delay="160">
             Nemokamas planas visada prieinamas be kreditinės kortelės.
             Kai prireiks daugiau aukcionų, greitesnių atnaujinimų ar
             komandos prieigos — pereik prie Pro arba Verslo plano.
           </p>
-          <div class="flex flex-wrap items-center gap-3">
-            <a href="/registracija" class="px-5 py-2.5 bg-black hover:bg-zinc-800 text-white text-sm font-medium transition-colors">
+          <div class="flex flex-wrap items-center gap-3" data-anim="up" data-anim-delay="240">
+            <a href="/registracija" class="px-5 py-2.5 bg-zinc-shine hover:opacity-90 text-white text-sm font-medium transition-opacity">
               Pradėti nemokamai
             </a>
             <a href="mailto:info@carbid.lt" class="px-5 py-2.5 border border-zinc-200 text-zinc-700 hover:border-zinc-400 text-sm transition-colors">
@@ -424,7 +424,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
     <!-- Plans grid -->
     <div class="bg-zinc-100 px-6 py-16">
       <div class="max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-300">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-300" data-anim-stagger>
 
           <!-- NEMOKAMAS -->
           <div class="bg-white flex flex-col p-10">
@@ -534,19 +534,19 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
     <div class="bg-white border-b border-zinc-100 px-6 py-20">
       <div class="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-end gap-12 lg:gap-24">
         <div class="flex-1">
-          <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-8">Kaip veikia</p>
-          <h2 class="text-5xl xl:text-6xl text-zinc-900 leading-[1.02]">
+          <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-8" data-anim="up">Kaip veikia</p>
+          <h2 class="text-5xl xl:text-6xl text-zinc-900 leading-[1.02]" data-anim="up" data-anim-delay="80">
             Aukcionų<br/>stebėjimas.<br/>Automatiškai.
           </h2>
         </div>
         <div class="lg:w-[400px]">
-          <p class="text-base text-zinc-500 leading-relaxed mb-8">
+          <p class="text-base text-zinc-500 leading-relaxed mb-8" data-anim="up" data-anim-delay="160">
             Automatiškai renkame duomenis iš Lietuvos ir Europos automobilių
             aukcionų, apdorojame juos ir pateikiame vienoje vietoje — kad tu
             galėtum greičiau rasti geriausią sandorį.
           </p>
-          <div class="flex flex-wrap items-center gap-3">
-            <a href="/registracija" class="px-5 py-2.5 bg-black hover:bg-zinc-800 text-white text-sm font-medium transition-colors">
+          <div class="flex flex-wrap items-center gap-3" data-anim="up" data-anim-delay="240">
+            <a href="/registracija" class="px-5 py-2.5 bg-zinc-shine hover:opacity-90 text-white text-sm font-medium transition-opacity">
               Pradėti nemokamai
             </a>
             <a href="/#kainodara" class="px-5 py-2.5 border border-zinc-200 text-zinc-700 hover:border-zinc-400 text-sm transition-colors">
@@ -559,7 +559,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
 
     <!-- 01 — tekstas kairė, foto dešinė -->
     <div class="flex flex-col lg:flex-row min-h-[600px] border-b border-zinc-100">
-      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-white order-2 lg:order-1">
+      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-white order-2 lg:order-1" data-anim="up">
         <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-300 mb-8">01 / 04</p>
         <h3 class="text-4xl xl:text-5xl text-zinc-900 leading-[1.05] mb-6">
           Automatinis<br/>duomenų<br/>rinkimas
@@ -584,17 +584,17 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
           </li>
         </ul>
       </div>
-      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden order-1 lg:order-2">
+      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden order-1 lg:order-2" data-anim="right">
         <img src="/images/automatine%20deze.jpg" alt="Automatinė pavarų dėžė" class="w-full h-full object-cover" loading="lazy"/>
       </div>
     </div>
 
     <!-- 02 — foto kairė, tekstas dešinė -->
     <div class="flex flex-col lg:flex-row min-h-[600px] border-b border-zinc-100">
-      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden">
+      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden" data-anim="left">
         <img src="/images/bmw%20masinos.jpg" alt="BMW automobiliai" class="w-full h-full object-cover" loading="lazy"/>
       </div>
-      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-white">
+      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-white" data-anim="up">
         <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-300 mb-8">02 / 04</p>
         <h3 class="text-4xl xl:text-5xl text-zinc-900 leading-[1.05] mb-6">
           Tikslus<br/>filtravimas
@@ -623,7 +623,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
 
     <!-- 03 — juodas tekstas kairė, foto dešinė -->
     <div class="flex flex-col lg:flex-row min-h-[600px] border-b border-zinc-100">
-      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-zinc-950 order-2 lg:order-1">
+      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-zinc-950 order-2 lg:order-1" data-anim="up">
         <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-700 mb-8">03 / 04</p>
         <h3 class="text-4xl xl:text-5xl text-white leading-[1.05] mb-6">
           AI rinkos<br/>analizė
@@ -648,17 +648,17 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
           </li>
         </ul>
       </div>
-      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden order-1 lg:order-2">
+      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden order-1 lg:order-2" data-anim="right">
         <img src="/images/masinos%20grazios.jpg" alt="Automobiliai" class="w-full h-full object-cover" loading="lazy"/>
       </div>
     </div>
 
     <!-- 04 — foto kairė, tekstas dešinė -->
     <div class="flex flex-col lg:flex-row min-h-[600px] border-b border-zinc-100">
-      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden">
+      <div class="lg:w-[52%] h-72 lg:h-auto bg-zinc-100 overflow-hidden" data-anim="left">
         <img src="/images/mercedes%20%20masina.jpg" alt="Mercedes automobilis" class="w-full h-full object-cover" loading="lazy"/>
       </div>
-      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-white">
+      <div class="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24 py-16 bg-white" data-anim="up">
         <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-300 mb-8">04 / 04</p>
         <h3 class="text-4xl xl:text-5xl text-zinc-900 leading-[1.05] mb-6">
           Pelno<br/>skaičiavimas
@@ -695,7 +695,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
 
     <!-- Section intro with image -->
     <div class="flex flex-col lg:flex-row min-h-[70vh] border-b border-zinc-100">
-      <div class="flex-1 flex flex-col justify-end pb-16 lg:pb-24 pt-20 px-8 lg:px-16 xl:px-24 bg-white order-2 lg:order-1">
+      <div class="flex-1 flex flex-col justify-end pb-16 lg:pb-24 pt-20 px-8 lg:px-16 xl:px-24 bg-white order-2 lg:order-1" data-anim="up">
         <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-10">Apie mus</p>
         <h2 class="text-5xl xl:text-6xl text-zinc-900 leading-[1.02] mb-8">
           Platforma<br/>perpardavinė-<br/>tojams.<br/>
@@ -707,14 +707,14 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
           vieną ekraną ir parodome, kur slypi pelnas.
         </p>
       </div>
-      <div class="lg:w-[58%] h-72 lg:h-auto bg-zinc-100 overflow-hidden order-1 lg:order-2">
+      <div class="lg:w-[58%] h-72 lg:h-auto bg-zinc-100 overflow-hidden order-1 lg:order-2" data-anim="right">
         <img src="/images/car-girl-1.jpg" alt="Carbid platforma" class="w-full h-full object-cover" loading="lazy"/>
       </div>
     </div>
 
     <!-- Stats with count-up -->
     <div class="bg-zinc-950 border-b border-zinc-900">
-      <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-800">
+      <div class="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-800" data-anim-stagger>
 
         <div class="bg-zinc-950 flex flex-col px-8 xl:px-14 py-14">
           <span class="stat-number text-6xl xl:text-7xl text-white font-light leading-none mb-5 tabular-nums"
@@ -747,7 +747,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
     <div class="bg-white py-24 px-6 border-b border-zinc-100">
       <div class="max-w-7xl mx-auto">
 
-        <div class="border-t border-b border-zinc-100 py-14 mb-20">
+        <div class="border-t border-b border-zinc-100 py-14 mb-20" data-anim="up">
           <p class="text-2xl xl:text-3xl text-zinc-400 font-light leading-[1.5] max-w-4xl">
             „Geriausi pasiūlymai aukcionuose dingsta per minutes,
             o jų ieškoti vienu metu keliose platformose yra varginanti
@@ -756,7 +756,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
         </div>
 
         <div class="flex flex-col lg:flex-row gap-0">
-          <div class="flex-1 lg:pr-24 pb-12 lg:pb-0">
+          <div class="flex-1 lg:pr-24 pb-12 lg:pb-0" data-anim="up">
             <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-8">Kodėl Carbid?</p>
             <div class="space-y-6 text-base text-zinc-600 leading-relaxed">
               <p>
@@ -773,7 +773,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
               </p>
             </div>
           </div>
-          <div class="lg:w-[42%] bg-zinc-100 overflow-hidden" style="min-height:360px;">
+          <div class="lg:w-[42%] bg-zinc-100 overflow-hidden" style="min-height:360px;" data-anim="right">
             <img src="/images/old-car-2.webp" alt="Klasikinis automobilis" class="w-full h-full object-cover" loading="lazy"/>
           </div>
         </div>
@@ -785,7 +785,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
     <div class="bg-zinc-50 border-b border-zinc-200 py-20 px-6">
       <div class="max-w-7xl mx-auto">
         <p class="text-[10px] uppercase tracking-[0.22em] text-zinc-400 mb-16">Vertybės</p>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-zinc-200">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-zinc-200" data-anim-stagger>
           <div class="bg-zinc-50 pr-0 lg:pr-12 py-10 lg:py-0">
             <p class="text-[10px] uppercase tracking-[0.15em] text-zinc-300 mb-6">01</p>
             <h3 class="text-2xl xl:text-3xl text-zinc-900 leading-[1.1] mb-5">Skaidrumas</h3>
@@ -812,7 +812,7 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
     </div>
 
     <!-- Photo collage -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-zinc-100">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-px bg-zinc-100" data-anim-stagger>
       <div class="h-72 lg:h-[480px] bg-zinc-200 overflow-hidden">
         <img src="/images/old-car-1.webp" alt="" class="w-full h-full object-cover hover:scale-[1.03] transition-transform duration-700" loading="lazy"/>
       </div>
@@ -833,13 +833,13 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
 
       <div class="flex items-center justify-between mb-8">
         <div>
-          <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-1">Resursai</p>
-          <h2 class="text-xl font-medium text-zinc-900">Straipsniai</h2>
+          <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-1" data-anim="up">Resursai</p>
+          <h2 class="text-xl font-medium text-zinc-900" data-anim="up" data-anim-delay="80">Straipsniai</h2>
         </div>
         <a href="/straipsniai" class="text-xs text-zinc-500 hover:text-zinc-800 transition-colors">Visi →</a>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-200">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-200" data-anim-stagger>
         {articles.map(({ slug, title, excerpt, date, readMin }) => (
           <article class="bg-white p-6 hover:bg-zinc-50 transition-colors">
             <h3 class="text-sm font-medium text-zinc-800 leading-snug mb-3">
@@ -1155,4 +1155,27 @@ function fmtOpt(n:number)  { return n.toLocaleString('lt-LT'); }
 
   window.addEventListener('scroll', onFlScroll, { passive: true });
   onFlScroll();
+
+  // ── Scroll-triggered animations ──────────────────────────────────────────
+  const animObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target as HTMLElement;
+      const delay = parseInt(el.dataset.animDelay ?? '0');
+      setTimeout(() => el.classList.add('anim-in'), delay);
+      animObs.unobserve(el);
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -48px 0px' });
+
+  // Stagger children of [data-anim-stagger] grids
+  document.querySelectorAll<HTMLElement>('[data-anim-stagger]').forEach(parent => {
+    Array.from(parent.children).forEach((child, i) => {
+      const el = child as HTMLElement;
+      el.dataset.anim = el.dataset.anim ?? 'up';
+      el.dataset.animDelay = String(i * 90);
+      animObs.observe(el);
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-anim]').forEach(el => animObs.observe(el));
 </script>

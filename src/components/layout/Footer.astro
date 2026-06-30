@@ -5,41 +5,47 @@ import { footerNav } from '../../config/navigation';
 const year = new Date().getFullYear();
 ---
 
-<footer class="bg-zinc-100 border-t border-zinc-200">
-  <div class="max-w-6xl mx-auto px-6">
+<footer class="bg-zinc-950">
 
-    <div class="py-10 grid grid-cols-1 md:grid-cols-[1fr_1fr_1fr] gap-10">
+  <!-- Gradient accent line -->
+  <div class="h-px" style="background:linear-gradient(90deg,transparent 0%,#3f3f46 25%,#71717a 50%,#3f3f46 75%,transparent 100%);"></div>
+
+  <div class="max-w-7xl mx-auto px-6">
+
+    <div class="py-14 grid grid-cols-1 md:grid-cols-[1.6fr_1fr_1fr] gap-10 md:gap-6">
+
       <div>
-        <a href="/" aria-label="AutoBid">
-          <img src="/images/autobid%20logo.png" alt="AutoBid" class="h-8 w-auto" />
+        <a href="/" aria-label="Carbid" class="inline-block mb-5">
+          <span class="text-lg font-semibold tracking-[0.04em] text-white">CARBID<span class="font-normal text-zinc-500">.lt</span></span>
         </a>
-        <p class="mt-3 text-sm text-zinc-500 max-w-xs">
+        <p class="text-sm text-zinc-500 max-w-[260px] leading-relaxed mb-5">
           Visi Lietuvos ir Europos automobilių aukcionai viename ekrane.
         </p>
-        <a href={`mailto:${config.companyEmail}`} class="mt-3 block text-xs text-zinc-400 hover:text-zinc-700 transition-colors">
+        <a href={`mailto:${config.companyEmail}`} class="text-xs text-zinc-600 hover:text-zinc-300 transition-colors">
           {config.companyEmail}
         </a>
       </div>
 
       {footerNav.map(({ title, items }) => (
         <div>
-          <p class="text-xs font-medium text-zinc-400 uppercase tracking-widest mb-4">{title}</p>
-          <ul class="space-y-2.5">
+          <p class="text-[10px] font-medium text-zinc-600 uppercase tracking-widest mb-5">{title}</p>
+          <ul class="space-y-3">
             {items.map(({ label, href }) => (
               <li>
-                <a href={href} class="text-sm text-zinc-600 hover:text-zinc-900 transition-colors">{label}</a>
+                <a href={href} class="text-sm text-zinc-400 hover:text-white transition-colors">{label}</a>
               </li>
             ))}
           </ul>
         </div>
       ))}
+
     </div>
 
-    <div class="py-4 border-t border-zinc-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-zinc-400">
+    <div class="py-5 border-t border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-zinc-600">
       <p>© {year} {config.companyName}</p>
-      <div class="flex gap-4">
-        <a href="/privatumas" class="hover:text-zinc-700 transition-colors">Privatumo politika</a>
-        <a href="/salygos" class="hover:text-zinc-700 transition-colors">Sąlygos</a>
+      <div class="flex gap-5">
+        <a href="/privatumas" class="hover:text-zinc-300 transition-colors">Privatumo politika</a>
+        <a href="/salygos" class="hover:text-zinc-300 transition-colors">Sąlygos</a>
       </div>
     </div>
 

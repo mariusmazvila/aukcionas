@@ -12,6 +12,11 @@
   background-image: linear-gradient(135deg, #0344D3 0%, #2D7FF9 100%);
 }
 
+/* Tamsus metalinis gradientas — pirminiai CTA mygtukai, footer akcentas. */
+@utility bg-zinc-shine {
+  background-image: linear-gradient(135deg, #09090b 0%, #52525b 48%, #18181b 100%);
+}
+
 * {
   font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
@@ -29,3 +34,16 @@ body { background-color: #ffffff; }
   outline: 2px solid #0344D3;
   outline-offset: 2px;
 }
+
+/* ── Scroll animations (Framer Motion feel) ───────────────────────────── */
+[data-anim] {
+  transition:
+    opacity  0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-anim]:not(.anim-in) { opacity: 0; }
+[data-anim="up"]:not(.anim-in)    { transform: translateY(36px); }
+[data-anim="left"]:not(.anim-in)  { transform: translateX(-40px); }
+[data-anim="right"]:not(.anim-in) { transform: translateX(40px); }
+[data-anim="scale"]:not(.anim-in) { transform: scale(0.96); }
+[data-anim].anim-in { opacity: 1; transform: none; }
