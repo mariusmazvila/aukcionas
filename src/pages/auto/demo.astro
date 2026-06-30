@@ -58,8 +58,8 @@ const market = [
 
 <BaseLayout title={`${car.make} ${car.model} ${car.year} — Carbid analizė`} noindex={true}>
 
-<!-- ── Sticky breadcrumb ── -->
-<div class="bg-white border-b border-zinc-200 px-6 py-3 sticky top-14 z-40">
+<!-- ── Breadcrumb ── -->
+<div class="bg-white border-b border-zinc-200 px-6 py-3 mt-14">
   <div class="max-w-7xl mx-auto flex items-center gap-2 text-sm">
     <a id="back-btn" href="/rezultatai"
        class="text-zinc-500 hover:text-zinc-900 transition-colors flex items-center gap-1.5">
@@ -91,19 +91,42 @@ const market = [
         <img id="car-photo" src="" alt="" class="hidden absolute inset-0 w-full h-full object-cover"/>
         <a id="car-photo-more" href="#" target="_blank" rel="noopener noreferrer"
            title="Visos nuotraukos originaliame skelbime"
-           class="hidden absolute bottom-4 right-4 items-center gap-1.5 px-3 py-2 bg-black/70 hover:bg-black/85 text-white text-xs font-medium backdrop-blur-sm transition-colors">
+           class="hidden absolute bottom-4 left-4 items-center gap-1.5 px-3 py-2 bg-black/70 hover:bg-black/85 text-white text-xs font-medium backdrop-blur-sm transition-colors">
           <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
           </svg>
           <span id="car-photo-more-label">nuotraukos</span>
         </a>
+
+        <!-- Pelno balas — ant nuotraukos kampas -->
+        <div class="absolute bottom-4 right-4 bg-white border border-zinc-200 px-3 py-2.5 flex items-center gap-3">
+          <div class="relative w-12 h-12 shrink-0">
+            <svg viewBox="0 0 100 100" class="w-full h-full" style="transform:rotate(-90deg)">
+              <circle cx="50" cy="50" r={r} fill="none" stroke="#e4e4e7" stroke-width="10"/>
+              <circle id="score-ring" cx="50" cy="50" r={r} fill="none" stroke={s.accent}
+                      stroke-width="10" stroke-dasharray={circ} stroke-dashoffset={dash}
+                      stroke-linecap="round"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span id="m-score" class="text-lg font-bold text-zinc-900">{car.profitScore}</span>
+              <span class="text-[8px] text-zinc-400">/ 100</span>
+            </div>
+          </div>
+          <div>
+            <p class="text-[10px] text-zinc-400 uppercase tracking-[0.12em] mb-0.5">
+              Pelno balas
+              <span id="demo-score" class="text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 align-middle ml-0.5">DEMO</span>
+            </p>
+            <p id="score-msg" class:list={['text-xs font-medium', s.text]}>{s.msg}</p>
+          </div>
+        </div>
       </div>
 
       <!-- Dešinė: info -->
       <div class="p-8 xl:p-12 flex flex-col">
 
         <!-- Ženkleliai -->
-        <div class="flex flex-wrap items-center gap-2 mb-5">
+        <div class="flex flex-wrap items-center gap-2 mb-6">
           <span id="car-source"
                 class="text-[10px] font-medium uppercase tracking-[0.12em] bg-zinc-950 text-white px-2 py-0.5">
             {car.source}
@@ -120,19 +143,19 @@ const market = [
         <h1 id="car-title" class="text-3xl xl:text-4xl text-zinc-900 mb-1.5">
           {car.make} {car.model}
         </h1>
-        <p id="car-subtitle" class="text-sm text-zinc-400 mb-8">
+        <p id="car-subtitle" class="text-sm text-zinc-400 mb-10">
           {car.year} · {car.km.toLocaleString('lt-LT')} km · {car.fuel} · {car.transmission}
         </p>
 
         <!-- Metrikos: gap-px tinklelis -->
-        <div class="grid grid-cols-2 gap-px bg-zinc-200 mb-6">
-          <div class="bg-white p-4">
-            <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-1.5">Dabar. kaina</p>
+        <div class="grid grid-cols-2 gap-px bg-zinc-200 mb-8">
+          <div class="bg-white p-5">
+            <p class="text-[10px] text-zinc-400 uppercase tracking-[0.15em] mb-2">Dabar. kaina</p>
             <p id="car-price" class="text-2xl font-semibold text-zinc-900">
               €{car.currentBid.toLocaleString('lt-LT')}
             </p>
           </div>
-          <div class="bg-zinc-950 p-4">
+          <div class="bg-zinc-950 p-5">
             <p class="text-[10px] text-zinc-500 uppercase tracking-[0.15em] mb-1.5">
               Maks. statymas
               <span id="demo-maxbid"
@@ -162,59 +185,32 @@ const market = [
           </div>
         </div>
 
-        <!-- Pelno balas + veiksmai -->
-        <div class="flex items-start gap-6 mt-auto">
-
-          <!-- SVG žiedas -->
-          <div class="flex flex-col items-center shrink-0">
-            <div class="relative w-20 h-20">
-              <svg viewBox="0 0 100 100" class="w-full h-full" style="transform:rotate(-90deg)">
-                <circle cx="50" cy="50" r={r} fill="none" stroke="#e4e4e7" stroke-width="9"/>
-                <circle id="score-ring" cx="50" cy="50" r={r} fill="none" stroke={s.accent}
-                        stroke-width="9" stroke-dasharray={circ} stroke-dashoffset={dash}
-                        stroke-linecap="round"/>
-              </svg>
-              <div class="absolute inset-0 flex flex-col items-center justify-center">
-                <span id="m-score" class="text-2xl font-bold text-zinc-900">{car.profitScore}</span>
-                <span class="text-[10px] text-zinc-400">/ 100</span>
-              </div>
-            </div>
-            <p class="text-[10px] text-zinc-500 mt-1.5 text-center leading-snug">
-              Pelno balas
-              <span id="demo-score"
-                    class="text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 align-middle ml-0.5">DEMO</span>
-            </p>
-            <p id="score-msg" class:list={['text-xs mt-0.5 font-medium', s.text]}>{s.msg}</p>
-          </div>
-
-          <!-- Mygtukai -->
-          <div class="flex flex-col gap-2.5 flex-1 min-w-0">
-            <a id="auction-link" href="#" target="_blank" rel="noopener noreferrer"
-               class="hidden items-center justify-center gap-2 px-4 py-2.5 bg-zinc-shine hover:opacity-90 text-white text-sm font-medium transition-opacity">
-              Peržiūrėti aukcione
-              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <!-- Veiksmai -->
+        <div class="flex flex-col gap-3 mt-auto">
+          <a id="auction-link" href="#" target="_blank" rel="noopener noreferrer"
+             class="hidden items-center justify-center gap-2 w-full px-4 py-3 bg-zinc-shine hover:opacity-90 text-white text-sm font-medium transition-opacity">
+            Peržiūrėti aukcione
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+            </svg>
+          </a>
+          <div class="flex gap-3">
+            <button class="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-zinc-950 hover:bg-zinc-800 text-white text-sm transition-colors">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
                 <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"/>
+                      d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
               </svg>
-            </a>
-            <div class="flex gap-2.5">
-              <button class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 bg-zinc-950 hover:bg-zinc-800 text-white text-sm transition-colors">
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                </svg>
-                Stebėjimas
-              </button>
-              <button class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2.5 border border-zinc-200 hover:border-zinc-900 text-zinc-700 text-sm transition-colors">
-                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-                </svg>
-                Eksportuoti
-              </button>
-            </div>
+              Pridėti į stebėjimą
+            </button>
+            <button class="flex items-center justify-center gap-2 px-4 py-3 border border-zinc-200 hover:border-zinc-900 text-zinc-700 text-sm transition-colors">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/>
+              </svg>
+              Eksportuoti
+            </button>
           </div>
-
         </div>
       </div>
     </div>
