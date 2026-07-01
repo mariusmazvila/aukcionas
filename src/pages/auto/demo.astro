@@ -97,22 +97,23 @@ const market = [
           <span id="car-photo-more-label">nuotraukos</span>
         </a>
 
-        <!-- Pelno balas — ant nuotraukos kampas -->
-        <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white border border-zinc-200 px-2 py-2 sm:px-3 sm:py-2.5 flex items-center gap-2 sm:gap-3">
+        <!-- Pelno balas — ant nuotraukos kampas, glass efektas -->
+        <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 flex items-center gap-2 sm:gap-3 px-2.5 py-2 sm:px-3.5 sm:py-2.5"
+             style="background:rgba(0,0,0,0.38);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.14);">
           <div class="relative w-12 h-12 shrink-0">
             <svg viewBox="0 0 100 100" class="w-full h-full" style="transform:rotate(-90deg)">
-              <circle cx="50" cy="50" r={r} fill="none" stroke="#e4e4e7" stroke-width="10"/>
+              <circle cx="50" cy="50" r={r} fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="10"/>
               <circle id="score-ring" cx="50" cy="50" r={r} fill="none" stroke={s.accent}
                       stroke-width="10" stroke-dasharray={circ} stroke-dashoffset={dash}
                       stroke-linecap="round"/>
             </svg>
             <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span id="m-score" class="text-lg font-bold text-zinc-900">{car.profitScore}</span>
-              <span class="text-[8px] text-zinc-400">/ 100</span>
+              <span id="m-score" class="text-lg font-bold text-white">{car.profitScore}</span>
+              <span class="text-[8px]" style="color:rgba(255,255,255,0.5)">/ 100</span>
             </div>
           </div>
           <div class="hidden sm:block">
-            <p class="text-[10px] text-zinc-400 uppercase tracking-[0.12em] mb-0.5">
+            <p class="text-[10px] uppercase tracking-[0.12em] mb-0.5" style="color:rgba(255,255,255,0.55)">
               Pelno balas
               <span id="demo-score" class="text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 align-middle ml-0.5">DEMO</span>
             </p>
