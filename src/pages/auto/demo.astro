@@ -77,12 +77,11 @@ const market = [
 <!-- ── HERO: 2 stulpeliai ── -->
 <div class="bg-white border-b border-zinc-200">
   <div class="max-w-7xl mx-auto">
-    <div class="grid lg:grid-cols-2" style="min-height:420px;">
+    <div class="grid lg:grid-cols-2">
 
       <!-- Kairė: nuotrauka -->
       <div id="car-photo-wrap"
-           class="relative bg-zinc-100 border-r border-zinc-200 flex items-center justify-center overflow-hidden"
-           style="min-height:300px;">
+           class="relative bg-zinc-100 border-r border-zinc-200 flex items-center justify-center overflow-hidden min-h-[260px] sm:min-h-[360px] lg:min-h-[480px]">
         <!-- Placeholder (rodomas kol nėra nuotraukos) -->
         <svg id="car-photo-placeholder" class="w-16 h-16 text-zinc-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.75">
           <circle cx="6" cy="17.5" r="1.75" stroke-width="1"/><circle cx="18" cy="17.5" r="1.75" stroke-width="1"/>
@@ -99,7 +98,7 @@ const market = [
         </a>
 
         <!-- Pelno balas — ant nuotraukos kampas -->
-        <div class="absolute bottom-4 right-4 bg-white border border-zinc-200 px-3 py-2.5 flex items-center gap-3">
+        <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 bg-white border border-zinc-200 px-2 py-2 sm:px-3 sm:py-2.5 flex items-center gap-2 sm:gap-3">
           <div class="relative w-12 h-12 shrink-0">
             <svg viewBox="0 0 100 100" class="w-full h-full" style="transform:rotate(-90deg)">
               <circle cx="50" cy="50" r={r} fill="none" stroke="#e4e4e7" stroke-width="10"/>
@@ -112,7 +111,7 @@ const market = [
               <span class="text-[8px] text-zinc-400">/ 100</span>
             </div>
           </div>
-          <div>
+          <div class="hidden sm:block">
             <p class="text-[10px] text-zinc-400 uppercase tracking-[0.12em] mb-0.5">
               Pelno balas
               <span id="demo-score" class="text-[8px] bg-amber-100 text-amber-700 px-1 py-0.5 align-middle ml-0.5">DEMO</span>
@@ -123,7 +122,7 @@ const market = [
       </div>
 
       <!-- Dešinė: info -->
-      <div class="p-8 xl:p-12 flex flex-col">
+      <div class="p-5 sm:p-8 xl:p-12 flex flex-col">
 
         <!-- Ženkleliai -->
         <div class="flex flex-wrap items-center gap-2 mb-6">
@@ -218,7 +217,7 @@ const market = [
 </div>
 
 <!-- ── SEKCIJOS ── -->
-<div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-4">
+<div class="max-w-5xl mx-auto px-3 sm:px-6 py-6 sm:py-10 space-y-3 sm:space-y-4">
 
   <!-- 0. Realūs duomenys iš Supabase -->
   <section id="real-specs" class="hidden bg-white border border-zinc-200 p-6">
@@ -227,7 +226,7 @@ const market = [
   </section>
 
   <!-- 1. Pelno analizė + AI mygtukas -->
-  <section class="bg-white border border-zinc-200 p-6">
+  <section class="bg-white border border-zinc-200 p-4 sm:p-6">
     <div class="flex items-center justify-between gap-4 mb-1">
       <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Pelno analizė</h2>
       <button id="toggle-costs" type="button"
@@ -307,7 +306,7 @@ const market = [
   </section>
 
   <!-- 2. Rekomendacija -->
-  <section class="bg-white border border-zinc-200 p-6">
+  <section class="bg-white border border-zinc-200 p-4 sm:p-6">
     <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">
       Rekomendacija
       <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
@@ -322,7 +321,7 @@ const market = [
   </section>
 
   <!-- 3. Finansinė analizė -->
-  <section class="bg-white border border-zinc-200 p-6">
+  <section class="bg-white border border-zinc-200 p-4 sm:p-6">
     <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
       Finansinė analizė
       <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
@@ -352,7 +351,7 @@ const market = [
   </section>
 
   <!-- 4. Maks. statymo skaičiuoklė -->
-  <section class="bg-white border border-zinc-200 p-6">
+  <section class="bg-white border border-zinc-200 p-4 sm:p-6">
     <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
       Maksimalaus statymo skaičiuoklė
       <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
@@ -389,7 +388,7 @@ const market = [
   </section>
 
   <!-- 5. Žalos analizė -->
-  <section class="bg-white border border-zinc-200 p-6">
+  <section class="bg-white border border-zinc-200 p-4 sm:p-6">
     <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
       Žalos analizė
       <span id="demo-damage"
@@ -425,7 +424,7 @@ const market = [
   </section>
 
   <!-- 6. Rinkos palyginimas -->
-  <section class="bg-white border border-zinc-200 p-6">
+  <section class="bg-white border border-zinc-200 p-4 sm:p-6">
     <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
       Rinkos palyginimas (LT)
       <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
@@ -445,7 +444,7 @@ const market = [
   </section>
 
   <!-- 7. Paklausa ir likvidumas -->
-  <section class="bg-white border border-zinc-200 p-6">
+  <section class="bg-white border border-zinc-200 p-4 sm:p-6">
     <h2 class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-5">
       Paklausa ir likvidumas
       <span class="ml-1.5 text-[9px] bg-amber-100 text-amber-700 px-1.5 py-0.5 align-middle">DEMO</span>
@@ -471,7 +470,7 @@ const market = [
   </section>
 
   <!-- 8. AI pastabos -->
-  <section class="bg-zinc-950 p-6 mb-4">
+  <section class="bg-zinc-950 p-4 sm:p-6 mb-4">
     <div class="flex items-start gap-4">
       <div class="w-8 h-8 bg-zinc-800 flex items-center justify-center shrink-0 mt-0.5">
         <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">

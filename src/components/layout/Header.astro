@@ -7,19 +7,17 @@ function isActive(href: string) {
   if (href === '/') return pathname === '/';
   return pathname.startsWith(href);
 }
-
-const linkBase = 'text-black hover:text-zinc-500';
 ---
 
-<header
-  class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-zinc-200"
-  id="site-header"
->
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="flex items-center justify-between h-14">
+<header id="site-header" class="fixed top-0 left-0 right-0 z-50">
 
-      <a href="/" aria-label="Carbid" class="flex items-center">
-        <span class="text-lg font-semibold tracking-[0.04em] text-black">CARBID<span class="font-normal text-zinc-400">.lt</span></span>
+  <div id="nav-outer">
+    <div id="nav-pill" class="flex items-center justify-between">
+
+      <a href="/" aria-label="Carbid" class="flex items-center shrink-0">
+        <img src="/images/carbid logo.png" alt="Carbid"
+             style="width:148px;height:40px;object-fit:cover;object-position:center 50%;"
+             fetchpriority="high" />
       </a>
 
       <nav aria-label="Pagrindinis meniu" class="hidden md:flex items-center">
@@ -27,8 +25,7 @@ const linkBase = 'text-black hover:text-zinc-500';
           <a
             href={href}
             class:list={[
-              'nav-link px-3 py-1.5 text-sm font-normal tracking-wide transition-colors',
-              linkBase,
+              'nav-link px-3 py-1.5 text-sm font-normal tracking-wide transition-colors text-zinc-800 hover:text-zinc-500',
             ]}
             aria-current={isActive(href) ? 'page' : undefined}
           >
@@ -38,7 +35,7 @@ const linkBase = 'text-black hover:text-zinc-500';
       </nav>
 
       <div class="hidden md:flex items-center gap-3">
-        <a href="/prisijungti" class:list={['nav-link text-sm font-normal tracking-wide transition-colors', linkBase]}>
+        <a href="/prisijungti" class="nav-link text-sm font-normal tracking-wide transition-colors text-zinc-800 hover:text-zinc-500">
           Prisijungti
         </a>
         <a href="/registracija" class="px-4 py-1.5 bg-zinc-shine hover:opacity-90 text-white text-sm font-medium transition-colors">
@@ -52,7 +49,7 @@ const linkBase = 'text-black hover:text-zinc-500';
         aria-expanded="false"
         aria-controls="mobile-menu"
         aria-label="Meniu"
-        class="md:hidden p-1.5 text-black hover:text-zinc-500 transition-colors"
+        class="md:hidden p-1.5 text-zinc-800 hover:text-zinc-500 transition-colors"
       >
         <svg id="icon-menu" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -65,50 +62,151 @@ const linkBase = 'text-black hover:text-zinc-500';
     </div>
   </div>
 
-  <div id="mobile-menu" class="hidden md:hidden border-t border-zinc-200 bg-white">
-    <nav class="max-w-7xl mx-auto px-6 py-3 flex flex-col">
+  <div id="mobile-menu" class="hidden md:hidden">
+    <nav class="flex flex-col px-4 py-3">
       {mainNav.map(({ label, href }) => (
         <a
           href={href}
-          class="py-2.5 text-sm font-normal tracking-wide border-b border-zinc-100 text-black hover:text-zinc-500"
+          class="py-2.5 text-sm font-normal tracking-wide border-b border-zinc-100 text-zinc-900 hover:text-zinc-500 transition-colors"
         >
           {label}
         </a>
       ))}
       <div class="pt-3 flex flex-col gap-2">
-        <a href="/prisijungti" class="py-2 text-sm text-black text-center border border-zinc-200 hover:border-zinc-400 hover:text-zinc-500 transition-colors">Prisijungti</a>
+        <a href="/prisijungti" class="py-2 text-sm text-zinc-900 text-center border border-zinc-200 hover:border-zinc-400 hover:text-zinc-500 transition-colors">Prisijungti</a>
         <a href="/registracija" class="py-2 bg-zinc-shine hover:opacity-90 text-white text-sm font-medium text-center transition-colors">Registracija</a>
       </div>
     </nav>
   </div>
+
 </header>
 
+<style>
+  /* Initial: subtle frosted glass — full width bar */
+  #site-header {
+    background: rgba(255, 255, 255, 0.82);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(228, 228, 231, 0.55);
+    transition:
+      background    0.45s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color  0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Floating: header shell goes transparent, pill takes over */
+  #site-header.is-floating {
+    background: transparent;
+    border-bottom-color: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  #nav-outer {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    transition:
+      max-width 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+      padding   0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  #nav-pill {
+    height: 3.5rem;
+    padding: 0;
+    border: 1px solid transparent;
+    transition:
+      border-radius  0.45s cubic-bezier(0.4, 0, 0.2, 1),
+      background     0.45s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow     0.45s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color   0.45s cubic-bezier(0.4, 0, 0.2, 1),
+      padding        0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Floating pill state */
+  #site-header.is-floating #nav-outer {
+    max-width: 58rem;
+    padding: 10px 1rem 8px;
+  }
+
+  #site-header.is-floating #nav-pill {
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.88);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-color: rgba(228, 228, 231, 0.8);
+    box-shadow: 0 4px 32px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+    padding: 0 1.25rem;
+  }
+
+  /* Nav link underline on hover */
+  .nav-link {
+    position: relative;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 0.75rem;
+    right: 0.75rem;
+    height: 1px;
+    background: #09090b;
+    transform: scaleX(0);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .nav-link:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* Mobile menu as a rounded dropdown */
+  #mobile-menu {
+    background: white;
+    border: 1px solid rgba(228, 228, 231, 0.9);
+    margin: 4px 1rem 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+  }
+</style>
+
 <script>
-  const btn = document.getElementById('mobile-menu-btn');
-  const menu = document.getElementById('mobile-menu');
-  const iconMenu = document.getElementById('icon-menu');
-  const iconClose = document.getElementById('icon-close');
+  const header = document.getElementById('site-header')!;
 
-  function open() {
-    menu?.classList.remove('hidden');
-    btn?.setAttribute('aria-expanded', 'true');
-    iconMenu?.classList.add('hidden');
-    iconClose?.classList.remove('hidden');
+  let ticking = false;
+  const updateScroll = () => {
+    header.classList.toggle('is-floating', window.scrollY > 40);
+    ticking = false;
+  };
+  window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(updateScroll); ticking = true; }
+  }, { passive: true });
+  updateScroll();
+
+  // Mobile menu
+  const menu  = document.getElementById('mobile-menu')!;
+  const btn   = document.getElementById('mobile-menu-btn')!;
+  const iconMenu  = document.getElementById('icon-menu')!;
+  const iconClose = document.getElementById('icon-close')!;
+
+  function openMenu() {
+    menu.classList.remove('hidden');
+    btn.setAttribute('aria-expanded', 'true');
+    iconMenu.classList.add('hidden');
+    iconClose.classList.remove('hidden');
   }
-  function close() {
-    menu?.classList.add('hidden');
-    btn?.setAttribute('aria-expanded', 'false');
-    iconMenu?.classList.remove('hidden');
-    iconClose?.classList.add('hidden');
+  function closeMenu() {
+    menu.classList.add('hidden');
+    btn.setAttribute('aria-expanded', 'false');
+    iconMenu.classList.remove('hidden');
+    iconClose.classList.add('hidden');
   }
 
-  btn?.addEventListener('click', (e) => {
+  btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    btn.getAttribute('aria-expanded') === 'true' ? close() : open();
+    btn.getAttribute('aria-expanded') === 'true' ? closeMenu() : openMenu();
   });
   document.addEventListener('click', (e) => {
-    if (!menu?.contains(e.target as Node) && !btn?.contains(e.target as Node)) close();
+    if (!menu.contains(e.target as Node) && !btn.contains(e.target as Node)) closeMenu();
   });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-  window.matchMedia('(min-width: 768px)').addEventListener('change', (e) => { if (e.matches) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
+  window.matchMedia('(min-width: 768px)').addEventListener('change', (e) => { if (e.matches) closeMenu(); });
 </script>

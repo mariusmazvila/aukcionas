@@ -105,17 +105,22 @@ const totalCount = count ?? results.length;
 <div class="min-h-screen bg-zinc-50">
 
   <!-- Top bar -->
-  <div class="bg-white border-b border-zinc-200 px-6 py-3 sticky top-0 z-10">
-    <div class="max-w-6xl mx-auto flex items-center gap-3">
+  <div class="bg-white border-b border-zinc-200 px-4 sm:px-6 py-3 sticky top-14 z-40">
+    <div class="max-w-6xl mx-auto flex items-center gap-2 sm:gap-3">
       <a href="/" class="text-zinc-500 hover:text-zinc-800 transition-colors flex items-center gap-1.5 text-sm shrink-0">
         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
         </svg>
-        Paieška
+        <span class="hidden sm:inline">Paieška</span>
       </a>
       <span class="text-zinc-200 shrink-0">|</span>
-      <div id="filter-chips" class="flex flex-wrap gap-1.5 flex-1 min-w-0"></div>
-      <a href="/" class="shrink-0 text-xs text-zinc-400 hover:text-zinc-600 transition-colors">Keisti paiešką</a>
+      <div id="filter-chips" class="flex flex-wrap gap-1.5 flex-1 min-w-0 overflow-hidden"></div>
+      <a href="/" class="hidden sm:block shrink-0 text-xs text-zinc-400 hover:text-zinc-600 transition-colors">Keisti paiešką</a>
+      <a href="/" class="sm:hidden shrink-0 p-1 text-zinc-400 hover:text-zinc-700" title="Keisti paiešką">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/>
+        </svg>
+      </a>
     </div>
   </div>
 
@@ -131,7 +136,7 @@ const totalCount = count ?? results.length;
       </div>
       <div class="flex items-center gap-3">
         <div class="relative">
-          <select class="pl-3 pr-8 py-2 border border-zinc-300 rounded-lg text-sm text-zinc-700 bg-white focus:outline-none focus:border-[#0344D3] appearance-none">
+          <select class="pl-3 pr-8 py-2 border border-zinc-300 text-sm text-zinc-700 bg-white focus:outline-none focus:border-zinc-900 appearance-none">
             <option>Pelno balas ↓</option>
             <option>Kaina ↑</option>
             <option>Kaina ↓</option>

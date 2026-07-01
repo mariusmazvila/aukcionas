@@ -106,5 +106,17 @@ const { gtmId } = config.analyticsConfig;
       <slot />
     </main>
     <Footer />
+
+    <script>
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            setTimeout(() => e.target.classList.add('is-underlined'), 150);
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.6 });
+      document.querySelectorAll('.word-underline').forEach(el => obs.observe(el));
+    </script>
   </body>
 </html>
